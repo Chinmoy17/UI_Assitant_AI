@@ -1,22 +1,19 @@
 @import "tailwindcss";
 
+/* Tailwind theme tokens — safe names that don't conflict with built-in utilities */
 @theme {
-  --color-bg: #0b0d10;
   --color-surface: #14171c;
   --color-surface2: #1c2026;
   --color-border: #2a2f37;
-  --color-text-base: #e6e8eb;
   --color-text-dim: #8b919a;
   --color-accent: #6366f1;
-  --color-accent-h: #7c7ff5;
+  --color-accent-hover: #7c7ff5;
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-warning: #f59e0b;
-  --font-mono: ui-monospace, Menlo, monospace;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
+/* ─── Base ─────────────────────────────────────────────────── */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
   background: #0b0d10;
@@ -28,7 +25,128 @@ body {
 
 #root { min-height: 100vh; }
 
-/* Complex interactive states that can't be done with Tailwind utilities */
+/* ─── Shared component classes ──────────────────────────────── */
+
+/* Callout box — explicit styles so browser/Tailwind conflicts don't hide it */
+.callout {
+  border-left: 3px solid #6366f1;
+  background: rgba(99, 102, 241, 0.09);
+  padding: 14px 18px;
+  border-radius: 0 6px 6px 0;
+  margin: 20px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #e6e8eb;
+}
+
+/* Demo container */
+.demo-box {
+  background: #14171c;
+  border: 1px solid #3a4050;
+  border-radius: 10px;
+  padding: 24px;
+  margin: 16px 0 24px;
+}
+
+.demo-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8b919a;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+
+/* Stat badge — monospace inline chip */
+.stat-badge {
+  display: inline-block;
+  background: #1c2026;
+  border: 1px solid #2a2f37;
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 13px;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  color: #e6e8eb;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  font-family: inherit;
+  line-height: 1;
+}
+.btn-primary:hover  { background: #7c7ff5; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #2a2f37;
+  color: #8b919a;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit;
+  line-height: 1;
+}
+.btn-ghost:hover {
+  background: #1c2026;
+  color: #e6e8eb;
+  border-color: #3a4050;
+}
+
+/* ─── Inline code ────────────────────────────────────────────── */
+.code-inline {
+  font-family: ui-monospace, Menlo, monospace;
+  background: #1c2026;
+  border: 1px solid #2a2f37;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: #c4c9d4;
+}
+
+/* ─── Form controls ──────────────────────────────────────────── */
+input[type="range"] {
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.ctrl-select,
+.ctrl-input {
+  background: #1c2026;
+  color: #e6e8eb;
+  border: 1px solid #2a2f37;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.ctrl-select:focus,
+.ctrl-input:focus { border-color: #6366f1; }
+
+/* ─── Interactive demo state classes ────────────────────────── */
 .hier-card.flat * {
   font-size: 14px !important;
   font-weight: 400 !important;
@@ -36,9 +154,7 @@ body {
   margin: 4px 0 !important;
 }
 
-.squint-target.blur {
-  filter: blur(6px);
-}
+.squint-target.blur { filter: blur(6px); }
 
 .heatmap.show-heat::before {
   content: '';
@@ -47,16 +163,21 @@ body {
   pointer-events: none;
   border-radius: 8px;
   background:
-    radial-gradient(ellipse 80% 8% at 0% 8%, rgba(239,68,68,.5), transparent 60%),
-    radial-gradient(ellipse 60% 6% at 0% 22%, rgba(239,68,68,.4), transparent 60%),
+    radial-gradient(ellipse 80% 8% at 0% 8%,  rgba(239,68,68,.5),  transparent 60%),
+    radial-gradient(ellipse 60% 6% at 0% 22%, rgba(239,68,68,.4),  transparent 60%),
     radial-gradient(ellipse 12% 60% at 2% 50%, rgba(239,68,68,.35), transparent 60%);
 }
 
+/* ─── Section animation ──────────────────────────────────────── */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: none; }
 }
+.section-enter { animation: fade-in 0.3s ease; }
 
-.section-enter {
-  animation: fade-in 0.3s ease;
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .layout-grid { grid-template-columns: 1fr !important; }
+  .layout-aside { position: relative !important; height: auto !important; }
+  .layout-main  { padding: 24px 20px !important; }
 }

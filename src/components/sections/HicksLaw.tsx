@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Callout from '../shared/Callout'
 import DemoBox from '../shared/DemoBox'
 import StatBadge from '../shared/StatBadge'
@@ -11,8 +11,8 @@ const ALL_LABELS = [
 
 export default function HicksLaw() {
   const [options, setOptions] = useState<string[]>([])
-  const [result, setResult] = useState<string | null>(null)
-  const startRef = { current: 0 }
+  const [result, setResult] = useState<{ text: string; success: boolean } | null>(null)
+  const startRef = useRef(0)
 
   function run(n: number) {
     const labels = [...ALL_LABELS].sort(() => Math.random() - 0.5).slice(0, n)
@@ -22,62 +22,68 @@ export default function HicksLaw() {
     startRef.current = performance.now()
   }
 
-  function handleClick(label: string, n: number) {
+  function handleClick(label: string) {
     const elapsed = Math.round(performance.now() - startRef.current)
     if (label === 'Settings') {
-      setResult(`Found Settings among ${n} options in ${elapsed} ms`)
+      setResult({ text: `Found Settings among ${options.length} options in ${elapsed} ms`, success: true })
     } else {
-      setResult(`That was "${label}" — try again`)
+      setResult({ text: `That was "${label}" — try again`, success: false })
+      startRef.current = performance.now()
     }
   }
 
   return (
     <div className="section-enter">
-      <h2 className="text-[32px] font-bold mb-2 tracking-tight">Hick's Law</h2>
-      <p className="text-[17px] text-text-dim mb-6 max-w-[70ch]">
-        <code className="font-mono bg-surface2 px-1.5 py-0.5 rounded text-[0.9em]">T = a + b·log₂(n)</code>. The time it takes to make a decision increases logarithmically with
-        the number and complexity of choices.
+      <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+        Hick's Law
+      </h2>
+      <p style={{ fontSize: 17, color: '#8b919a', marginBottom: 24, maxWidth: '70ch', lineHeight: 1.5 }}>
+        <code className="code-inline">T = a + b·log₂(n)</code>. The time it takes to make a
+        decision increases logarithmically with the number and complexity of choices.
       </p>
-      <p className="mb-3 max-w-[70ch]">
-        More choices = longer reaction time. When users are bombarded with a massive, unorganized list
-        of options, they experience choice paralysis. However, Hick's Law doesn't mean you should simply
-        hide features. It means you should categorize them. Chunking items into categories reduces the
-        mental search time dramatically.
+      <p style={{ marginBottom: 14, maxWidth: '70ch' }}>
+        More choices = longer reaction time. When users are bombarded with a massive, unorganized
+        list of options, they experience choice paralysis. However, Hick's Law doesn't mean you
+        should simply hide features. It means you should categorize them. Chunking items into
+        categories reduces mental search time dramatically.
       </p>
 
       <DemoBox label='Find "Settings" as fast as possible'>
-        <p className="mb-4">
+        <p style={{ marginBottom: 16, color: '#8b919a', fontSize: 14 }}>
           Try to find and click the "Settings" button. Notice how your search time scales up
           uncomfortably when presented with 20 options compared to 3.
         </p>
-        <div className="flex gap-3 mb-4 flex-wrap">
+        <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
           {[3, 8, 20].map(n => (
-            <button
-              key={n}
-              onClick={() => run(n)}
-              className="px-4 py-2 rounded-md border border-border text-text-dim text-[14px] hover:bg-surface2 transition-colors cursor-pointer"
-            >
-              {n} options
-            </button>
+            <button key={n} className="btn-ghost" onClick={() => run(n)}>{n} options</button>
           ))}
         </div>
+
         {options.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
             {options.map(label => (
               <button
                 key={label}
-                onClick={() => handleClick(label, options.length)}
-                className="bg-surface2 text-text-base border border-border px-3.5 py-2 rounded text-[13px] hover:border-accent cursor-pointer transition-colors"
+                onClick={() => handleClick(label)}
+                style={{
+                  background: '#1c2026', color: '#e6e8eb',
+                  border: '1px solid #2a2f37', padding: '8px 14px',
+                  borderRadius: 4, cursor: 'pointer', fontSize: 13,
+                  fontFamily: 'inherit', transition: 'border-color 0.15s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#6366f1' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2f37' }}
               >
                 {label}
               </button>
             ))}
           </div>
         )}
+
         {result && (
-          <div className="mt-4">
-            <StatBadge className={result.includes('try again') ? 'text-danger' : ''}>
-              {result}
+          <div style={{ marginTop: 14 }}>
+            <StatBadge>
+              <span style={{ color: result.success ? '#10b981' : '#ef4444' }}>{result.text}</span>
             </StatBadge>
           </div>
         )}
@@ -85,8 +91,8 @@ export default function HicksLaw() {
 
       <Callout>
         Chunking 20 items into 4 groups of 5 is much faster to process than 20 flat items:{' '}
-        <code className="font-mono bg-surface2 px-1.5 py-0.5 rounded text-[0.9em]">log₂4 + log₂5 ≪ log₂20</code>. Use progressive disclosure: show the most common options first,
-        and hide the rest behind a "More" menu.
+        <code className="code-inline">log₂4 + log₂5 ≪ log₂20</code>. Use progressive disclosure:
+        show the most common options first, and hide the rest behind a "More" menu.
       </Callout>
     </div>
   )

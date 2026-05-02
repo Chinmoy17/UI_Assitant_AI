@@ -7,10 +7,8 @@ interface DemoBoxProps {
 
 export default function DemoBox({ label, children }: DemoBoxProps) {
   return (
-    <div className="bg-surface border border-border rounded-lg p-6 my-4">
-      <div className="text-[11px] uppercase tracking-widest text-text-dim font-semibold mb-3">
-        {label}
-      </div>
+    <div className="demo-box">
+      <div className="demo-label">{label}</div>
       {children}
     </div>
   )

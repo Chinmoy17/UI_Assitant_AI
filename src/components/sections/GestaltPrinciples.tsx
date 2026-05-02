@@ -4,29 +4,23 @@ import DemoBox from '../shared/DemoBox'
 
 function ProximityDemo() {
   const [gap, setGap] = useState(8)
-  const rows = [0, 1, 2]
-  const cols = [0, 1, 2, 3, 4, 5, 6, 7]
-
   return (
     <>
-      <p className="mb-4">
-        Elements close to each other are perceived as a single group. Move the slider below to change
-        the horizontal gap. Notice how your brain instantly switches from seeing "columns" to seeing
-        "rows" purely based on whitespace.
+      <p style={{ marginBottom: 16, color: '#8b919a', fontSize: 14 }}>
+        Elements close to each other are perceived as a single group. Move the slider to change
+        the horizontal gap. Notice how your brain switches from seeing "columns" to "rows" purely
+        based on whitespace.
       </p>
-      <label className="block text-[12px] uppercase tracking-wider text-text-dim mb-1">
-        Horizontal gap: <span>{gap}</span>px
+      <label style={{ display: 'block', fontSize: 12, color: '#8b919a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+        Horizontal gap: {gap}px
       </label>
-      <input
-        type="range" min={2} max={60} value={gap}
-        onChange={e => setGap(+e.target.value)}
-        className="w-full"
-      />
-      <div className="mt-6 flex flex-col gap-3">
-        {rows.map(r => (
-          <div key={r} className="flex" style={{ gap: `${gap}px` }}>
-            {cols.map(c => (
-              <div key={c} className="w-3.5 h-3.5 bg-accent rounded-full" />
+      <input type="range" min={2} max={60} value={gap}
+        onChange={e => setGap(+e.target.value)} style={{ width: '100%' }} />
+      <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {[0, 1, 2].map(r => (
+          <div key={r} style={{ display: 'flex', gap: `${gap}px` }}>
+            {Array.from({ length: 8 }).map((_, c) => (
+              <div key={c} style={{ width: 14, height: 14, background: '#6366f1', borderRadius: '50%' }} />
             ))}
           </div>
         ))}
@@ -38,27 +32,18 @@ function ProximityDemo() {
 function SimilarityDemo() {
   const [similar, setSimilar] = useState(false)
   const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444']
-
   return (
     <>
-      <p className="mb-4">
+      <p style={{ marginBottom: 16, color: '#8b919a', fontSize: 14 }}>
         Elements that look similar are perceived to have the same function. Toggle similarity below.
-        With identical colors, it's just a 4×4 grid. When colored by columns, the brain groups them
+        With identical colors it's just a 4×4 grid; when colored by columns the brain groups them
         vertically, ignoring the equal spacing.
       </p>
-      <button
-        onClick={() => setSimilar(s => !s)}
-        className="px-4 py-2 rounded-md border border-border text-text-dim text-[14px] hover:bg-surface2 transition-colors cursor-pointer"
-      >
-        Toggle similarity
-      </button>
-      <div className="mt-6 grid gap-2" style={{ gridTemplateColumns: 'repeat(4, 24px)' }}>
+      <button className="btn-ghost" onClick={() => setSimilar(s => !s)}>Toggle similarity</button>
+      <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(4, 24px)', gap: 8 }}>
         {Array.from({ length: 16 }, (_, i) => (
-          <div
-            key={i}
-            className="w-3.5 h-3.5 rounded-full"
-            style={{ background: similar ? colors[i % 4] : '#6366f1' }}
-          />
+          <div key={i} style={{ width: 14, height: 14, borderRadius: '50%',
+            background: similar ? colors[i % 4] : '#6366f1' }} />
         ))}
       </div>
     </>
@@ -68,15 +53,17 @@ function SimilarityDemo() {
 export default function GestaltPrinciples() {
   return (
     <div className="section-enter">
-      <h2 className="text-[32px] font-bold mb-2 tracking-tight">Gestalt Principles</h2>
-      <p className="text-[17px] text-text-dim mb-6 max-w-[70ch]">
-        The brain perceives wholes before parts. Founded by the Berlin School of experimental psychology
-        in the 1920s, Gestalt theory explains how we group disparate elements.
+      <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+        Gestalt Principles
+      </h2>
+      <p style={{ fontSize: 17, color: '#8b919a', marginBottom: 24, maxWidth: '70ch', lineHeight: 1.5 }}>
+        The brain perceives wholes before parts. Founded by the Berlin School of experimental
+        psychology in the 1920s, Gestalt theory explains how we group disparate elements.
       </p>
-      <p className="mb-3 max-w-[70ch]">
-        The human mind seeks order in chaos. Instead of processing every individual element on a screen,
-        it groups them into larger logical chunks. This chunking is automatic and highly predictable based
-        on physical properties like distance and appearance.
+      <p style={{ marginBottom: 14, maxWidth: '70ch' }}>
+        The human mind seeks order in chaos. Instead of processing every individual element on a
+        screen, it groups them into larger logical chunks. This chunking is automatic and highly
+        predictable based on physical properties like distance and appearance.
       </p>
 
       <DemoBox label="Law of Proximity">
@@ -88,10 +75,10 @@ export default function GestaltPrinciples() {
       </DemoBox>
 
       <Callout>
-        <strong>The Takeaway:</strong> White space is not empty space; it is a structural tool. Form
-        labels must hug their inputs (proximity) tighter than the gap to the next field. Same-colored
-        buttons across an app feel like they do the same thing (similarity). If two things are
-        conceptually related, they must be visually grouped.
+        <strong>The Takeaway:</strong> White space is not empty space; it is a structural tool.
+        Form labels must hug their inputs (proximity) tighter than the gap to the next field.
+        Same-colored buttons across an app feel like they do the same thing (similarity). If two
+        things are conceptually related, they must be visually grouped.
       </Callout>
     </div>
   )

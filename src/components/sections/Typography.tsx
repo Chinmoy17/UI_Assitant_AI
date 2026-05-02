@@ -2,81 +2,73 @@ import { useState } from 'react'
 import DemoBox from '../shared/DemoBox'
 
 const FONTS = [
-  { label: 'System Sans', value: '-apple-system, sans-serif' },
+  { label: 'System Sans',     value: '-apple-system, sans-serif' },
   { label: 'Georgia (serif)', value: 'Georgia, serif' },
   { label: 'Times New Roman', value: "'Times New Roman', serif" },
-  { label: 'Courier (mono)', value: "'Courier New', monospace" },
-  { label: 'Comic Sans', value: '"Comic Sans MS", cursive' },
+  { label: 'Courier (mono)',  value: "'Courier New', monospace" },
+  { label: 'Comic Sans',      value: '"Comic Sans MS", cursive' },
 ]
 
 export default function Typography() {
-  const [fontSize, setFontSize] = useState(16)
+  const [fontSize,   setFontSize]   = useState(16)
   const [lineHeight, setLineHeight] = useState(160)
-  const [maxWidth, setMaxWidth] = useState(60)
-  const [font, setFont] = useState(FONTS[0].value)
+  const [maxWidth,   setMaxWidth]   = useState(60)
+  const [font,       setFont]       = useState(FONTS[0].value)
 
   return (
     <div className="section-enter">
-      <h2 className="text-[32px] font-bold mb-2 tracking-tight">Typography as Cognition</h2>
-      <p className="text-[17px] text-text-dim mb-6 max-w-[70ch]">
+      <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+        Typography as Cognition
+      </h2>
+      <p style={{ fontSize: 17, color: '#8b919a', marginBottom: 24, maxWidth: '70ch', lineHeight: 1.5 }}>
         Typography is the bandwidth between written language and human vision. Good typography removes
         friction; bad typography actively disrupts reading mechanics.
       </p>
-      <p className="mb-3 max-w-[70ch]">
-        Reading is not a smooth, continuous pan across text. The eye performs "saccades"—rapid jumps
-        across words—and pauses on "fixations" every 200–250 milliseconds. We recognize the overall
+      <p style={{ marginBottom: 14, maxWidth: '70ch' }}>
+        Reading is not a smooth, continuous pan across text. The eye performs "saccades" — rapid jumps
+        across words — and pauses on "fixations" every 200–250 milliseconds. We recognize the overall
         shape of a word rather than spelling it out letter-by-letter. If lines are too long, the eye
-        struggles to track back to the beginning of the next line. If line height is too tight,
-        ascenders and descenders collide, breaking word shapes.
+        struggles to track back to the beginning of the next line.
       </p>
 
       <DemoBox label="Tune the typography">
-        <p className="mb-4">
-          Adjust the variables below. Notice how extreme line lengths (over 75 characters) make it hard
-          to track your place, and how font choice impacts the perceived credibility of the text.
+        <p style={{ marginBottom: 16, color: '#8b919a', fontSize: 14 }}>
+          Adjust the variables below. Notice how extreme line lengths (over 75 characters) make it
+          hard to track your place, and how font choice impacts perceived credibility.
         </p>
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div>
-            <label className="block text-[12px] uppercase tracking-wider text-text-dim mb-1">
-              Size: {fontSize}px
-            </label>
-            <input type="range" min={11} max={28} value={fontSize}
-              onChange={e => setFontSize(+e.target.value)} className="w-full" />
-          </div>
-          <div>
-            <label className="block text-[12px] uppercase tracking-wider text-text-dim mb-1">
-              Line height: {(lineHeight / 100).toFixed(2)}
-            </label>
-            <input type="range" min={100} max={220} value={lineHeight}
-              onChange={e => setLineHeight(+e.target.value)} className="w-full" />
-          </div>
-          <div>
-            <label className="block text-[12px] uppercase tracking-wider text-text-dim mb-1">
-              Width: {maxWidth}ch
-            </label>
-            <input type="range" min={20} max={120} value={maxWidth}
-              onChange={e => setMaxWidth(+e.target.value)} className="w-full" />
-          </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 16 }}>
+          {[
+            { label: `Size: ${fontSize}px`,       min: 11, max: 28, val: fontSize,    set: setFontSize },
+            { label: `Line height: ${(lineHeight/100).toFixed(2)}`, min: 100, max: 220, val: lineHeight, set: setLineHeight },
+            { label: `Width: ${maxWidth}ch`,       min: 20, max: 120, val: maxWidth,   set: setMaxWidth },
+          ].map(ctrl => (
+            <div key={ctrl.label}>
+              <label style={{ display: 'block', fontSize: 12, color: '#8b919a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+                {ctrl.label}
+              </label>
+              <input type="range" min={ctrl.min} max={ctrl.max} value={ctrl.val}
+                onChange={e => ctrl.set(+e.target.value)} style={{ width: '100%' }} />
+            </div>
+          ))}
         </div>
 
-        <label className="block text-[12px] uppercase tracking-wider text-text-dim mb-1">Font</label>
+        <label style={{ display: 'block', fontSize: 12, color: '#8b919a', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
+          Font
+        </label>
         <select
-          value={font}
-          onChange={e => setFont(e.target.value)}
-          className="bg-surface2 text-text-base border border-border px-3 py-2 rounded mb-4 w-60"
+          value={font} onChange={e => setFont(e.target.value)}
+          className="ctrl-select"
+          style={{ width: 240, marginBottom: 16 }}
         >
-          {FONTS.map(f => (
-            <option key={f.label} value={f.value}>{f.label}</option>
-          ))}
+          {FONTS.map(f => <option key={f.label} value={f.value}>{f.label}</option>)}
         </select>
 
         <div
-          className="bg-white text-[#1a1a1a] p-8 rounded-lg transition-all duration-200"
           style={{
-            fontSize: fontSize,
-            lineHeight: (lineHeight / 100).toFixed(2),
-            maxWidth: `${maxWidth}ch`,
-            fontFamily: font,
+            background: '#fff', color: '#1a1a1a', padding: 32, borderRadius: 8,
+            fontSize, lineHeight: (lineHeight / 100).toFixed(2),
+            maxWidth: `${maxWidth}ch`, fontFamily: font, transition: 'all 0.2s',
           }}
         >
           <h3 style={{ fontSize: '1.6em', marginBottom: '0.5em', color: '#111' }}>

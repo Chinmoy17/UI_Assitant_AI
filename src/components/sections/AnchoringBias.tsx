@@ -6,20 +6,22 @@ function PriceTier({
   name: string; price: string; desc: string; featured?: boolean; badge?: string
 }) {
   return (
-    <div
-      className={[
-        'bg-surface2 p-5 rounded-md border-2 text-center',
-        featured ? 'border-accent scale-105' : 'border-border',
-      ].join(' ')}
-    >
+    <div style={{
+      background: '#1c2026', padding: 20, borderRadius: 6, textAlign: 'center',
+      border: `2px solid ${featured ? '#6366f1' : '#2a2f37'}`,
+      transform: featured ? 'scale(1.05)' : 'none',
+    }}>
       {badge && (
-        <span className="text-[10px] bg-accent text-white px-2 py-0.5 rounded-full inline-block mb-1">
+        <span style={{
+          fontSize: 10, background: '#6366f1', color: '#fff',
+          padding: '2px 10px', borderRadius: 99, display: 'inline-block', marginBottom: 6,
+        }}>
           {badge}
         </span>
       )}
-      <div className="text-text-dim text-[13px] uppercase tracking-widest">{name}</div>
-      <div className="text-[28px] font-bold my-2">{price}</div>
-      <div className="text-text-dim text-[13px]">{desc}</div>
+      <div style={{ color: '#8b919a', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1 }}>{name}</div>
+      <div style={{ fontSize: 28, fontWeight: 700, margin: '8px 0' }}>{price}</div>
+      <div style={{ color: '#8b919a', fontSize: 13 }}>{desc}</div>
     </div>
   )
 }
@@ -27,34 +29,35 @@ function PriceTier({
 export default function AnchoringBias() {
   return (
     <div className="section-enter">
-      <h2 className="text-[32px] font-bold mb-2 tracking-tight">Anchoring Bias</h2>
-      <p className="text-[17px] text-text-dim mb-6 max-w-[70ch]">
-        The first piece of information you see acts as an "anchor," calibrating how you perceive every
-        subsequent piece of information.
+      <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+        Anchoring Bias
+      </h2>
+      <p style={{ fontSize: 17, color: '#8b919a', marginBottom: 24, maxWidth: '70ch', lineHeight: 1.5 }}>
+        The first piece of information you see acts as an "anchor," calibrating how you perceive
+        every subsequent piece of information.
       </p>
-      <p className="mb-3 max-w-[70ch]">
-        Pioneered by psychologists Amos Tversky and Daniel Kahneman, anchoring is a cognitive bias
-        heavily used in pricing and negotiations. If you see a $2,000 watch, a $400 watch suddenly
-        feels like a bargain. Without the $2,000 anchor, the $400 watch might feel outrageously
-        expensive. This is also linked to the "Decoy Effect," where an intentionally unappealing option
-        is added to make the target option look better.
+      <p style={{ marginBottom: 14, maxWidth: '70ch' }}>
+        Pioneered by Amos Tversky and Daniel Kahneman, anchoring is a cognitive bias heavily used
+        in pricing and negotiations. If you see a $2,000 watch, a $400 watch suddenly feels like
+        a bargain. This is also linked to the "Decoy Effect," where an intentionally unappealing
+        option is added to make the target option look better.
       </p>
 
       <DemoBox label="Pricing without anchoring">
-        <div className="grid grid-cols-3 gap-3">
-          <PriceTier name="Basic" price="$29" desc="For individuals" />
-          <PriceTier name="Pro" price="$59" desc="For teams" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <PriceTier name="Basic"    price="$29" desc="For individuals" />
+          <PriceTier name="Pro"      price="$59" desc="For teams" />
           <PriceTier name="Business" price="$99" desc="For companies" />
         </div>
       </DemoBox>
 
       <DemoBox label="Same prices, anchored + featured tier">
-        <div className="grid grid-cols-3 gap-3">
-          <PriceTier name="Basic" price="$29" desc="For individuals" />
-          <PriceTier name="Pro" price="$59" desc="For teams" featured badge="MOST POPULAR" />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, padding: '8px 0' }}>
+          <PriceTier name="Basic"    price="$29" desc="For individuals" />
+          <PriceTier name="Pro"      price="$59" desc="For teams" featured badge="MOST POPULAR" />
           <PriceTier name="Business" price="$99" desc="For companies" />
         </div>
-        <p className="mt-4 text-[13px] text-text-dim">
+        <p style={{ marginTop: 16, fontSize: 13, color: '#8b919a' }}>
           Notice how the $99 tier anchors the $59 tier as "reasonable." Combined with visual
           highlighting, the Pro tier becomes the path of least resistance.
         </p>

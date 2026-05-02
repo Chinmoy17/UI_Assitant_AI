@@ -7,9 +7,7 @@ interface StatBadgeProps {
 
 export default function StatBadge({ children, className = '' }: StatBadgeProps) {
   return (
-    <span
-      className={`inline-block bg-surface2 px-3 py-2 rounded-md font-mono text-[13px] mr-2 mb-2 ${className}`}
-    >
+    <span className={`stat-badge ${className}`}>
       {children}
     </span>
   )

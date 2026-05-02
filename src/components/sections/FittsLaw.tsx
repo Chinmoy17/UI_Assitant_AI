@@ -12,10 +12,10 @@ export default function FittsLaw() {
   const lastClick = useRef<number | null>(null)
   const areaRef = useRef<HTMLDivElement>(null)
 
-  function moveTarget(currentSize: number) {
+  function moveTarget(s: number) {
     if (!areaRef.current) return
-    const maxX = areaRef.current.clientWidth - currentSize
-    const maxY = areaRef.current.clientHeight - currentSize
+    const maxX = areaRef.current.clientWidth - s
+    const maxY = areaRef.current.clientHeight - s
     setPos({ x: Math.random() * maxX, y: Math.random() * maxY })
   }
 
@@ -23,84 +23,80 @@ export default function FittsLaw() {
 
   function handleHit() {
     const now = performance.now()
-    if (lastClick.current !== null) {
-      setTimes(t => [...t, now - lastClick.current!])
-    }
+    if (lastClick.current !== null) setTimes(t => [...t, now - lastClick.current!])
     lastClick.current = now
-    const nextHits = hits + 1
-    setHits(nextHits)
-    if (nextHits >= 10) { setDone(true); return }
+    const next = hits + 1
+    setHits(next)
+    if (next >= 10) { setDone(true); return }
     moveTarget(size)
   }
 
   function reset() {
-    setHits(0)
-    setTimes([])
-    lastClick.current = null
-    setDone(false)
+    setHits(0); setTimes([]); lastClick.current = null; setDone(false)
     moveTarget(size)
   }
 
-  const avg = times.length
-    ? Math.round(times.reduce((a, b) => a + b, 0) / times.length)
-    : null
+  const avg = times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : null
 
   return (
     <div className="section-enter">
-      <h2 className="text-[32px] font-bold mb-2 tracking-tight">Fitts's Law</h2>
-      <p className="text-[17px] text-text-dim mb-6 max-w-[70ch]">
-        <code className="font-mono bg-surface2 px-1.5 py-0.5 rounded text-[0.9em]">T = a + b·log₂(D/W + 1)</code>. The time required to rapidly move to a target area is a
-        function of the ratio between the distance to the target and the width of the target.
+      <h2 style={{ fontSize: 32, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+        Fitts's Law
+      </h2>
+      <p style={{ fontSize: 17, color: '#8b919a', marginBottom: 24, maxWidth: '70ch', lineHeight: 1.5 }}>
+        <code className="code-inline">T = a + b·log₂(D/W + 1)</code>. The time required to rapidly
+        move to a target is a function of the ratio between the distance to the target and its width.
       </p>
-      <p className="mb-3 max-w-[70ch]">
+      <p style={{ marginBottom: 14, maxWidth: '70ch' }}>
         Proposed by Paul Fitts in 1954, this law dictates that bigger targets located closer to the
-        cursor (or finger) are exponentially faster to hit. This is why mobile primary actions are huge,
-        and why desktop operating systems place crucial menus at the extreme edges of the screen.
+        cursor (or finger) are exponentially faster to hit. This is why mobile primary actions are
+        huge, and why desktop operating systems place crucial menus at the extreme edges of the screen
+        (an edge has infinite width because the mouse cannot move past it).
       </p>
 
       <DemoBox label="Click as fast as you can — 10 hits">
-        <p className="mb-4">
-          Adjust the size of the target. Try it at 20px, then try it at 100px. Notice how much physical
-          and mental strain is removed when the target is large.
+        <p style={{ marginBottom: 16, color: '#8b919a', fontSize: 14 }}>
+          Adjust the target size. Try 20px, then 100px. Notice how much physical and mental strain
+          is removed when the target is large.
         </p>
-        <div className="flex items-center gap-3 mb-4">
-          <label className="text-[12px] uppercase tracking-wider text-text-dim">Size:</label>
-          <input
-            type="range" min={20} max={120} value={size}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+          <label style={{ fontSize: 12, color: '#8b919a', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>
+            Size:
+          </label>
+          <input type="range" min={20} max={120} value={size}
             onChange={e => { const s = +e.target.value; setSize(s); moveTarget(s) }}
-            className="w-48"
-          />
+            style={{ width: 200 }} />
           <StatBadge>{size}px</StatBadge>
         </div>
 
-        <div
-          ref={areaRef}
-          className="relative h-60 bg-surface2 rounded-md overflow-hidden"
-        >
+        <div ref={areaRef} style={{ position: 'relative', height: 240, background: '#1c2026', borderRadius: 6, overflow: 'hidden' }}>
           <button
             onClick={done ? undefined : handleHit}
-            style={{ width: size, height: size, left: pos.x, top: pos.y, fontSize: size > 40 ? 14 : 11 }}
-            className="absolute bg-accent text-white rounded border-none cursor-pointer font-medium hover:bg-accent-h transition-colors"
+            style={{
+              position: 'absolute', width: size, height: size,
+              left: pos.x, top: pos.y,
+              background: '#6366f1', color: '#fff', border: 'none', borderRadius: 4,
+              cursor: done ? 'default' : 'pointer', fontWeight: 500,
+              fontSize: size > 40 ? 14 : 11, fontFamily: 'inherit',
+              transition: 'background 0.1s',
+            }}
+            onMouseEnter={e => { if (!done) e.currentTarget.style.background = '#7c7ff5' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#6366f1' }}
           >
             {done ? 'Done!' : 'Click'}
           </button>
         </div>
 
-        <div className="mt-3 flex gap-2 flex-wrap items-center">
-          <StatBadge>Hits: <strong className="text-accent">{hits}</strong>/10</StatBadge>
-          <StatBadge>Avg: <strong className="text-accent">{avg ?? '—'}</strong> ms</StatBadge>
-          <button
-            onClick={reset}
-            className="px-4 py-2 rounded-md border border-border text-text-dim text-[14px] hover:bg-surface2 transition-colors cursor-pointer"
-          >
-            Reset
-          </button>
+        <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+          <StatBadge>Hits: <strong style={{ color: '#6366f1' }}>{hits}</strong>/10</StatBadge>
+          <StatBadge>Avg: <strong style={{ color: '#6366f1' }}>{avg ?? '—'}</strong> ms</StatBadge>
+          <button className="btn-ghost" onClick={reset}>Reset</button>
         </div>
       </DemoBox>
 
       <Callout>
-        <strong>The Takeaway:</strong> Make clickable areas larger than their visual bounds, especially on
-        mobile devices to accommodate "fat fingers." Never place destructive actions (like "Delete")
+        <strong>The Takeaway:</strong> Make clickable areas larger than their visual bounds, especially
+        on mobile to accommodate "fat fingers." Never place destructive actions (like "Delete")
         physically close to frequent actions (like "Save").
       </Callout>
     </div>
