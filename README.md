@@ -57,6 +57,54 @@ The server starts automatically. Check `Ctrl+Shift+P` → **"MCP: List Servers"*
 
 ---
 
+## Using in Claude Code
+
+Add to your Claude Code settings (`~/.claude/settings.json`):
+
+```json
+{
+  "mcpServers": {
+    "ui-craft": {
+      "command": "npx",
+      "args": ["-y", "@chinmoy_mitra/ui-craft@latest"]
+    }
+  }
+}
+```
+
+Or via Claude Code command palette: `/mcp` → add server → paste the config above.
+
+Then in any Claude Code session:
+```
+use ui-craft to design a dashboard for developers focused on clarity
+```
+
+---
+
+## Using in Cursor
+
+Add to Cursor settings: `Cursor Settings → MCP → Add new MCP server`
+
+```json
+{
+  "mcpServers": {
+    "ui-craft": {
+      "command": "npx",
+      "args": ["-y", "@chinmoy_mitra/ui-craft@latest"]
+    }
+  }
+}
+```
+
+Or manually edit `~/.cursor/mcp.json` (Mac/Linux) or `%APPDATA%\Cursor\mcp.json` (Windows) and add the same block.
+
+Then ask in Cursor Agent chat:
+```
+Design a landing page for a SaaS product focused on conversion
+```
+
+---
+
 ## How to Use
 
 Switch your Copilot/Claude chat to **Agent mode**, then ask naturally:
@@ -122,11 +170,8 @@ See [ARCHITECTURE.md](./ARCHITECTURE.md) for a full guide on adding features.
 - [ ] `accessibility_check` — usability and contrast recommendations
 - [ ] Remote content updates (no reinstall needed for knowledge base changes)
 
----
 
-## For Developers
 
-See [ARCHITECTURE.md](./ARCHITECTURE.md) for how to add tools, expand the knowledge base, and publish new versions.
 
 ---
 
