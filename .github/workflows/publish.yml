@@ -3,7 +3,7 @@ name: Publish MCP Package
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'ui-mcp-server/**'
 
