@@ -1,0 +1,351 @@
+[
+  {
+    "id": "preattentive_vision",
+    "title": "Pre-attentive Vision",
+    "summary": "The human visual system processes certain attributes in under 250ms, before conscious thought. Color, size, shape, orientation, and motion are detected in parallel across the entire visual field.",
+    "rules": [
+      "Use color or size to create instant hierarchy — the eye lands there first",
+      "Limit pre-attentive signals to 1-2 per screen to avoid visual noise",
+      "Use motion (animation) sparingly — it hijacks attention completely",
+      "Combine multiple pre-attentive cues (color + size) for critical CTAs"
+    ],
+    "dos": [
+      "Use a single accent color for your primary action",
+      "Make the most important number or stat visually largest",
+      "Use a distinct shape or icon for error/warning states"
+    ],
+    "donts": [
+      "Don't use more than 5 colors in a UI — each competes for attention",
+      "Don't animate decorative elements — reserve motion for meaningful feedback",
+      "Don't rely on position alone to imply importance"
+    ],
+    "applies_to": ["dashboard", "landing_page", "data_viz", "alerts"]
+  },
+  {
+    "id": "gestalt_principles",
+    "title": "Gestalt Principles",
+    "summary": "The brain groups visual elements automatically using rules: proximity (close = related), similarity (look alike = same group), closure (fills in gaps), continuity (follows lines), and figure-ground (separates object from background).",
+    "rules": [
+      "Use whitespace (proximity) to group related elements — no border needed",
+      "Use consistent visual treatment for items in the same category (similarity)",
+      "Cards and containers leverage closure — they group without hard lines",
+      "Align elements on a grid to leverage continuity"
+    ],
+    "dos": [
+      "Group form fields by function using spacing, not boxes",
+      "Use consistent icon style across the whole UI",
+      "Create sections with whitespace rather than horizontal rules"
+    ],
+    "donts": [
+      "Don't mix icon styles (outline vs filled) in the same context",
+      "Don't use borders to group things that proximity would handle",
+      "Don't place unrelated items close together"
+    ],
+    "applies_to": ["form", "dashboard", "navigation", "settings", "landing_page"]
+  },
+  {
+    "id": "cognitive_load",
+    "title": "Cognitive Load & Miller's Law",
+    "summary": "Working memory holds 4±1 chunks at a time (Miller's Law updated). Every element on screen that requires interpretation consumes a chunk. When overloaded, users freeze, leave, or make errors.",
+    "rules": [
+      "Limit primary navigation to 5-7 items",
+      "Break long forms into steps — one decision per screen",
+      "Use progressive disclosure: show advanced options only on demand",
+      "Remove any element that doesn't directly serve the user's current goal"
+    ],
+    "dos": [
+      "Use chunking: group phone numbers as (555) 123-4567, not 5551234567",
+      "Show only the fields relevant to the current step",
+      "Use defaults intelligently to reduce required decisions"
+    ],
+    "donts": [
+      "Don't show all configuration options at once",
+      "Don't use jargon that requires mental translation",
+      "Don't make users remember information from a previous screen"
+    ],
+    "applies_to": ["form", "onboarding", "settings", "checkout", "dashboard"]
+  },
+  {
+    "id": "visual_hierarchy",
+    "title": "Visual Hierarchy",
+    "summary": "The order in which the eye travels across a composition. Controlled by size, weight, color, contrast, and spacing. A strong hierarchy makes the path obvious; a weak one forces the user to hunt.",
+    "rules": [
+      "One element should clearly dominate — the primary CTA or headline",
+      "Use 3 levels of hierarchy max: primary, secondary, tertiary",
+      "Increase contrast for more important elements",
+      "Size differences of at least 1.5x to feel intentional"
+    ],
+    "dos": [
+      "Make the page title or hero statement the largest text element",
+      "Use font weight (bold vs regular) as a hierarchy signal",
+      "Reduce opacity for supporting text, not just size"
+    ],
+    "donts": [
+      "Don't make everything bold — it cancels out",
+      "Don't use the same font size for labels and values",
+      "Don't treat all CTAs as equal — one must be primary"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "squint_test",
+    "title": "The Squint Test",
+    "summary": "If you squint at your UI until it blurs, the primary element should still be obvious. If you can't tell what the page is about when blurred, the hierarchy is broken.",
+    "rules": [
+      "The most important element should have the most visual mass",
+      "CTA buttons must contrast strongly with their background",
+      "Headers should be noticeably larger than body copy"
+    ],
+    "dos": [
+      "Test your design at 50% zoom — does it still make sense?",
+      "Ensure your primary CTA has 4.5:1 contrast ratio minimum"
+    ],
+    "donts": [
+      "Don't use subtle color differences for critical state changes",
+      "Don't rely on hover states to reveal important actions"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form"]
+  },
+  {
+    "id": "fitts_law",
+    "title": "Fitts's Law",
+    "summary": "Time to acquire a target = log2(distance/size + 1). Bigger targets and shorter travel distances reduce errors and frustration. Small clickable elements far from the user's focus create friction.",
+    "rules": [
+      "Primary CTAs should be large (min 44×44px) and near the content they act on",
+      "Destructive actions (delete, cancel) should be small and distant",
+      "Navigation items should be edge-anchored or consistently positioned",
+      "Mobile: all touch targets minimum 48dp (Google) / 44pt (Apple)"
+    ],
+    "dos": [
+      "Make the entire card clickable, not just a small 'View' link",
+      "Place the primary button at the natural end of the user's reading path",
+      "Use full-width buttons in mobile modals"
+    ],
+    "donts": [
+      "Don't use tiny close buttons (X) on critical modals",
+      "Don't put destructive buttons next to primary actions",
+      "Don't shrink touch targets to save space"
+    ],
+    "applies_to": ["form", "mobile", "dashboard", "onboarding", "settings"]
+  },
+  {
+    "id": "hicks_law",
+    "title": "Hick's Law",
+    "summary": "Decision time = log2(n + 1) where n = number of choices. More options = longer decisions = more abandoned sessions. Reducing choice is a feature, not a limitation.",
+    "rules": [
+      "Limit navigation to 5-7 top-level items",
+      "Offer a recommended option to shortcut the decision",
+      "Remove rarely-used options from primary UI — put them in Settings",
+      "For onboarding: wizard beats a list of features"
+    ],
+    "dos": [
+      "Pre-select the most popular or recommended plan/option",
+      "Use 'Most Popular' or 'Recommended' badges",
+      "In search results, limit visible results to 5-10 with a 'See all'"
+    ],
+    "donts": [
+      "Don't give equal visual weight to all navigation items",
+      "Don't list every feature — lead with the top 3 benefits",
+      "Don't make users choose before they understand the options"
+    ],
+    "applies_to": ["navigation", "onboarding", "pricing", "settings", "landing_page"]
+  },
+  {
+    "id": "typography",
+    "title": "Typography & Readability",
+    "summary": "Typography accounts for 95% of web design. Line length, leading, weight contrast, and hierarchy determine whether text gets read or skipped.",
+    "rules": [
+      "Line length: 60-80 characters (45-75ch) for body text",
+      "Line height: 1.5-1.7x for body, 1.1-1.3x for headings",
+      "Minimum body text: 16px (14px minimum for secondary copy)",
+      "Font pairing: max 2 typefaces — one for headings, one for body"
+    ],
+    "dos": [
+      "Use system fonts or a well-known variable font for performance",
+      "Increase font size on mobile (16px minimum)",
+      "Use real typographic hierarchy: H1 > H2 > body is visually distinct"
+    ],
+    "donts": [
+      "Don't use more than 2 font families",
+      "Don't use all-caps for body text",
+      "Don't set line height below 1.4 for body copy",
+      "Don't center-align long text blocks"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "color_contrast",
+    "title": "Color & Contrast (WCAG)",
+    "summary": "Color contrast isn't just accessibility compliance — it's the primary driver of legibility. WCAG AA requires 4.5:1 for normal text, 3:1 for large text. 300 million people have color vision deficiency.",
+    "rules": [
+      "Normal text: minimum 4.5:1 contrast ratio (WCAG AA)",
+      "Large text (18px+ bold or 24px+): minimum 3:1",
+      "Never use color as the only signal — pair with shape, text, or pattern",
+      "Test all states: default, hover, focus, disabled, error"
+    ],
+    "dos": [
+      "Use a contrast checker on every text/background combination",
+      "Pair color with icons for status (error = red + X icon)",
+      "Offer a high-contrast mode or ensure base design is WCAG AA"
+    ],
+    "donts": [
+      "Don't use light gray text on white background",
+      "Don't use only color to indicate error state",
+      "Don't use red/green as the only distinction (8% of men have color blindness)"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "f_pattern",
+    "title": "F-Pattern & Reading Patterns",
+    "summary": "Eye-tracking studies show users scan in an F-shape on content-heavy pages: full first line, partial second line, then left edge. The right side of the screen below the fold is largely ignored.",
+    "rules": [
+      "Place the most important content in the top-left quadrant",
+      "Front-load key information in headings and first sentences",
+      "Use left-aligned text for scannable lists",
+      "Break F-pattern with images, callouts, or visual interrupts"
+    ],
+    "dos": [
+      "Put your primary CTA in the top-right or end of the first line",
+      "Use bold or callout boxes to interrupt the F scan",
+      "Front-load bullet points with the key word"
+    ],
+    "donts": [
+      "Don't put critical information in the right column (it will be missed)",
+      "Don't bury the lead — lead with the most important point",
+      "Don't use long dense paragraphs — users scan, not read"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "content"]
+  },
+  {
+    "id": "affordance",
+    "title": "Affordance & Signifiers",
+    "summary": "An affordance is what an object can do. A signifier is the visual cue that communicates it. Buttons need depth cues, links need underlines or color, inputs need borders. Without signifiers, users don't click.",
+    "rules": [
+      "Buttons must look distinctly different from non-interactive text",
+      "Links should be colored and/or underlined — don't style them like plain text",
+      "Form inputs need a visible border or background distinction",
+      "Disabled states must look obviously inactive (reduced opacity)"
+    ],
+    "dos": [
+      "Use border-radius, shadows, or gradient to signal button depth",
+      "Show cursor:pointer on all interactive elements",
+      "Add hover states to all clickable elements"
+    ],
+    "donts": [
+      "Don't create false affordances — don't make non-clickable things look clickable",
+      "Don't rely on color alone to distinguish links from text",
+      "Don't remove button borders on white backgrounds"
+    ],
+    "applies_to": ["form", "navigation", "landing_page", "dashboard", "settings"]
+  },
+  {
+    "id": "feedback_latency",
+    "title": "Feedback Latency & Doherty Threshold",
+    "summary": "Every action must produce a reaction within 400ms (Doherty Threshold). 0.1s = instantaneous, 1s = seamless flow, 10s = attention lost. Without feedback, users assume failure and click again.",
+    "rules": [
+      "Show visual feedback within 100ms of any click/tap",
+      "Provide loading indicators for anything over 400ms",
+      "Use optimistic UI — show success state before server confirms",
+      "Disable buttons during loading to prevent double submission"
+    ],
+    "dos": [
+      "Add button loading states (spinner or text change) on form submit",
+      "Use skeleton screens instead of spinner for content loading",
+      "Show inline validation as user types, not only on submit"
+    ],
+    "donts": [
+      "Don't leave buttons in their default state during async operations",
+      "Don't use page refreshes for operations that can be async",
+      "Don't delay feedback to 'feel more real' — faster is always better"
+    ],
+    "applies_to": ["form", "dashboard", "onboarding", "settings"]
+  },
+  {
+    "id": "anchoring_bias",
+    "title": "Anchoring Bias",
+    "summary": "The first piece of information seen acts as a calibration point for all subsequent judgments. First number seen dominates price perception. First option seen sets the baseline for feature comparison.",
+    "rules": [
+      "Show your highest-tier option first to anchor expectations",
+      "Use a decoy option to make the target tier look reasonable",
+      "Display original price before discounted price (crossed out)",
+      "Feature the 'recommended' tier with visual prominence"
+    ],
+    "dos": [
+      "Put the most expensive plan on the left in pricing tables",
+      "Show MSRP before your price — even if it's industry standard pricing",
+      "Use 'Save X%' badges to reinforce the anchor comparison"
+    ],
+    "donts": [
+      "Don't show cheapest option first if you want to upsell",
+      "Don't present all options with equal visual weight",
+      "Don't hide the value comparison — make anchoring explicit"
+    ],
+    "applies_to": ["pricing", "landing_page", "onboarding"]
+  },
+  {
+    "id": "halo_effect",
+    "title": "The Halo Effect (Aesthetic-Usability Effect)",
+    "summary": "A single positive trait (visual beauty) biases perception of unrelated traits (trustworthiness, competence, security). Users rate beautiful interfaces as more usable, even with identical functionality. Sloppy spacing erodes trust.",
+    "rules": [
+      "Consistent spacing signals competence — use an 8px grid",
+      "Font choice signals brand personality before a word is read",
+      "First-load impression sets the entire perception of the product",
+      "Error states and edge cases still need polish — they're trust moments"
+    ],
+    "dos": [
+      "Use a design system or token system to ensure spacing consistency",
+      "Polish micro-interactions — they signal attention to detail",
+      "Ensure onboarding/signup flows look as good as marketing pages"
+    ],
+    "donts": [
+      "Don't launch with inconsistent spacing or misaligned elements",
+      "Don't use system-default form styles if your brand depends on trust",
+      "Don't let internal tools look broken — it signals poor craftsmanship"
+    ],
+    "applies_to": ["landing_page", "onboarding", "form", "dashboard", "settings"]
+  },
+  {
+    "id": "progressive_disclosure",
+    "title": "Progressive Disclosure",
+    "summary": "Show only what's needed for the current task. Reveal complexity progressively as the user's intent becomes clear. Novice and expert paths should coexist without one degrading the other.",
+    "rules": [
+      "Show 'Advanced' or 'More options' toggles instead of always-visible settings",
+      "Onboarding should ask minimum required info — get more detail over time",
+      "Expandable sections work better than tabs for settings pages"
+    ],
+    "dos": [
+      "Use a wizard pattern for complex multi-step flows",
+      "Defer optional configuration to after the user achieves first value",
+      "Reveal contextual options (edit, delete) only on hover/focus"
+    ],
+    "donts": [
+      "Don't show power-user options to new users on their first visit",
+      "Don't ask for information before it's needed",
+      "Don't collapse information that users need frequently"
+    ],
+    "applies_to": ["form", "onboarding", "settings", "dashboard"]
+  },
+  {
+    "id": "color_psychology",
+    "title": "Color Psychology & Palette Strategy",
+    "summary": "Colors carry universal and cultural meaning that sets emotional tone before content is read. Blue = trust/technology, Green = success/growth/health, Red = urgency/danger, Purple = premium/creative, Orange = energy/action, Black = luxury/power.",
+    "rules": [
+      "Choose your primary color based on the emotional contract with your user",
+      "Limit palette to: 1 primary, 1 secondary/accent, neutrals, semantic (error/success/warning)",
+      "Dark mode requires separate contrast validation — don't just invert",
+      "Semantic colors (red=error, green=success) must be culturally consistent"
+    ],
+    "dos": [
+      "Use your primary color for the most important interactive element only",
+      "Test your palette with a color blindness simulator",
+      "Define your palette as design tokens for consistency"
+    ],
+    "donts": [
+      "Don't use more than 5 distinct colors in a single view",
+      "Don't use color trends that clash with your brand personality",
+      "Don't use pure black (#000) — use near-black (#111, #1a1a1a) for better readability"
+    ],
+    "applies_to": ["landing_page", "dashboard", "onboarding", "form", "settings"]
+  }
+]

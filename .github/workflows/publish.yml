@@ -1,0 +1,36 @@
+name: Publish MCP Package
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'ui-mcp-server/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        working-directory: ui-mcp-server
+        run: npm ci
+
+      - name: Build
+        working-directory: ui-mcp-server
+        run: npm run build
+
+      - name: Publish to npm
+        working-directory: ui-mcp-server
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

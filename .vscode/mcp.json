@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "ui-assistant": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "ui-mcp-assistant@latest"]
+    }
+  }
+}
