@@ -3,7 +3,7 @@
     "ui-assistant": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "ui-craft@latest"]
+      "args": ["-y", "@chinmoy_mitra/ui-craft@latest"]
     }
   }
 }
