@@ -3,7 +3,7 @@
     "ui-assistant": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "ui-mcp-assistant@latest"]
+      "args": ["-y", "ui-craft@latest"]
     }
   }
 }

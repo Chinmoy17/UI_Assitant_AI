@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>UI Psychology Lab - Enhanced Edition</title>
+<style>
+  :root {
+    --bg:#0b0d10; --surface:#14171c; --surface-2:#1c2026; --border:#2a2f37;
+    --text:#e6e8eb; --text-dim:#8b919a; --accent:#6366f1; --accent-hover:#7c7ff5;
+    --success:#10b981; --danger:#ef4444; --warning:#f59e0b;
+    --mono:ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;
+       background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+  .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+  aside{background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;
+        position:sticky;top:0;height:100vh;overflow-y:auto}
+  aside h1{font-size:14px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text-dim)}
+  aside p.subtitle{font-size:12px;color:var(--text-dim);margin-bottom:24px}
+  nav ul{list-style:none}
+  nav a{display:block;padding:8px 12px;color:var(--text-dim);text-decoration:none;
+        border-radius:6px;font-size:13px;transition:all .15s;cursor:pointer}
+  nav a:hover{background:var(--surface-2);color:var(--text)}
+  nav a.active{background:var(--accent);color:#fff}
+  main{padding:48px 56px;max-width:1000px}
+  section{display:none;animation:fade .3s}
+  section.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h2{font-size:32px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+  .lede{font-size:17px;color:var(--text-dim);margin-bottom:24px;max-width:70ch}
+  h3{font-size:18px;margin:32px 0 12px;font-weight:600}
+  p{margin-bottom:14px;max-width:70ch}
+  .demo{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin:16px 0 24px}
+  .demo-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);
+              margin-bottom:12px;font-weight:600}
+  button.btn{background:var(--accent);color:#fff;border:none;padding:10px 18px;border-radius:6px;
+             font-size:14px;font-weight:500;cursor:pointer;transition:all .15s}
+  button.btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
+  button.btn.ghost{background:transparent;border:1px solid var(--border);color:var(--text)}
+  button.btn.ghost:hover{background:var(--surface-2)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .callout{background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(99,102,241,.02));
+           border-left:3px solid var(--accent);padding:14px 18px;border-radius:4px;margin:16px 0;font-size:14px}
+  code{font-family:var(--mono);background:var(--surface-2);padding:2px 6px;border-radius:4px;font-size:.9em}
+  .dot-grid{display:grid;grid-template-columns:repeat(15,1fr);gap:8px}
+  .dot{width:16px;height:16px;border-radius:50%;background:#5b6270}
+  .dot.target{background:var(--danger);cursor:pointer}
+  .dot.target.shape{border-radius:0;background:#5b6270;cursor:pointer}
+  .gestalt-item{width:14px;height:14px;background:var(--accent);border-radius:50%}
+  .hier-card{background:#fff;color:#1a1a1a;padding:24px;border-radius:8px;transition:all .3s}
+  .hier-card.flat *{font-size:14px!important;font-weight:400!important;color:#555!important;margin:4px 0!important}
+  .squint-target{background:#fff;color:#111;padding:30px;border-radius:8px;transition:filter .3s}
+  .squint-target.blur{filter:blur(6px)}
+  .fitts-area{position:relative;height:240px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+  .fitts-target{position:absolute;background:var(--accent);color:#fff;border:none;border-radius:4px;
+                cursor:pointer;font-weight:500;transition:background .1s}
+  .fitts-target:hover{background:var(--accent-hover)}
+  .hicks-options{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+  .hicks-options button{background:var(--surface-2);color:var(--text);border:1px solid var(--border);
+                        padding:8px 14px;border-radius:4px;cursor:pointer;font-size:13px}
+  .hicks-options button:hover{border-color:var(--accent)}
+  .contrast-demo{padding:24px;border-radius:6px;transition:all .2s}
+  input[type=range]{width:100%}
+  input[type=color]{width:60px;height:36px;border:1px solid var(--border);border-radius:4px;background:none;cursor:pointer}
+  .typo-sample{background:#fff;color:#1a1a1a;padding:32px;border-radius:8px;transition:all .2s}
+  .price-tier{background:var(--surface-2);padding:20px;border-radius:6px;border:2px solid var(--border);text-align:center}
+  .price-tier.featured{border-color:var(--accent);transform:scale(1.05)}
+  .price-tier .price{font-size:28px;font-weight:700;margin:8px 0}
+  .price-tier .name{color:var(--text-dim);font-size:13px;text-transform:uppercase;letter-spacing:1px}
+  .aff-button-flat{background:#6366f1;color:#fff;padding:12px 20px;border:none;font-size:14px;cursor:pointer}
+  .aff-button-deep{background:linear-gradient(180deg,#7c7ff5,#4f52d8);color:#fff;padding:12px 20px;border:none;
+                   border-radius:6px;font-size:14px;cursor:pointer;
+                   box-shadow:0 1px 0 rgba(255,255,255,.2) inset,0 2px 4px rgba(0,0,0,.3)}
+  .aff-button-deep:active{transform:translateY(1px)}
+  .feedback-demo button{margin-right:8px;margin-bottom:8px}
+  .feedback-status{margin-top:12px;font-size:13px;color:var(--text-dim);min-height:20px}
+  .stat{display:inline-block;background:var(--surface-2);padding:8px 14px;border-radius:6px;
+        font-family:var(--mono);font-size:13px;margin-right:8px;margin-bottom:8px}
+  .stat strong{color:var(--accent)}
+  .heatmap{position:relative;background:#fff;color:#1a1a1a;padding:24px;border-radius:8px;line-height:1.6}
+  .heatmap.show-heat::before{content:'';position:absolute;inset:0;pointer-events:none;border-radius:8px;
+    background:
+      radial-gradient(ellipse 80% 8% at 0% 8%,rgba(239,68,68,.5),transparent 60%),
+      radial-gradient(ellipse 60% 6% at 0% 22%,rgba(239,68,68,.4),transparent 60%),
+      radial-gradient(ellipse 12% 60% at 2% 50%,rgba(239,68,68,.35),transparent 60%)}
+  .halo-card{background:#fff;color:#111;padding:20px;border-radius:8px;font-family:-apple-system,sans-serif}
+  .halo-card.bad{font-family:"Comic Sans MS",cursive;background:#ffeb3b;border:3px dashed red;
+                 padding:15px;border-radius:0}
+  .halo-card.bad h4{color:blue;text-decoration:underline}
+  .halo-card.bad button{background:lime;color:red;padding:5px;border:2px ridge purple}
+  .toggle-row{display:flex;gap:12px;align-items:center;margin:12px 0;flex-wrap:wrap}
+  label.slider-label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:4px;
+                     text-transform:uppercase;letter-spacing:.5px}
+  footer{padding:32px 0;color:var(--text-dim);font-size:13px;border-top:1px solid var(--border);margin-top:64px}
+  select,input[type=text]{background:var(--surface-2);color:var(--text);border:1px solid var(--border);
+                          padding:8px 12px;border-radius:4px;font-family:inherit}
+  @media(max-width:768px){.layout{grid-template-columns:1fr}aside{position:relative;height:auto}main{padding:24px}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside>
+    <h1>UI Psychology Lab</h1>
+    <p class="subtitle">Interactive first-principles guide</p>
+    <nav><ul>
+      <li><a data-target="intro" class="active">Introduction</a></li>
+      <li><a data-target="preattentive">1. Pre-attentive Vision</a></li>
+      <li><a data-target="gestalt">2. Gestalt Principles</a></li>
+      <li><a data-target="cogload">3. Cognitive Load</a></li>
+      <li><a data-target="hierarchy">4. Visual Hierarchy</a></li>
+      <li><a data-target="squint">5. Squint Test</a></li>
+      <li><a data-target="fitts">6. Fitts's Law</a></li>
+      <li><a data-target="hicks">7. Hick's Law</a></li>
+      <li><a data-target="typography">8. Typography</a></li>
+      <li><a data-target="color">9. Color & Contrast</a></li>
+      <li><a data-target="fpattern">10. F-Pattern</a></li>
+      <li><a data-target="affordance">11. Affordance</a></li>
+      <li><a data-target="feedback">12. Feedback Latency</a></li>
+      <li><a data-target="anchoring">13. Anchoring Bias</a></li>
+      <li><a data-target="halo">14. Halo Effect</a></li>
+      <li><a data-target="finale">Synthesis</a></li>
+    </ul></nav>
+  </aside>
+  <main>
+    <section id="intro" class="active">
+      <h2>The Psychology of UI</h2>
+      <p class="lede">An interactive lab where you don't just read about cognitive principles — you experience them directly on your own brain.</p>
+      
+      <h3>Core thesis</h3>
+      <p>A UI is not merely a visual artifact or a canvas for artistic expression. It's fundamentally a <strong>cognitive prosthetic</strong>. Every pixel, margin, and color choice you make either reduces or increases the mental workload of your users.</p>
+      <p>The human brain is an incredibly powerful but highly optimized machine. It operates as a fast, lazy, biased pattern-matcher with a strictly limited working memory (roughly 4-7 items at a time) and is governed by 200-millisecond reflex loops. Because thinking burns calories, our brains have evolved to avoid deep analytical thought whenever possible, relying instead on heuristics and visual shortcuts.</p>
+      <p>Your interface either cooperates with this biological reality, making tasks feel frictionless and intuitive, or it fights it, causing frustration, fatigue, and abandonment.</p>
+      <div class="callout"><strong>How to use this lab:</strong> Navigate via the sidebar on the left. Each section contains a brief explanation and a live demo. The goal is to prove these principles viscerally — experiencing the friction or ease firsthand is when abstract theory becomes intuitive design sense.</div>
+    </section>
+
+    <section id="preattentive">
+      <h2>Pre-attentive Vision</h2>
+      <p class="lede">Before conscious thought engages (~200ms), your visual cortex has already processed color, orientation, size, and motion.</p>
+      <p>Pre-attentive processing is the subconscious accumulation of information from the environment. It evolved as a survival mechanism (e.g., spotting a bright red berry in a green bush, or a sudden movement in peripheral vision). In UI design, if you want something to stand out immediately, you must rely on pre-attentive attributes—most notably color, size, and spatial positioning—rather than complex shapes or text that require conscious decoding.</p>
+      
+      <div class="demo">
+        <div class="demo-label">Demo: Find the red dot</div>
+        <p style="margin-bottom:16px">Click the red dot as fast as you can. Notice how your eye snaps directly to it without "scanning" the grid.</p>
+        <div id="dotgrid1" class="dot-grid"></div>
+        <div id="dotresult1" style="margin-top:16px"></div>
+        <button class="btn ghost" onclick="resetDots('dotgrid1','color')" style="margin-top:12px">Reset</button>
+      </div>
+      
+      <div class="demo">
+        <div class="demo-label">Demo: Now find the square (shape, not color)</div>
+        <p style="margin-bottom:16px">Same task, but the target now differs only by shape. Notice the difference? You are forced to consciously scan element by element.</p>
+        <div id="dotgrid2" class="dot-grid"></div>
+        <div id="dotresult2" style="margin-top:16px"></div>
+        <button class="btn ghost" onclick="resetDots('dotgrid2','shape')" style="margin-top:12px">Reset</button>
+      </div>
+      <div class="callout"><strong>The Takeaway:</strong> Color is the strongest pre-attentive feature. Your primary Call-To-Action (CTA) must differ from secondary buttons by color or high contrast, not just by label or a slight shape change. Relying on shape alone forces the user into slow, cognitive scanning.</div>
+    </section>
+
+    <section id="gestalt">
+      <h2>Gestalt Principles</h2>
+      <p class="lede">The brain perceives wholes before parts. Founded by the Berlin School of experimental psychology in the 1920s, Gestalt theory explains how we group disparate elements.</p>
+      <p>The human mind seeks order in chaos. Instead of processing every individual element on a screen, it groups them into larger logical chunks. This chunking is automatic and highly predictable based on physical properties like distance and appearance.</p>
+
+      <div class="demo">
+        <div class="demo-label">Law of Proximity</div>
+        <p style="margin-bottom:16px">Elements close to each other are perceived as a single group. Move the slider below to change the horizontal gap. Notice how your brain instantly switches from seeing "columns" to seeing "rows" purely based on whitespace.</p>
+        <label class="slider-label">Horizontal gap: <span id="proxVal">8</span>px</label>
+        <input type="range" id="proxSlider" min="2" max="60" value="8">
+        <div id="proxDemo" style="margin-top:24px;display:grid;gap:12px"></div>
+      </div>
+
+      <div class="demo">
+        <div class="demo-label">Law of Similarity</div>
+        <p style="margin-bottom:16px">Elements that look similar are perceived to have the same function. Toggle similarity below. With identical colors, it's just a 4×4 grid. When colored by columns, the brain groups them vertically, ignoring the equal spacing.</p>
+        <button class="btn ghost" onclick="toggleSimilarity()">Toggle similarity</button>
+        <div id="simDemo" style="margin-top:24px;display:grid;grid-template-columns:repeat(4,24px);gap:8px"></div>
+      </div>
+      <div class="callout"><strong>The Takeaway:</strong> White space is not empty space; it is a structural tool. Form labels must hug their inputs (proximity) tighter than the gap to the next field. Same-colored buttons across an app feel like they do the same thing (similarity). If two things are conceptually related, they must be visually grouped.</div>
+    </section>
+
+    <section id="cogload">
+      <h2>Cognitive Load Theory</h2>
+      <p class="lede">Working memory holds roughly 4 to 7 chunks of information. Every unexplained icon, complex navigation, or disjointed layout spends from this limited budget.</p>
+      <p>Developed by John Sweller in 1988, Cognitive Load Theory categorizes mental effort into three types: <strong>Intrinsic</strong> (the inherent difficulty of the task), <strong>Extraneous</strong> (unnecessary effort caused by bad design), and <strong>Germane</strong> (effort put into learning and schema formation). Your job as a designer is to minimize Extraneous load so the user's brain has enough bandwidth left to actually accomplish their task.</p>
+
+      <div class="demo">
+        <div class="demo-label">Memory test (7 digits)</div>
+        <p style="margin-bottom:16px">A sequence will show for 2 seconds. Try to recall it. This simulates the capacity of your short-term working memory.</p>
+        <button class="btn" onclick="startMemoryTest()">Start test</button>
+        <div id="memoryDisplay" style="font-family:var(--mono);font-size:24px;margin:16px 0;min-height:32px;letter-spacing:8px"></div>
+        <input type="text" id="memoryInput" placeholder="Type what you saw" style="display:none;font-family:var(--mono)">
+        <button class="btn ghost" id="memoryCheck" onclick="checkMemory()" style="display:none;margin-left:8px">Check</button>
+        <div id="memoryResult" style="margin-top:12px"></div>
+      </div>
+      <div class="callout">Most people fail or struggle at 7+ items (Miller's Law: 7±2). Now imagine your interface forces users to remember a verification code, a product ID, or instructions from a previous screen while filling out a form. If you exceed their working memory, they will make errors.</div>
+    </section>
+
+    <section id="hierarchy">
+      <h2>Visual Hierarchy</h2>
+      <p class="lede">Hierarchy is the deliberate manipulation of pre-attentive features (size, color, contrast, spacing) to ensure the brain processes elements in the exact order of their importance.</p>
+      <p>Without clear hierarchy, everything on the screen screams for attention equally. This results in visual white noise, causing anxiety and a spike in cognitive load as the user has to manually evaluate what to read first. Good hierarchy acts as a trail of breadcrumbs for the eye.</p>
+
+      <div class="demo">
+        <div class="demo-label">Toggle hierarchy</div>
+        <p style="margin-bottom:16px">Click the button to remove visual hierarchy. It is the exact same text, but notice the massive difference in how much cognitive effort is required to parse what this card is about.</p>
+        <button class="btn ghost" onclick="document.getElementById('hierCard').classList.toggle('flat')">Toggle hierarchy</button>
+        <div id="hierCard" class="hier-card" style="margin-top:16px">
+          <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px">New Release</div>
+          <h3 style="font-size:24px;margin:4px 0 8px;color:#111">Pro Plan</h3>
+          <p style="color:#555;margin-bottom:16px">Everything you need to ship faster.</p>
+          <div style="font-size:32px;font-weight:700;color:#111">\$29<span style="font-size:14px;color:#888;font-weight:400">/mo</span></div>
+          <button class="btn" style="margin-top:16px">Start free trial</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="squint">
+      <h2>The Squint Test</h2>
+      <p class="lede">Squint until details blur. The blobs that remain are your actual visual hierarchy.</p>
+      <p>The "Squint Test" (or blur test) is a practical heuristic for evaluating hierarchy. By blurring the screen, you strip away the semantic meaning of the words and the intricate details of the icons. You are left only with the pre-attentive features: high-contrast shapes, large text blocks, and colored buttons. If the most important action isn't glaringly obvious when blurred, your hierarchy is broken.</p>
+
+      <div class="demo">
+        <div class="demo-label">Squint mode</div>
+        <button class="btn ghost" onclick="document.getElementById('squintTarget').classList.toggle('blur')">Toggle squint</button>
+        <div id="squintTarget" class="squint-target" style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+            <strong style="font-size:18px">Acme</strong>
+            <div style="display:flex;gap:16px;font-size:13px;color:#555">
+              <span>Features</span><span>Pricing</span><span>Docs</span><span>Sign in</span>
+            </div>
+          </div>
+          <h2 style="font-size:36px;color:#111;margin-bottom:12px">Build interfaces faster.</h2>
+          <p style="color:#555;max-width:60ch;margin-bottom:24px">A component library for serious teams.</p>
+          <button class="btn" style="padding:14px 28px;font-size:15px">Get started free →</button>
+          <span style="margin-left:12px;color:#888;font-size:13px">No credit card required</span>
+        </div>
+      </div>
+      <div class="callout">When blurred, the primary Call-To-Action (the button) and the main headline should be the only distinct elements remaining. That confirms your layout is successfully directing the user's attention.</div>
+    </section>
+
+    <section id="fitts">
+      <h2>Fitts's Law</h2>
+      <p class="lede"><code>T = a + b·log₂(D/W + 1)</code>. The time required to rapidly move to a target area is a function of the ratio between the distance to the target and the width of the target.</p>
+      <p>Proposed by Paul Fitts in 1954, this law dictates that bigger targets located closer to the cursor (or finger) are exponentially faster to hit. This is why mobile primary actions are huge, and why desktop operating systems place crucial menus at the extreme edges of the screen (an edge has infinite width because the mouse cannot move past it).</p>
+
+      <div class="demo">
+        <div class="demo-label">Click as fast as you can — 10 hits</div>
+        <p style="margin-bottom:16px">Adjust the size of the target. Try it at 20px, then try it at 100px. Notice how much physical and mental strain is removed when the target is large.</p>
+        <div class="toggle-row">
+          <label class="slider-label" style="margin:0">Size:</label>
+          <input type="range" id="fittsSize" min="20" max="120" value="40" style="width:200px">
+          <span id="fittsSizeVal" class="stat">40px</span>
+        </div>
+        <div class="fitts-area" id="fittsArea">
+          <button class="fitts-target" id="fittsTarget">Click</button>
+        </div>
+        <div style="margin-top:12px">
+          <span class="stat">Hits: <strong id="fittsHits">0</strong>/10</span>
+          <span class="stat">Avg: <strong id="fittsAvg">—</strong> ms</span>
+          <button class="btn ghost" onclick="resetFitts()">Reset</button>
+        </div>
+      </div>
+      <div class="callout"><strong>The Takeaway:</strong> Make clickable areas larger than their visual bounds, especially on mobile devices to accommodate "fat fingers." Never place destructive actions (like "Delete") physically close to frequent actions (like "Save").</div>
+    </section>
+
+    <section id="hicks">
+      <h2>Hick's Law</h2>
+      <p class="lede"><code>T = a + b·log₂(n)</code>. Formulated by William Edmund Hick and Ray Hyman, it states that the time it takes to make a decision increases logarithmically with the number and complexity of choices.</p>
+      <p>More choices = longer reaction time. When users are bombarded with a massive, unorganized list of options, they experience choice paralysis. However, Hick's Law doesn't mean you should simply hide features. It means you should categorize them. Chunking items into categories reduces the mental search time dramatically.</p>
+
+      <div class="demo">
+        <div class="demo-label">Find "Settings" as fast as possible</div>
+        <p style="margin-bottom:16px">Try to find and click the "Settings" button. Notice how your search time scales up uncomfortably when presented with 20 options compared to 3.</p>
+        <div class="toggle-row">
+          <button class="btn ghost" onclick="hicksRun(3)">3 options</button>
+          <button class="btn ghost" onclick="hicksRun(8)">8 options</button>
+          <button class="btn ghost" onclick="hicksRun(20)">20 options</button>
+        </div>
+        <div id="hicksContainer" class="hicks-options"></div>
+        <div id="hicksResult"></div>
+      </div>
+      <div class="callout">Chunking 20 items into 4 groups of 5 is much faster to process than 20 flat items: <code>log₂4 + log₂5 ≪ log₂20</code>. Use progressive disclosure: show the most common options first, and hide the rest behind a "More" menu.</div>
+    </section>
+
+    <section id="typography">
+      <h2>Typography as Cognition</h2>
+      <p class="lede">Typography is the bandwidth between written language and human vision. Good typography removes friction; bad typography actively disrupts reading mechanics.</p>
+      <p>Reading is not a smooth, continuous pan across text. The eye performs "saccades"—rapid jumps across words—and pauses on "fixations" every 200–250 milliseconds. We recognize the overall shape of a word rather than spelling it out letter-by-letter. If lines are too long, the eye struggles to track back to the beginning of the next line. If line height is too tight, ascenders and descenders collide, breaking word shapes.</p>
+
+      <div class="demo">
+        <div class="demo-label">Tune the typography</div>
+        <p style="margin-bottom:16px">Adjust the variables below. Notice how extreme line lengths (over 75 characters) make it hard to track your place, and how font choice impacts the perceived credibility of the text.</p>
+        <div class="grid-3" style="margin-bottom:16px">
+          <div><label class="slider-label">Size: <span id="fsVal">16</span>px</label><input type="range" id="fsSlider" min="11" max="28" value="16"></div>
+          <div><label class="slider-label">Line height: <span id="lhVal">1.6</span></label><input type="range" id="lhSlider" min="100" max="220" value="160"></div>
+          <div><label class="slider-label">Width: <span id="mwVal">60</span>ch</label><input type="range" id="mwSlider" min="20" max="120" value="60"></div>
+        </div>
+        <label class="slider-label">Font</label>
+        <select id="fontSelect" style="width:240px;margin-bottom:16px">
+          <option value="-apple-system,sans-serif">System Sans</option>
+          <option value="Georgia,serif">Georgia (serif)</option>
+          <option value="'Times New Roman',serif">Times New Roman</option>
+          <option value="'Courier New',monospace">Courier (mono)</option>
+          <option value='"Comic Sans MS",cursive'>Comic Sans</option>
+        </select>
+        <div id="typoSample" class="typo-sample">
+          <h3 style="font-size:1.6em;margin-bottom:.5em;color:#111">The mechanics of reading</h3>
+          <p style="color:#333">Reading isn't linear scanning of letters. The eye performs saccades — rapid jumps — pausing on fixations every 200–250ms, recognizing word shapes more than individual characters. When line length exceeds about 75 characters, the eye loses its place returning to the next line.</p>
+          <p style="color:#333;margin-top:1em">Try Comic Sans. The same content suddenly feels less credible — the Baskerville Effect in reverse. Typography signals authority before content is read.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="color">
+      <h2>Color & Contrast</h2>
+      <p class="lede">Luminance contrast matters far more than hue contrast. Pure color differences without lightness differences are invisible to the colorblind and hard to read for everyone.</p>
+      <p>The Web Content Accessibility Guidelines (WCAG) measure contrast ratios to ensure text remains legible across various screens, lighting conditions, and visual impairments (like red-green colorblindness). "Designer gray" (light gray text on a white background) is a common anti-pattern that sacrifices usability for an illusion of cleanliness.</p>
+
+      <div class="demo">
+        <div class="demo-label">WCAG contrast checker</div>
+        <div class="toggle-row">
+          <label>BG: <input type="color" id="bgColor" value="#ffffff"></label>
+          <label>Text: <input type="color" id="fgColor" value="#777777"></label>
+          <span class="stat">Ratio: <strong id="contrastRatio">—</strong></span>
+          <span class="stat" id="contrastGrade">—</span>
+        </div>
+        <div id="contrastBox" class="contrast-demo" style="background:#fff;color:#777">
+          <h3 style="margin-bottom:8px">Sample heading</h3>
+          <p>The quick brown fox jumps over the lazy dog. Read this paragraph and notice how easy or hard it is on your eyes.</p>
+        </div>
+      </div>
+      <div class="callout">Aim for WCAG AA standard: a 4.5:1 ratio for normal body text, and 3:1 for large text. Try `#999999` text on a white background—it fails accessibility standards.</div>
+    </section>
+
+    <section id="fpattern">
+      <h2>F-Pattern Scanning</h2>
+      <p class="lede">Eye-tracking studies by the Nielsen Norman Group consistently show that users don't read web pages linearly—they scan in an F-shaped pattern.</p>
+      <p>The eye starts at the top left, scans horizontally across the top, drops down a bit, scans a shorter horizontal line, and then systematically drops down the left edge. Because of this, anything buried deep in the middle or bottom-right of a dense paragraph will be ignored.</p>
+
+      <div class="demo">
+        <div class="demo-label">Visualized heat overlay</div>
+        <button class="btn ghost" onclick="document.getElementById('heatmapTarget').classList.toggle('show-heat')">Toggle heatmap</button>
+        <div id="heatmapTarget" class="heatmap" style="margin-top:16px">
+          <h3 style="font-size:22px;color:#111;margin-bottom:12px">Why developers love TypeScript: a deep dive</h3>
+          <p>TypeScript has become the de facto language for building large-scale JavaScript applications. Its type system catches bugs at compile time that would otherwise surface at runtime, dramatically reducing production incidents.</p>
+          <p style="margin-top:12px">Beyond bug-prevention, TypeScript serves as living documentation. Types describe intent in a way comments cannot, because they are checked by the compiler.</p>
+          <p style="margin-top:12px">However, adoption requires investment. Teams must learn structural typing, generics, and the nuances of inference. The payoff comes after the learning curve flattens.</p>
+        </div>
+      </div>
+      <div class="callout"><strong>The Takeaway:</strong> Front-load your important words. Start paragraphs with the core concept. Left-aligned bullet points and bolded text act as "anchors" to pull the scanning eye back into the content.</div>
+    </section>
+
+    <section id="affordance">
+      <h2>Affordance & Signifiers</h2>
+      <p class="lede">An affordance is what an object can do. A signifier is the visual cue that communicates that affordance to the user.</p>
+      <p>Coined by Don Norman in his seminal book "The Design of Everyday Things," affordances define interactions. A door with a flat plate affords pushing; a door with a handle affords pulling. In digital design, a button affords clicking. However, if the button is perfectly flat text, it lacks a *signifier*. The user has to guess or hover to find out if it's interactive. Shadows, gradients, and borders are digital signifiers derived from the physical world.</p>
+
+      <div class="demo">
+        <div class="demo-label">Which feels more clickable?</div>
+        <div class="grid-2">
+          <div style="text-align:center">
+            <p style="margin-bottom:16px;color:var(--text-dim);font-size:13px">Flat (no signifiers)</p>
+            <button class="aff-button-flat">Submit</button>
+          </div>
+          <div style="text-align:center">
+            <p style="margin-bottom:16px;color:var(--text-dim);font-size:13px">Depth signifiers (gradient, shadow, radius)</p>
+            <button class="aff-button-deep">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div class="callout">Both are functional <code>&lt;button&gt;</code> elements. But the second explicitly <em>signals</em> clickability through 3D depth cues that your visual system evolved to understand intuitively. Beware of "false affordances" where things look clickable but aren't.</div>
+    </section>
+
+    <section id="feedback">
+      <h2>Feedback Latency</h2>
+      <p class="lede">Every action must produce a reaction. Without immediate feedback, users assume failure, experience anxiety, and begin clicking frantically.</p>
+      <p>The Doherty Threshold states that productivity soars when a computer and its users interact at a pace (<400ms) that ensures neither has to wait on the other. According to Jakob Nielsen: 0.1 seconds feels instantaneous, 1.0 second keeps the user's flow of thought seamless, and 10 seconds is the absolute limit for keeping a user's attention.</p>
+
+      <div class="demo">
+        <div class="demo-label">Click each — feel the difference</div>
+        <div class="feedback-demo">
+          <button class="btn" onclick="feedbackTest(0,false,this)">0ms (instant)</button>
+          <button class="btn" onclick="feedbackTest(300,false,this)">300ms</button>
+          <button class="btn" onclick="feedbackTest(1000,false,this)">1s</button>
+          <button class="btn" onclick="feedbackTest(3000,false,this)">3s (no spinner)</button>
+          <button class="btn" onclick="feedbackTest(3000,true,this)">3s (with spinner)</button>
+        </div>
+        <div id="feedbackStatus" class="feedback-status"></div>
+      </div>
+      <div class="callout">Waiting 3 seconds with no visual change feels broken. Adding a spinner for that exact same 3-second wait changes the user's emotional state entirely, converting <em>uncertainty</em> into <em>patience</em>. Provide immediate optimistic feedback whenever possible.</div>
+    </section>
+
+    <section id="anchoring">
+      <h2>Anchoring Bias</h2>
+      <p class="lede">The first piece of information you see acts as an "anchor," calibrating how you perceive every subsequent piece of information.</p>
+      <p>Pioneered by psychologists Amos Tversky and Daniel Kahneman, anchoring is a cognitive bias heavily used in pricing and negotiations. If you see a $2,000 watch, a $400 watch suddenly feels like a bargain. Without the $2,000 anchor, the $400 watch might feel outrageously expensive. This is also linked to the "Decoy Effect," where an intentionally unappealing option is added to make the target option look better.</p>
+
+      <div class="demo">
+        <div class="demo-label">Pricing without anchoring</div>
+        <div class="grid-3">
+          <div class="price-tier"><div class="name">Basic</div><div class="price">\$29</div><div style="color:var(--text-dim);font-size:13px">For individuals</div></div>
+          <div class="price-tier"><div class="name">Pro</div><div class="price">\$59</div><div style="color:var(--text-dim);font-size:13px">For teams</div></div>
+          <div class="price-tier"><div class="name">Business</div><div class="price">\$99</div><div style="color:var(--text-dim);font-size:13px">For companies</div></div>
+        </div>
+      </div>
+      <div class="demo">
+        <div class="demo-label">Same prices, anchored + featured tier</div>
+        <div class="grid-3">
+          <div class="price-tier"><div class="name">Basic</div><div class="price">\$29</div><div style="color:var(--text-dim);font-size:13px">For individuals</div></div>
+          <div class="price-tier featured">
+            <div style="font-size:10px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:99px;display:inline-block;margin-bottom:4px">MOST POPULAR</div>
+            <div class="name">Pro</div><div class="price">\$59</div><div style="color:var(--text-dim);font-size:13px">For teams</div>
+          </div>
+          <div class="price-tier"><div class="name">Business</div><div class="price">\$99</div><div style="color:var(--text-dim);font-size:13px">For companies</div></div>
+        </div>
+        <p style="margin-top:16px;font-size:13px;color:var(--text-dim)">Notice how the \$99 tier anchors the \$59 tier as "reasonable." Combined with visual highlighting, the Pro tier becomes the path of least resistance.</p>
+      </div>
+    </section>
+
+    <section id="halo">
+      <h2>The Halo Effect (Aesthetic-Usability Effect)</h2>
+      <p class="lede">A single positive trait (like looking beautiful) colors the user's perception of unrelated traits (like functionality, security, or value).</p>
+      <p>Coined in 1920 by Edward Thorndike, the Halo Effect explains why we assume attractive people are smarter. In UI, it manifests as the Aesthetic-Usability Effect (studied by Kurosu and Kashimura in 1995). Users consistently rate visually appealing interfaces as more usable, more trustworthy, and higher quality—even if the underlying code is identical. Sloppy spacing doesn't just look bad; it erodes trust in the product's core competence.</p>
+
+      <div class="demo">
+        <div class="demo-label">Same content, different polish</div>
+        <p style="margin-bottom:16px">Which of these applications would you trust with your social security number or credit card?</p>
+        <div class="grid-2">
+          <div class="halo-card bad">
+            <h4>SecureBank!!!</h4>
+            <p>Welcome to the safest online bank ever!!! Your money is 100% protected!</p>
+            <button>DEPOSIT NOW</button>
+          </div>
+          <div class="halo-card">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <div style="width:24px;height:24px;background:#6366f1;border-radius:6px"></div>
+              <strong>SecureBank</strong>
+            </div>
+            <h4 style="font-size:18px;margin-bottom:8px">Banking, secured.</h4>
+            <p style="color:#555;font-size:14px;margin-bottom:16px">256-bit encryption. FDIC insured. Trusted by 2M+ customers.</p>
+            <button class="btn">Open an account →</button>
+          </div>
+        </div>
+      </div>
+      <div class="callout">The promises are identical, but the perceived reality is wildly different. Poor typography and harsh colors in the first card trigger a visceral sense of "scam." Good design is the fastest way to manufacture trust.</div>
+    </section>
+
+    <section id="finale">
+      <h2>Synthesis</h2>
+      <p class="lede">Now that you've felt the principles, you possess the operating system for making rational UI decisions.</p>
+      
+      <h3>The Three Questions Test</h3>
+      <p>Every screen you design must answer three questions in under 5 seconds, without requiring the user to scroll or think deeply:</p>
+      <ul style="margin-left: 20px; margin-bottom: 20px;">
+        <li><strong>Where am I?</strong> (Clear navigation, active states, page titles)</li>
+        <li><strong>What can I do here?</strong> (Clear affordances, recognizable patterns, legible typography)</li>
+        <li><strong>What should I do next?</strong> (Strong visual hierarchy, obvious primary CTA)</li>
+      </ul>
+
+      <h3>The "Why?" Stack</h3>
+      <p>For every design decision—a border, a shadow, a color shift—ask "why?" If the answer is "because it looks cool," reconsider it. If the answer is "to group related elements to reduce cognitive load" or "to provide a larger target area according to Fitts's Law," keep it.</p>
+      
+      <div class="callout">Remember: The user's brain is a fast, lazy, biased pattern-matcher with a 4-slot working memory operating on 200ms reflexes. Empathy in design doesn't just mean understanding their feelings; it means understanding their biology. Every principle in this lab is a tool for cooperating with that biology.</div>
+      
+      <footer>UI Psychology Lab · Enhanced Edition · A meta-demonstration of its own principles.</footer>
+    </section>
+  </main>
+</div>
+
+<script>
+/* Navigation */
+document.querySelectorAll('nav a').forEach(a=>{
+  a.addEventListener('click',()=>{
+    document.querySelectorAll('nav a').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+    a.classList.add('active');
+    document.getElementById(a.dataset.target).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* 1. Pre-attentive */
+function resetDots(gridId,mode){
+  const grid=document.getElementById(gridId);
+  grid.innerHTML='';
+  const total=90, targetIdx=Math.floor(Math.random()*total);
+  const startTime=performance.now();
+  for(let i=0;i<total;i++){
+    const dot=document.createElement('div');
+    dot.className='dot';
+    if(i===targetIdx){
+      dot.classList.add('target');
+      if(mode==='shape')dot.classList.add('shape');
+      dot.addEventListener('click',()=>{
+        const elapsed=Math.round(performance.now()-startTime);
+        const resultEl=document.getElementById(gridId==='dotgrid1'?'dotresult1':'dotresult2');
+        resultEl.innerHTML=`<span class="stat">Found in <strong>${elapsed}</strong> ms</span>`;
+      });
+    }
+    grid.appendChild(dot);
+  }
+}
+resetDots('dotgrid1','color');
+resetDots('dotgrid2','shape');
+
+/* 2. Gestalt - Proximity */
+const proxSlider=document.getElementById('proxSlider');
+const proxDemo=document.getElementById('proxDemo');
+function renderProx(){
+  const gap=proxSlider.value;
+  document.getElementById('proxVal').textContent=gap;
+  proxDemo.innerHTML='';
+  for(let r=0;r<3;r++){
+    const row=document.createElement('div');
+    row.style.cssText=`display:flex;gap:${gap}px`;
+    for(let c=0;c<8;c++){
+      const el=document.createElement('div');
+      el.className='gestalt-item';
+      row.appendChild(el);
+    }
+    proxDemo.appendChild(row);
+  }
+}
+proxSlider.addEventListener('input',renderProx);
+renderProx();
+
+/* 2. Gestalt - Similarity */
+let simState=false;
+function toggleSimilarity(){
+  simState=!simState;
+  const sim=document.getElementById('simDemo');
+  sim.innerHTML='';
+  const colors=['#6366f1','#10b981','#f59e0b','#ef4444'];
+  for(let i=0;i<16;i++){
+    const el=document.createElement('div');
+    el.className='gestalt-item';
+    if(simState)el.style.background=colors[i%4];
+    sim.appendChild(el);
+  }
+}
+toggleSimilarity();toggleSimilarity();
+
+/* 3. Memory test */
+let memorySeq='';
+function startMemoryTest(){
+  memorySeq='';
+  for(let i=0;i<7;i++)memorySeq+=Math.floor(Math.random()*10);
+  const display=document.getElementById('memoryDisplay');
+  display.textContent=memorySeq;
+  document.getElementById('memoryInput').style.display='none';
+  document.getElementById('memoryCheck').style.display='none';
+  document.getElementById('memoryResult').textContent='';
+  setTimeout(()=>{
+    display.textContent='— recall now —';
+    const inp=document.getElementById('memoryInput');
+    inp.style.display='inline-block';
+    document.getElementById('memoryCheck').style.display='inline-block';
+    inp.value='';inp.focus();
+  },2000);
+}
+function checkMemory(){
+  const input=document.getElementById('memoryInput').value;
+  const result=document.getElementById('memoryResult');
+  if(input===memorySeq)result.innerHTML=`<span class="stat" style="color:var(--success)">Correct! ${memorySeq}</span>`;
+  else result.innerHTML=`<span class="stat" style="color:var(--danger)">You typed ${input}, actual was ${memorySeq}</span>`;
+}
+
+/* 6. Fitts */
+let fittsHits=0,fittsTimes=[],fittsLastClick=null;
+const fittsTarget=document.getElementById('fittsTarget');
+const fittsArea=document.getElementById('fittsArea');
+const fittsSize=document.getElementById('fittsSize');
+function moveFittsTarget(){
+  const size=+fittsSize.value;
+  fittsTarget.style.width=size+'px';
+  fittsTarget.style.height=size+'px';
+  fittsTarget.style.fontSize=(size>40?14:11)+'px';
+  document.getElementById('fittsSizeVal').textContent=size+'px';
+  const maxX=fittsArea.clientWidth-size;
+  const maxY=fittsArea.clientHeight-size;
+  fittsTarget.style.left=Math.random()*maxX+'px';
+  fittsTarget.style.top=Math.random()*maxY+'px';
+}
+fittsTarget.addEventListener('click',()=>{
+  const now=performance.now();
+  if(fittsLastClick!==null)fittsTimes.push(now-fittsLastClick);
+  fittsLastClick=now;
+  fittsHits++;
+  document.getElementById('fittsHits').textContent=fittsHits;
+  if(fittsTimes.length){
+    const avg=Math.round(fittsTimes.reduce((a,b)=>a+b,0)/fittsTimes.length);
+    document.getElementById('fittsAvg').textContent=avg;
+  }
+  if(fittsHits>=10){
+    fittsTarget.textContent='Done!';
+    return;
+  }
+  moveFittsTarget();
+});
+fittsSize.addEventListener('input',moveFittsTarget);
+function resetFitts(){
+  fittsHits=0;fittsTimes=[];fittsLastClick=null;
+  fittsTarget.textContent='Click';
+  document.getElementById('fittsHits').textContent='0';
+  document.getElementById('fittsAvg').textContent='—';
+  moveFittsTarget();
+}
+moveFittsTarget();
+
+/* 7. Hicks */
+let hicksStart=null;
+const hicksLabels=['Home','Profile','Inbox','Settings','Logout','Help','Search','Files','Calendar','Notes','Tasks','Tags','Trash','Drafts','Archive','Reports','Billing','Team','Integrations','API'];
+function hicksRun(n){
+  const container=document.getElementById('hicksContainer');
+  container.innerHTML='';
+  const result=document.getElementById('hicksResult');
+  result.innerHTML='';
+  // shuffle a copy
+  const labels=[...hicksLabels].sort(()=>Math.random()-.5).slice(0,n);
+  if(!labels.includes('Settings'))labels[Math.floor(Math.random()*n)]='Settings';
+  hicksStart=performance.now();
+  labels.forEach(label=>{
+    const b=document.createElement('button');
+    b.textContent=label;
+    b.addEventListener('click',()=>{
+      const elapsed=Math.round(performance.now()-hicksStart);
+      if(label==='Settings'){
+        result.innerHTML=`<span class="stat">Found Settings among ${n} options in <strong>${elapsed}</strong> ms</span>`;
+      }else{
+        result.innerHTML=`<span class="stat" style="color:var(--danger)">That was "${label}" — try again</span>`;
+      }
+    });
+    container.appendChild(b);
+  });
+}
+
+/* 8. Typography */
+const fsSlider=document.getElementById('fsSlider');
+const lhSlider=document.getElementById('lhSlider');
+const mwSlider=document.getElementById('mwSlider');
+const fontSelect=document.getElementById('fontSelect');
+const typoSample=document.getElementById('typoSample');
+function applyTypo(){
+  const fs=fsSlider.value;
+  const lh=(lhSlider.value/100).toFixed(2);
+  const mw=mwSlider.value;
+  document.getElementById('fsVal').textContent=fs;
+  document.getElementById('lhVal').textContent=lh;
+  document.getElementById('mwVal').textContent=mw;
+  typoSample.style.fontSize=fs+'px';
+  typoSample.style.lineHeight=lh;
+  typoSample.style.maxWidth=mw+'ch';
+  typoSample.style.fontFamily=fontSelect.value;
+}
+[fsSlider,lhSlider,mwSlider,fontSelect].forEach(el=>el.addEventListener('input',applyTypo));
+applyTypo();
+
+/* 9. Color contrast */
+const bgColor=document.getElementById('bgColor');
+const fgColor=document.getElementById('fgColor');
+const contrastBox=document.getElementById('contrastBox');
+function lum(hex){
+  const r=parseInt(hex.substr(1,2),16)/255;
+  const g=parseInt(hex.substr(3,2),16)/255;
+  const b=parseInt(hex.substr(5,2),16)/255;
+  const c=[r,g,b].map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));
+  return .2126*c[0]+.7152*c[1]+.0722*c[2];
+}
+function updateContrast(){
+  const bg=bgColor.value, fg=fgColor.value;
+  const L1=lum(bg), L2=lum(fg);
+  const ratio=(Math.max(L1,L2)+.05)/(Math.min(L1,L2)+.05);
+  document.getElementById('contrastRatio').textContent=ratio.toFixed(2)+':1';
+  let grade='Fail',color='var(--danger)';
+  if(ratio>=7){grade='AAA';color='var(--success)';}
+  else if(ratio>=4.5){grade='AA';color='var(--success)';}
+  else if(ratio>=3){grade='AA Large';color='var(--warning)';}
+  const ge=document.getElementById('contrastGrade');
+  ge.textContent=grade;ge.style.color=color;
+  contrastBox.style.background=bg;
+  contrastBox.style.color=fg;
+}
+bgColor.addEventListener('input',updateContrast);
+fgColor.addEventListener('input',updateContrast);
+updateContrast();
+
+/* 12. Feedback */
+function feedbackTest(delay,spinner,btn){
+  const status=document.getElementById('feedbackStatus');
+  const original=btn.textContent;
+  if(delay===0){status.textContent='✓ Done instantly. Felt like nothing happened? That\'s the point.';return;}
+  if(spinner){btn.textContent='Loading…';btn.disabled=true;status.textContent='Spinner shown — waiting feels manageable.';}
+  else{status.textContent='No feedback. Are you wondering if it\'s working?';}
+  setTimeout(()=>{
+    btn.textContent=original;btn.disabled=false;
+    status.textContent=`✓ Completed after ${delay}ms ${spinner?'(with spinner)':'(no spinner — felt longer, right?)'}`;
+  },delay);
+}
+</script>
+</body>
+</html>

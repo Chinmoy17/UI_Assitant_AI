@@ -3,7 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { designPage, designPageShape, type DesignPageInput } from './tools/design_page.js'
 
 const server = new McpServer({
-  name: 'ui-mcp-assistant',
+  name: 'ui-craft',
   version: '0.1.0',
 })
 

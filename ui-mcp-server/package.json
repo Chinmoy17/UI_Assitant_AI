@@ -1,10 +1,10 @@
 {
-  "name": "ui-mcp-assistant",
+  "name": "ui-craft",
   "version": "0.1.0",
   "description": "UI Design Assistant MCP server — psychology-backed design decisions",
   "main": "dist/server.js",
   "bin": {
-    "ui-mcp-assistant": "dist/server.js"
+    "ui-craft": "dist/server.js"
   },
   "scripts": {
     "build": "tsc",
