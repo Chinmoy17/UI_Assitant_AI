@@ -11,6 +11,7 @@ build/
 
 # Editor
 .vscode/settings.json
+.vscode/ui-assistant/
 .DS_Store
 
 # Logs
@@ -18,3 +19,5 @@ build/
 npm-debug.log*
 
 ARCHITECTURE.md
+
+phase_plan.md

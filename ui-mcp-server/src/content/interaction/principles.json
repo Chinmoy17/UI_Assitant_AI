@@ -1,0 +1,94 @@
+[
+  {
+    "id": "fitts_law",
+    "title": "Fitts's Law",
+    "category": "interaction",
+    "summary": "Time to acquire a target = log2(distance/size + 1). Bigger targets and shorter travel distances reduce errors and frustration.",
+    "rules": [
+      "Primary CTAs should be large (min 44x44px) and near the content they act on",
+      "Destructive actions (delete, cancel) should be small and distant",
+      "Navigation items should be edge-anchored or consistently positioned",
+      "Mobile: all touch targets minimum 48dp (Google) / 44pt (Apple)"
+    ],
+    "dos": [
+      "Make the entire card clickable, not just a small 'View' link",
+      "Place the primary button at the natural end of the user's reading path",
+      "Use full-width buttons in mobile modals"
+    ],
+    "donts": [
+      "Don't use tiny close buttons (X) on critical modals",
+      "Don't put destructive buttons next to primary actions",
+      "Don't shrink touch targets to save space"
+    ],
+    "applies_to": ["form", "mobile", "dashboard", "onboarding", "settings"]
+  },
+  {
+    "id": "hicks_law",
+    "title": "Hick's Law",
+    "category": "interaction",
+    "summary": "Decision time = log2(n + 1) where n = number of choices. More options = longer decisions = more abandoned sessions.",
+    "rules": [
+      "Limit navigation to 5-7 top-level items",
+      "Offer a recommended option to shortcut the decision",
+      "Remove rarely-used options from primary UI — put them in Settings",
+      "For onboarding: wizard beats a list of features"
+    ],
+    "dos": [
+      "Pre-select the most popular or recommended plan/option",
+      "Use 'Most Popular' or 'Recommended' badges",
+      "In search results, limit visible results to 5-10 with a 'See all'"
+    ],
+    "donts": [
+      "Don't give equal visual weight to all navigation items",
+      "Don't list every feature — lead with the top 3 benefits",
+      "Don't make users choose before they understand the options"
+    ],
+    "applies_to": ["navigation", "onboarding", "pricing", "settings", "landing_page"]
+  },
+  {
+    "id": "affordance",
+    "title": "Affordance & Signifiers",
+    "category": "interaction",
+    "summary": "An affordance is what an object can do. A signifier is the visual cue that communicates it. Without signifiers, users don't click.",
+    "rules": [
+      "Buttons must look distinctly different from non-interactive text",
+      "Links should be colored and/or underlined",
+      "Form inputs need a visible border or background distinction",
+      "Disabled states must look obviously inactive"
+    ],
+    "dos": [
+      "Use border-radius, shadows, or gradient to signal button depth",
+      "Show cursor:pointer on all interactive elements",
+      "Add hover states to all clickable elements"
+    ],
+    "donts": [
+      "Don't create false affordances — don't make non-clickable things look clickable",
+      "Don't rely on color alone to distinguish links from text",
+      "Don't remove button borders on white backgrounds"
+    ],
+    "applies_to": ["form", "navigation", "landing_page", "dashboard", "settings"]
+  },
+  {
+    "id": "feedback_latency",
+    "title": "Feedback Latency & Doherty Threshold",
+    "category": "interaction",
+    "summary": "Every action must produce a reaction within 400ms. Without feedback, users assume failure and click again.",
+    "rules": [
+      "Show visual feedback within 100ms of any click/tap",
+      "Provide loading indicators for anything over 400ms",
+      "Use optimistic UI — show success state before server confirms",
+      "Disable buttons during loading to prevent double submission"
+    ],
+    "dos": [
+      "Add button loading states on form submit",
+      "Use skeleton screens instead of spinner for content loading",
+      "Show inline validation as user types, not only on submit"
+    ],
+    "donts": [
+      "Don't leave buttons in their default state during async operations",
+      "Don't use page refreshes for operations that can be async",
+      "Don't delay feedback to 'feel more real'"
+    ],
+    "applies_to": ["form", "dashboard", "onboarding", "settings"]
+  }
+]
