@@ -1,0 +1,48 @@
+[
+  {
+    "id": "anchoring_bias",
+    "title": "Anchoring Bias",
+    "category": "persuasion",
+    "summary": "The first piece of information seen acts as a calibration point for all subsequent judgments. First number seen dominates price perception.",
+    "rules": [
+      "Show your highest-tier option first to anchor expectations",
+      "Use a decoy option to make the target tier look reasonable",
+      "Display original price before discounted price",
+      "Feature the 'recommended' tier with visual prominence"
+    ],
+    "dos": [
+      "Put the most expensive plan on the left in pricing tables",
+      "Show MSRP before your price",
+      "Use 'Save X%' badges to reinforce the anchor comparison"
+    ],
+    "donts": [
+      "Don't show cheapest option first if you want to upsell",
+      "Don't present all options with equal visual weight",
+      "Don't hide the value comparison"
+    ],
+    "applies_to": ["pricing", "landing_page", "onboarding"]
+  },
+  {
+    "id": "halo_effect",
+    "title": "The Halo Effect (Aesthetic-Usability Effect)",
+    "category": "persuasion",
+    "summary": "A single positive trait (visual beauty) biases perception of trustworthiness, competence, and security. Sloppy spacing erodes trust.",
+    "rules": [
+      "Consistent spacing signals competence — use an 8px grid",
+      "Font choice signals brand personality before a word is read",
+      "First-load impression sets the entire perception of the product",
+      "Error states and edge cases still need polish — they're trust moments"
+    ],
+    "dos": [
+      "Use a design system or token system for spacing consistency",
+      "Polish micro-interactions — they signal attention to detail",
+      "Ensure onboarding flows look as good as marketing pages"
+    ],
+    "donts": [
+      "Don't launch with inconsistent spacing or misaligned elements",
+      "Don't use system-default form styles if your brand depends on trust",
+      "Don't let internal tools look broken"
+    ],
+    "applies_to": ["landing_page", "onboarding", "form", "dashboard", "settings"]
+  }
+]

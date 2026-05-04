@@ -1,0 +1,72 @@
+[
+  {
+    "id": "typography",
+    "title": "Typography & Readability",
+    "category": "aesthetics",
+    "summary": "Typography accounts for 95% of web design. Line length, leading, weight contrast, and hierarchy determine whether text gets read or skipped.",
+    "rules": [
+      "Line length: 60-80 characters (45-75ch) for body text",
+      "Line height: 1.5-1.7x for body, 1.1-1.3x for headings",
+      "Minimum body text: 16px",
+      "Font pairing: max 2 typefaces"
+    ],
+    "dos": [
+      "Use system fonts or a well-known variable font for performance",
+      "Increase font size on mobile (16px minimum)",
+      "Use real typographic hierarchy: H1 > H2 > body is visually distinct"
+    ],
+    "donts": [
+      "Don't use more than 2 font families",
+      "Don't use all-caps for body text",
+      "Don't set line height below 1.4 for body copy",
+      "Don't center-align long text blocks"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "color_contrast",
+    "title": "Color & Contrast (WCAG)",
+    "category": "aesthetics",
+    "summary": "Color contrast isn't just accessibility — it's the primary driver of legibility. WCAG AA requires 4.5:1 for normal text.",
+    "rules": [
+      "Normal text: minimum 4.5:1 contrast ratio (WCAG AA)",
+      "Large text (18px+ bold or 24px+): minimum 3:1",
+      "Never use color as the only signal — pair with shape, text, or pattern",
+      "Test all states: default, hover, focus, disabled, error"
+    ],
+    "dos": [
+      "Use a contrast checker on every text/background combination",
+      "Pair color with icons for status (error = red + X icon)",
+      "Offer a high-contrast mode"
+    ],
+    "donts": [
+      "Don't use light gray text on white background",
+      "Don't use only color to indicate error state",
+      "Don't use red/green as the only distinction"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "color_psychology",
+    "title": "Color Psychology & Palette Strategy",
+    "category": "aesthetics",
+    "summary": "Colors carry universal meaning that sets emotional tone before content is read. Blue = trust, Green = growth, Red = urgency, Purple = premium.",
+    "rules": [
+      "Choose your primary color based on the emotional contract with your user",
+      "Limit palette to: 1 primary, 1 accent, neutrals, semantic colors",
+      "Dark mode requires separate contrast validation",
+      "Semantic colors must be culturally consistent"
+    ],
+    "dos": [
+      "Use your primary color for the most important interactive element only",
+      "Test your palette with a color blindness simulator",
+      "Define your palette as design tokens"
+    ],
+    "donts": [
+      "Don't use more than 5 distinct colors in a single view",
+      "Don't use pure black (#000) — use near-black (#111)",
+      "Don't use color trends that clash with your brand personality"
+    ],
+    "applies_to": ["landing_page", "dashboard", "onboarding", "form", "settings"]
+  }
+]

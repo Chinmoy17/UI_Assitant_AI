@@ -1,0 +1,70 @@
+[
+  {
+    "id": "cognitive_load",
+    "title": "Cognitive Load & Miller's Law",
+    "category": "cognitive",
+    "summary": "Working memory holds 4±1 chunks at a time. Every element on screen that requires interpretation consumes a chunk. When overloaded, users freeze, leave, or make errors.",
+    "rules": [
+      "Limit primary navigation to 5-7 items",
+      "Break long forms into steps — one decision per screen",
+      "Use progressive disclosure: show advanced options only on demand",
+      "Remove any element that doesn't directly serve the user's current goal"
+    ],
+    "dos": [
+      "Use chunking: group phone numbers as (555) 123-4567, not 5551234567",
+      "Show only the fields relevant to the current step",
+      "Use defaults intelligently to reduce required decisions"
+    ],
+    "donts": [
+      "Don't show all configuration options at once",
+      "Don't use jargon that requires mental translation",
+      "Don't make users remember information from a previous screen"
+    ],
+    "applies_to": ["form", "onboarding", "settings", "checkout", "dashboard"]
+  },
+  {
+    "id": "f_pattern",
+    "title": "F-Pattern & Reading Patterns",
+    "category": "cognitive",
+    "summary": "Eye-tracking studies show users scan in an F-shape on content-heavy pages: full first line, partial second line, then left edge. The right side of the screen below the fold is largely ignored.",
+    "rules": [
+      "Place the most important content in the top-left quadrant",
+      "Front-load key information in headings and first sentences",
+      "Use left-aligned text for scannable lists",
+      "Break F-pattern with images, callouts, or visual interrupts"
+    ],
+    "dos": [
+      "Put your primary CTA in the top-right or end of the first line",
+      "Use bold or callout boxes to interrupt the F scan",
+      "Front-load bullet points with the key word"
+    ],
+    "donts": [
+      "Don't put critical information in the right column (it will be missed)",
+      "Don't bury the lead — lead with the most important point",
+      "Don't use long dense paragraphs — users scan, not read"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "content"]
+  },
+  {
+    "id": "progressive_disclosure",
+    "title": "Progressive Disclosure",
+    "category": "cognitive",
+    "summary": "Show only what's needed for the current task. Reveal complexity progressively as the user's intent becomes clear.",
+    "rules": [
+      "Show 'Advanced' or 'More options' toggles instead of always-visible settings",
+      "Onboarding should ask minimum required info — get more detail over time",
+      "Expandable sections work better than tabs for settings pages"
+    ],
+    "dos": [
+      "Use a wizard pattern for complex multi-step flows",
+      "Defer optional configuration to after the user achieves first value",
+      "Reveal contextual options (edit, delete) only on hover/focus"
+    ],
+    "donts": [
+      "Don't show power-user options to new users on their first visit",
+      "Don't ask for information before it's needed",
+      "Don't collapse information that users need frequently"
+    ],
+    "applies_to": ["form", "onboarding", "settings", "dashboard"]
+  }
+]

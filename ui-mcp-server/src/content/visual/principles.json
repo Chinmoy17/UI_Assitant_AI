@@ -1,0 +1,91 @@
+[
+  {
+    "id": "preattentive_vision",
+    "title": "Pre-attentive Vision",
+    "category": "visual",
+    "summary": "The human visual system processes color, size, shape, orientation, and motion in under 250ms — before conscious thought.",
+    "rules": [
+      "Use color or size to create instant hierarchy — the eye lands there first",
+      "Limit pre-attentive signals to 1-2 per screen to avoid visual noise",
+      "Use motion sparingly — it hijacks attention completely",
+      "Combine multiple pre-attentive cues (color + size) for critical CTAs"
+    ],
+    "dos": [
+      "Use a single accent color for your primary action",
+      "Make the most important number or stat visually largest",
+      "Use a distinct shape or icon for error/warning states"
+    ],
+    "donts": [
+      "Don't use more than 5 colors in a UI — each competes for attention",
+      "Don't animate decorative elements — reserve motion for meaningful feedback",
+      "Don't rely on position alone to imply importance"
+    ],
+    "applies_to": ["dashboard", "landing_page", "data_viz", "alerts"]
+  },
+  {
+    "id": "gestalt_principles",
+    "title": "Gestalt Principles",
+    "category": "visual",
+    "summary": "The brain groups visual elements automatically: proximity (close = related), similarity (look alike = same group), closure, continuity, and figure-ground.",
+    "rules": [
+      "Use whitespace (proximity) to group related elements — no border needed",
+      "Use consistent visual treatment for items in the same category",
+      "Cards and containers leverage closure — they group without hard lines",
+      "Align elements on a grid to leverage continuity"
+    ],
+    "dos": [
+      "Group form fields by function using spacing, not boxes",
+      "Use consistent icon style across the whole UI",
+      "Create sections with whitespace rather than horizontal rules"
+    ],
+    "donts": [
+      "Don't mix icon styles (outline vs filled) in the same context",
+      "Don't use borders to group things that proximity would handle",
+      "Don't place unrelated items close together"
+    ],
+    "applies_to": ["form", "dashboard", "navigation", "settings", "landing_page"]
+  },
+  {
+    "id": "visual_hierarchy",
+    "title": "Visual Hierarchy",
+    "category": "visual",
+    "summary": "The order in which the eye travels across a composition. Controlled by size, weight, color, contrast, and spacing.",
+    "rules": [
+      "One element should clearly dominate — the primary CTA or headline",
+      "Use 3 levels of hierarchy max: primary, secondary, tertiary",
+      "Increase contrast for more important elements",
+      "Size differences of at least 1.5x to feel intentional"
+    ],
+    "dos": [
+      "Make the page title or hero statement the largest text element",
+      "Use font weight (bold vs regular) as a hierarchy signal",
+      "Reduce opacity for supporting text, not just size"
+    ],
+    "donts": [
+      "Don't make everything bold — it cancels out",
+      "Don't use the same font size for labels and values",
+      "Don't treat all CTAs as equal — one must be primary"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form", "onboarding", "settings"]
+  },
+  {
+    "id": "squint_test",
+    "title": "The Squint Test",
+    "category": "visual",
+    "summary": "If you squint at your UI until it blurs, the primary element should still be obvious. If you can't tell what the page is about when blurred, the hierarchy is broken.",
+    "rules": [
+      "The most important element should have the most visual mass",
+      "CTA buttons must contrast strongly with their background",
+      "Headers should be noticeably larger than body copy"
+    ],
+    "dos": [
+      "Test your design at 50% zoom — does it still make sense?",
+      "Ensure your primary CTA has 4.5:1 contrast ratio minimum"
+    ],
+    "donts": [
+      "Don't use subtle color differences for critical state changes",
+      "Don't rely on hover states to reveal important actions"
+    ],
+    "applies_to": ["landing_page", "dashboard", "form"]
+  }
+]
