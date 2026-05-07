@@ -7,7 +7,7 @@ import { appendHistory, loadContext, saveContext, type ProjectContextUpdate } fr
 
 const server = new McpServer({
   name: 'ui-craft',
-  version: '0.2.0',
+  version: '0.3.0',
 })
 
 type TextToolHandler = (input: unknown) => Promise<{
