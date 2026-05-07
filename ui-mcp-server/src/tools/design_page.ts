@@ -3,6 +3,137 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { loadContext, type ProjectContext } from '../storage/storage.js'
 
+// ─── KB types ────────────────────────────────────────────────────────────────
+
+interface KBVisualPrinciple {
+  id: string
+  title: string
+  summary: string
+  how: string[]
+  implementation: string[]
+  examples: string[]
+  failure_mode: string
+  best_page_types: string[]
+  best_emphasis: string[]
+}
+
+interface KBBrandExample {
+  brand: string
+  industry_match: string[]
+  emphasis_match: string[]
+  design_signals: string[]
+  emotional_effect: string
+  design_lesson: string
+  type_direction: string
+  color_direction: string
+}
+
+interface KBFontFamily {
+  use_case: string
+  fonts: string[]
+  reason: string
+  industry_match: string[]
+  emphasis_match: string[]
+}
+
+interface KBTypographySpec {
+  font_families: KBFontFamily[]
+  size_scale: Array<{ role: string; desktop: string; mobile: string }>
+  line_height_scale: Array<{ role: string; value: string }>
+  spacing_scale: Array<{ token: string; px: number }>
+  button_targets: Array<{ use_case: string; minimum: string; preferred: string }>
+  page_type_font_pairings: Record<string, { pairings: string[]; headline_guidance: string }>
+  line_length_guidance: Record<string, string>
+}
+
+// ─── KB loaders ──────────────────────────────────────────────────────────────
+
+const KB_BASE = path.join(__dirname, '..', 'content', 'kb')
+
+function loadKBVisualPrinciples(): KBVisualPrinciple[] {
+  const file = path.join(KB_BASE, 'visual_principles.json')
+  if (!fs.existsSync(file)) return []
+  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBVisualPrinciple[]
+}
+
+function loadKBBrandExamples(): KBBrandExample[] {
+  const file = path.join(KB_BASE, 'brand_examples.json')
+  if (!fs.existsSync(file)) return []
+  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBBrandExample[]
+}
+
+function loadKBTypographySpec(): KBTypographySpec | null {
+  const file = path.join(KB_BASE, 'typography_spec.json')
+  if (!fs.existsSync(file)) return null
+  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographySpec
+}
+
+// ─── KB selection helpers ────────────────────────────────────────────────────
+
+function selectKBPrinciples(
+  pageType: string,
+  emphasis: string,
+  allPrinciples: KBVisualPrinciple[],
+  count: number
+): KBVisualPrinciple[] {
+  const scored = allPrinciples.map(p => {
+    let score = 0
+    if (p.best_page_types.includes(pageType)) score += 3
+    if (p.best_emphasis.includes(emphasis)) score += 2
+    return { p, score }
+  })
+  scored.sort((a, b) => b.score - a.score || a.p.id.localeCompare(b.p.id))
+  return scored.slice(0, count).map(s => s.p)
+}
+
+function findBrandMatch(
+  industry: string,
+  emphasis: string,
+  examples: KBBrandExample[]
+): KBBrandExample | null {
+  if (!industry) return null
+  const normalized = industry.toLowerCase()
+  for (const ex of examples) {
+    const industryHit = ex.industry_match.some(term => normalized.includes(term))
+    const emphasisHit = ex.emphasis_match.includes(emphasis)
+    if (industryHit && emphasisHit) return ex
+    if (industryHit) return ex
+  }
+  return null
+}
+
+function getTypographyFonts(
+  pageType: string,
+  industry: string,
+  emphasis: string,
+  spec: KBTypographySpec | null
+): { fontFamily: string; pairings: string; headlineGuidance: string; sizeNotes: string } {
+  const fallback = { fontFamily: 'Inter', pairings: '', headlineGuidance: '', sizeNotes: '' }
+  if (!spec) return fallback
+
+  // Font family recommendation
+  const normalizedIndustry = (industry || '').toLowerCase()
+  const normalizedEmphasis = emphasis.toLowerCase()
+  let bestFamily = spec.font_families.find(
+    ff => ff.industry_match.some(t => normalizedIndustry.includes(t)) && ff.emphasis_match.includes(normalizedEmphasis)
+  ) ?? spec.font_families.find(
+    ff => ff.industry_match.some(t => normalizedIndustry.includes(t))
+  ) ?? spec.font_families[0]
+
+  const pairingInfo = spec.page_type_font_pairings[pageType]
+  const sizeRow = spec.size_scale.find(s => s.role === 'Body')
+  const sizeNotes = sizeRow ? `Body: ${sizeRow.desktop} desktop / ${sizeRow.mobile} mobile` : ''
+
+  return {
+    fontFamily: bestFamily.fonts.slice(0, 3).join(', '),
+    pairings: pairingInfo?.pairings.join(' — ') ?? '',
+    headlineGuidance: pairingInfo?.headline_guidance ?? '',
+    sizeNotes,
+  }
+}
+
+// ─── Existing principle types ─────────────────────────────────────────────────
+
 interface Principle {
   id: string
   title: string
@@ -360,6 +491,11 @@ export function designPage(input: DesignPageInput): string {
   const principles = loadAllPrinciples()
   const projectCtx: ProjectContext = loadContext()
 
+  // Load KB content
+  const kbVisualPrinciples = loadKBVisualPrinciples()
+  const kbBrandExamples    = loadKBBrandExamples()
+  const kbTypoSpec         = loadKBTypographySpec()
+
   const requestContext = [
     context,
     projectCtx.project_name ? `Project: ${projectCtx.project_name}` : '',
@@ -426,6 +562,71 @@ export function designPage(input: DesignPageInput): string {
 
   const impactSection = `\n## High-Impact Changes\n${highImpactChanges.map(change => `- ${change}`).join('\n')}`
 
+  // ─── KB enrichment ──────────────────────────────────────────────────────────
+
+  // 1. Typography enrichment from KB spec
+  const kbTypo = getTypographyFonts(page_type, projectCtx.industry, emphasis, kbTypoSpec)
+  const typoEnrichmentSection = kbTypoSpec
+    ? `\n### Font Recommendations (KB)\n` +
+      `**Recommended families:** ${kbTypo.fontFamily}\n` +
+      (kbTypo.pairings ? `**Pairings for ${page_type.replace('_', ' ')}:** ${kbTypo.pairings}\n` : '') +
+      (kbTypo.headlineGuidance ? `**Headline guidance:** ${kbTypo.headlineGuidance}\n` : '') +
+      `**Body size:** ${kbTypoSpec.size_scale.find(s => s.role === 'Body')?.desktop ?? '16–18px'} desktop / ` +
+      `${kbTypoSpec.size_scale.find(s => s.role === 'Body')?.mobile ?? '16–18px'} mobile\n` +
+      `**Line-height (body):** ${kbTypoSpec.line_height_scale.find(l => l.role === 'Body')?.value ?? '1.45–1.7'}`
+    : ''
+
+  // 2. Visual design principles from KB (top 2 for this page_type + emphasis)
+  const selectedKBPrinciples = selectKBPrinciples(page_type, emphasis, kbVisualPrinciples, 2)
+  const kbPrincipleSection = selectedKBPrinciples.length > 0
+    ? `\n## Visual Design Foundation (KB)\n\n` +
+      selectedKBPrinciples.map(p => {
+        const howLines = p.how.slice(0, 2).map(h => `  - ${h}`).join('\n')
+        const implLine = p.implementation[0] ? `  - ${p.implementation[0]}` : ''
+        const example  = p.examples[0] ? `\n**Example:** ${p.examples[0]}` : ''
+        const failure  = `\n**Avoid:** ${p.failure_mode}`
+        return `### ${p.title}\n${p.summary}\n\n**How to use:**\n${howLines}\n${implLine}${example}${failure}`
+      }).join('\n\n')
+    : ''
+
+  // 3. Brand emotional direction from KB
+  const brandMatch = findBrandMatch(projectCtx.industry, emphasis, kbBrandExamples)
+  const kbBrandSection = brandMatch
+    ? `\n## Emotional Direction (KB)\n` +
+      `**Reference brand:** ${brandMatch.brand}\n` +
+      `**Emotional effect:** ${brandMatch.emotional_effect}\n` +
+      `**Design lesson:** ${brandMatch.design_lesson}\n` +
+      `**Signals to adopt:**\n${brandMatch.design_signals.map(s => `- ${s}`).join('\n')}\n` +
+      `**Type direction:** ${brandMatch.type_direction}\n` +
+      `**Color direction:** ${brandMatch.color_direction}`
+    : ''
+
+  // ─── Enhanced checklist from KB section 9 ───────────────────────────────────
+  const kbChecklist = `\n## Review Checklist\n` +
+    `### Attention and hierarchy\n` +
+    `- [ ] Is there one obvious focal point?\n` +
+    `- [ ] Is the headline or primary KPI visibly dominant?\n` +
+    `- [ ] Does the CTA stand out without screaming?\n` +
+    `### Readability and contrast\n` +
+    `- [ ] Is all critical text WCAG AA compliant (4.5:1 minimum)?\n` +
+    `- [ ] Are supporting and primary text clearly differentiated?\n` +
+    `- [ ] Are there too many high-contrast competitors on one screen?\n` +
+    `### Structure and grouping\n` +
+    `- [ ] Are related items grouped tightly enough?\n` +
+    `- [ ] Are actions positioned near the objects they affect?\n` +
+    `- [ ] Is the alignment clean enough to feel intentional?\n` +
+    `### Interaction and psychology\n` +
+    `- [ ] Is choice count low enough for fast decisions (≤7 nav items)?\n` +
+    `- [ ] Are touch targets at least 44×44px on mobile?\n` +
+    `- [ ] Does the system give immediate feedback for every async action?\n` +
+    `- [ ] Are defaults helping the user, not only the business?\n` +
+    `### Brand and emotion\n` +
+    `- [ ] Does the interface emotion match the product promise?\n` +
+    `- [ ] Do typography, color, spacing, and imagery tell the same story?\n` +
+    `### Ethics and accessibility\n` +
+    `- [ ] Would this flow still feel fair if the user were in a hurry or under stress?\n` +
+    `- [ ] Does the interface work with keyboard, screen reader, and reduced motion?`
+
   return `# UI Design Strategy: ${page_type.replace('_', ' ')} for ${audience}
 **Emphasis:** ${emphasis} | **Page type:** ${page_type}${context ? `\n**Context:** ${context}` : ''}\n**Resolved context:** ${strategyContext}${brandSection}${customRulesSection}${deviceSection}${impactSection}
 
@@ -436,6 +637,7 @@ ${layoutAdvice}
 
 ## Typography
 ${typoAdvice}
+${typoEnrichmentSection}
 
 ## Color Strategy
 ${colorAdvice}
@@ -447,17 +649,13 @@ ${colorAdvice}
 ${principleSection}
 
 ---
+${kbPrincipleSection}
+${kbBrandSection}
 
 ## Common Mistakes to Avoid
 ${mistakes}
 
 ---
-
-## Quick Checklist
-- [ ] Does the primary CTA stand out at a glance (squint test)?
-- [ ] Is cognitive load minimized — fewer than 7 nav items, progressive disclosure for complexity?
-- [ ] Do all interactive elements have clear signifiers?
-- [ ] Is text contrast WCAG AA compliant (4.5:1 minimum)?
-- [ ] Is feedback latency addressed — loading states for every async action?
+${kbChecklist}
 `
 }
