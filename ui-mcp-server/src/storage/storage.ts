@@ -1,11 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-const STORAGE_DIR = path.join(process.cwd(), '.vscode', 'ui-assistant')
-const CONTEXT_FILE = path.join(STORAGE_DIR, 'context.json')
-const HISTORY_FILE = path.join(STORAGE_DIR, 'history.json')
-
 const HISTORY_LIMIT = 10
+const STORAGE_DIRNAME = 'ui-assistant'
+const WORKSPACE_DIR_ENV = 'UI_CRAFT_WORKSPACE_DIR'
+const STORAGE_DIR_ENV = 'UI_CRAFT_STORAGE_DIR'
 
 export interface ProjectContext {
   version: string
@@ -29,6 +28,12 @@ export interface HistoryEntry {
   summary: string
 }
 
+export interface StorageState {
+  current_stage: 'INIT' | 'DESIGN' | 'GENERATE' | 'IMPROVE' | 'DONE'
+  last_tool: string
+  updated_at: string
+}
+
 const DEFAULT_CONTEXT: ProjectContext = {
   version: '1.0',
   project_name: '',
@@ -44,28 +49,82 @@ const DEFAULT_CONTEXT: ProjectContext = {
   custom_rules: [],
 }
 
-function ensureStorageDir(): void {
-  if (!fs.existsSync(STORAGE_DIR)) {
-    fs.mkdirSync(STORAGE_DIR, { recursive: true })
+const DEFAULT_STATE: StorageState = {
+  current_stage: 'INIT',
+  last_tool: '',
+  updated_at: '',
+}
+
+function isLikelyInstallPath(candidate: string): boolean {
+  const normalized = candidate.toLowerCase()
+  return normalized.includes('node_modules') || normalized.includes('npm-cache')
+}
+
+function resolveWorkspaceRoot(): string {
+  const configuredStorageDir = process.env[STORAGE_DIR_ENV]
+  if (configuredStorageDir) {
+    return path.resolve(configuredStorageDir)
+  }
+
+  const configuredWorkspaceDir = process.env[WORKSPACE_DIR_ENV]
+  if (configuredWorkspaceDir) {
+    return path.join(path.resolve(configuredWorkspaceDir), '.vscode', STORAGE_DIRNAME)
+  }
+
+  const seeds = [process.env.INIT_CWD, process.cwd()].filter(Boolean) as string[]
+  const preferredSeed = seeds.find(seed => !isLikelyInstallPath(seed)) ?? seeds[0] ?? process.cwd()
+  return path.join(path.resolve(preferredSeed), '.vscode', STORAGE_DIRNAME)
+}
+
+function getStoragePaths() {
+  const storageDir = resolveWorkspaceRoot()
+  return {
+    storageDir,
+    contextFile: path.join(storageDir, 'context.json'),
+    stateFile: path.join(storageDir, 'state.json'),
+    historyFile: path.join(storageDir, 'history.json'),
+    notesFile: path.join(storageDir, 'notes.md'),
   }
 }
 
-export function initStorage(): void {
-  ensureStorageDir()
+function ensureStorageDir(): ReturnType<typeof getStoragePaths> {
+  const storagePaths = getStoragePaths()
 
-  if (!fs.existsSync(CONTEXT_FILE)) {
-    fs.writeFileSync(CONTEXT_FILE, JSON.stringify(DEFAULT_CONTEXT, null, 2))
+  if (!fs.existsSync(storagePaths.storageDir)) {
+    fs.mkdirSync(storagePaths.storageDir, { recursive: true })
   }
 
-  if (!fs.existsSync(HISTORY_FILE)) {
-    fs.writeFileSync(HISTORY_FILE, JSON.stringify([], null, 2))
+  return storagePaths
+}
+
+export function initContextSystem(): void {
+  const storagePaths = ensureStorageDir()
+
+  if (!fs.existsSync(storagePaths.contextFile)) {
+    fs.writeFileSync(storagePaths.contextFile, JSON.stringify(DEFAULT_CONTEXT, null, 2))
+  }
+
+  if (!fs.existsSync(storagePaths.stateFile)) {
+    fs.writeFileSync(storagePaths.stateFile, JSON.stringify(DEFAULT_STATE, null, 2))
+  }
+
+  if (!fs.existsSync(storagePaths.historyFile)) {
+    fs.writeFileSync(storagePaths.historyFile, JSON.stringify([], null, 2))
+  }
+
+  if (!fs.existsSync(storagePaths.notesFile)) {
+    fs.writeFileSync(storagePaths.notesFile, '# UI Craft Notes\n\n')
   }
 }
+
+export const initStorage = initContextSystem
 
 export function loadContext(): ProjectContext {
-  initStorage()
+  initContextSystem()
+  const { contextFile } = getStoragePaths()
+
   try {
-    const raw = fs.readFileSync(CONTEXT_FILE, 'utf-8')
+    const raw = fs.readFileSync(contextFile, 'utf-8')
     const parsed = JSON.parse(raw) as ProjectContext
     // migrate older versions missing new fields
     return { ...DEFAULT_CONTEXT, ...parsed }
@@ -75,22 +134,24 @@ export function loadContext(): ProjectContext {
 }
 
 export function saveContext(updates: Partial<ProjectContext>): void {
-  initStorage()
+  initContextSystem()
   const current = loadContext()
+  const { contextFile } = getStoragePaths()
   const merged = {
     ...current,
     ...updates,
     brand: { ...current.brand, ...(updates.brand ?? {}) },
   }
-  fs.writeFileSync(CONTEXT_FILE, JSON.stringify(merged, null, 2))
+  fs.writeFileSync(contextFile, JSON.stringify(merged, null, 2))
 }
 
 export function appendHistory(entry: Omit<HistoryEntry, 'timestamp'>): void {
-  initStorage()
+  initContextSystem()
   let history: HistoryEntry[] = []
+  const { historyFile, stateFile } = getStoragePaths()
 
   try {
-    const raw = fs.readFileSync(HISTORY_FILE, 'utf-8')
+    const raw = fs.readFileSync(historyFile, 'utf-8')
     history = JSON.parse(raw) as HistoryEntry[]
   } catch {
     history = []
@@ -102,5 +163,11 @@ export function appendHistory(entry: Omit<HistoryEntry, 'timestamp'>): void {
     history = history.slice(0, HISTORY_LIMIT)
   }
 
-  fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2))
+  fs.writeFileSync(historyFile, JSON.stringify(history, null, 2))
+  fs.writeFileSync(stateFile, JSON.stringify({
+    ...DEFAULT_STATE,
+    current_stage: 'DESIGN',
+    last_tool: entry.tool,
+    updated_at: new Date().toISOString(),
+  }, null, 2))
 }

@@ -1,7 +1,8 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { z } from 'zod'
 import { designPage, designPageShape, type DesignPageInput } from './tools/design_page.js'
-import { appendHistory } from './storage/storage.js'
+import { appendHistory, loadContext, saveContext } from './storage/storage.js'
 
 const server = new McpServer({
   name: 'ui-craft',
@@ -27,6 +28,59 @@ server.tool(
 
     return {
       content: [{ type: 'text', text: result }],
+    }
+  }
+)
+
+const projectContextShape = {
+  project_name: z.string().optional(),
+  stack: z.string().optional(),
+  audience: z.string().optional(),
+  industry: z.string().optional(),
+  brand: z.object({
+    primary_color: z.string().optional(),
+    font: z.string().optional(),
+    theme: z.enum(['light', 'dark', 'custom']).optional(),
+  }).optional(),
+  device_targets: z.array(z.string()).optional(),
+  custom_rules: z.array(z.string()).optional(),
+}
+
+server.tool(
+  'get_project_context',
+  'Read the current project context stored in the local .vscode/ui-assistant/context.json file for this user workspace.',
+  {},
+  async () => {
+    const context = loadContext()
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(context, null, 2),
+      }],
+    }
+  }
+)
+
+// @ts-ignore TS2589: known MCP SDK type inference depth issue
+server.tool(
+  'set_project_context',
+  'Update the local project context used to tailor UI design recommendations for this workspace.',
+  projectContextShape,
+  async (input) => {
+    saveContext(input)
+
+    appendHistory({
+      tool: 'set_project_context',
+      input: input as Record<string, unknown>,
+      summary: 'Updated local project context',
+    })
+
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify(loadContext(), null, 2),
+      }],
     }
   }
 )
