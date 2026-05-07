@@ -1,9 +1,9 @@
 {
   "servers": {
-    "ui-assistant": {
+    "ui-craft": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "@chinmoy_mitra/ui-craft@latest"]
+      "command": "node",
+      "args": ["c:/Program Files/Project/UI_Expert/ui-mcp-server/dist/server.js"]
     }
   }
 }

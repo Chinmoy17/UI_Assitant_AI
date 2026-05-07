@@ -1,0 +1,92 @@
+[
+  {
+    "brand": "Nike",
+    "industry_match": ["sports", "fitness", "fashion", "apparel", "athletic", "retail", "consumer", "lifestyle"],
+    "emphasis_match": ["conversion"],
+    "design_signals": [
+      "Oversized athletic photography and dominant imagery",
+      "Bold black-and-white contrast with a single urgent accent color",
+      "Short imperative headline copy — 2 to 5 words",
+      "Minimal UI chrome — content and product lead"
+    ],
+    "emotional_effect": "Urgency, confidence, motion, personal ambition",
+    "design_lesson": "When the product promise is energy or transformation, scale and contrast should lead. Let imagery and typography do the persuasion before any body copy is read.",
+    "type_direction": "Oversized bold condensed or expanded headline. Minimal body copy. Single CTA stands alone.",
+    "color_direction": "Black-and-white primary palette. One vivid accent for urgency. High contrast always."
+  },
+  {
+    "brand": "Apple",
+    "industry_match": ["technology", "hardware", "premium", "luxury", "creative", "consumer electronics", "software", "productivity"],
+    "emphasis_match": ["trust", "clarity"],
+    "design_signals": [
+      "Generous white space as the primary design element",
+      "Precise product framing — one product, clean background",
+      "Restrained color — neutral surfaces, single accent used sparingly",
+      "Controlled motion — short, purposeful, never gratuitous"
+    ],
+    "emotional_effect": "Calm confidence, quality, precision, premium trust",
+    "design_lesson": "When the product promise is quality or craftsmanship, remove clutter and let material and spacing do the persuasion. Restraint is the signal.",
+    "type_direction": "Clean sans-serif at scale. Short declarative headlines. Generous line-height. Nothing competes with the product.",
+    "color_direction": "White or near-white surfaces. Deep neutral text. One brand accent used at peak moments only."
+  },
+  {
+    "brand": "Meta",
+    "industry_match": ["social", "community", "communication", "messaging", "enterprise", "collaboration", "platform"],
+    "emphasis_match": ["speed", "clarity"],
+    "design_signals": [
+      "Familiar blue-white foundation — jakob's law in action",
+      "Repetitive interaction patterns — avatars, reactions, chips, modals",
+      "Rounded surfaces and consistent density",
+      "Constant engagement cues close to content"
+    ],
+    "emotional_effect": "Familiarity, continuity, low learning cost, social immediacy",
+    "design_lesson": "Very large ecosystems need repeated signals and familiar patterns more than novelty. Innovation should happen in value, not in basic comprehension.",
+    "type_direction": "System font or high-legibility neutral sans. Consistent hierarchy across all surfaces. No decorative type.",
+    "color_direction": "Blue-white core. High-signal accent for primary action. Semantic colors for status and interaction states."
+  },
+  {
+    "brand": "Spotify",
+    "industry_match": ["music", "media", "entertainment", "streaming", "content", "audio", "podcast"],
+    "emphasis_match": ["conversion"],
+    "design_signals": [
+      "Dark surfaces that create immersion and focus",
+      "Vivid accents — especially brand green for action",
+      "Bold expressive cover art as the primary visual content",
+      "Strong typographic rhythm across playlist and library layouts"
+    ],
+    "emotional_effect": "Energy, immersion, personal identity, taste, presence",
+    "design_lesson": "When content is expressive, the chrome should support mood without fighting the content. Dark surfaces let content breathe. High-saturation accents create energy without overwhelming.",
+    "type_direction": "Bold geometric sans for headlines. Consistent utility sans for metadata. High contrast on dark surfaces.",
+    "color_direction": "Dark background with vivid accent. Brand green as the single action color. Let content imagery provide color variety."
+  },
+  {
+    "brand": "Airbnb",
+    "industry_match": ["travel", "hospitality", "marketplace", "booking", "accommodation", "rental", "ecommerce"],
+    "emphasis_match": ["trust", "conversion"],
+    "design_signals": [
+      "Warm human photography — people and spaces, not products",
+      "Soft curves and rounded components",
+      "Human-centered copy — emotional but plain",
+      "High trust spacing — nothing feels rushed or compressed"
+    ],
+    "emotional_effect": "Belonging, safety, approachability, warmth",
+    "design_lesson": "Hospitality and marketplace products must reduce risk perception and increase warmth simultaneously. Photography should tell the human story; UI should step back and support.",
+    "type_direction": "Friendly but professional sans-serif. Warm body copy. Headline that speaks to the experience, not just the transaction.",
+    "color_direction": "Warm neutral backgrounds. Brand coral or red accent used sparingly. Photography provides color richness."
+  },
+  {
+    "brand": "Stripe",
+    "industry_match": ["fintech", "developer", "api", "payments", "b2b", "saas", "infrastructure", "technical", "devtools"],
+    "emphasis_match": ["trust", "clarity"],
+    "design_signals": [
+      "Code-forward visuals — documentation and product integrated",
+      "Strong typographic hierarchy with disciplined spacing",
+      "Confident minimalism — no decoration that doesn't serve communication",
+      "Precise grid and alignment — everything has a reason"
+    ],
+    "emotional_effect": "Competence, modernity, technical trust, reliability",
+    "design_lesson": "Technical products win when clarity and polish coexist. Let the product's capability speak; the interface should feel like a craftsperson built it.",
+    "type_direction": "Precise neutral sans for UI. Code font for technical content. Strong H1–H3 hierarchy. Generous body line-height.",
+    "color_direction": "Off-white or light gray surfaces. Deep neutral text. Indigo or purple accent. Semantic green and red for status."
+  }
+]

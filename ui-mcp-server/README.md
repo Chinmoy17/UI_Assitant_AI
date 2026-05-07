@@ -20,6 +20,7 @@ Get back:
 - Typography rules (font size, line height, max-width)
 - Color strategy
 - Top 3 cognitive psychology principles that apply
+- High-impact UI transformation moves for greenfield or redesign work
 - Common mistakes to avoid
 - Quick checklist
 
@@ -115,6 +116,45 @@ The agent will automatically call the `design_page` tool and return a full desig
 | `audience` | string | e.g. `"B2B enterprise users"`, `"first-time consumers"` |
 | `emphasis` | string | `clarity` `conversion` `trust` `speed` |
 | `context` | string (optional) | Any additional context about your product |
+
+### `get_project_context`
+
+Reads the current local project context from `.vscode/ui-assistant/context.json`.
+
+### `set_project_context`
+
+Updates the local project context used by `design_page`.
+
+Supported fields:
+
+- `project_name`
+- `stack`
+- `audience`
+- `industry`
+- `brand.primary_color`
+- `brand.font`
+- `brand.theme`
+- `device_targets`
+- `custom_rules`
+
+## Local Project Storage
+
+UI Craft stores project-aware state inside the user workspace:
+
+```text
+.vscode/ui-assistant/
+  context.json
+  state.json
+  history.json
+  notes.md
+```
+
+Resolution order:
+
+- `UI_CRAFT_STORAGE_DIR` for a direct storage folder override
+- `UI_CRAFT_WORKSPACE_DIR` for a workspace-root override
+- `INIT_CWD` when launched via `npx`
+- `process.cwd()` as the final fallback
 
 ---
 
