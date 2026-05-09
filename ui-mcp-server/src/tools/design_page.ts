@@ -182,14 +182,52 @@ interface KBLayoutSpacing {
   checklist: Record<string, string[]>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type KBGenericObject = Record<string, any>
+
+interface KBInteractionPatterns {
+  timing_scale: { tokens: Array<{ token: string; ms: number; use: string }>; rules: string[] }
+  easing_curves: Array<{ name: string; css: string; use: string; rule?: string }>
+  micro_interactions: Array<{ trigger: string; response: string; timing: string; rule: string }>
+  hover_intent: { rule: string; tooltip_delay: string; dropdown_delay: string }
+  reduced_motion: { css_query: string; rule: string; implementation: string; what_to_remove: string }
+  page_type_motion_guidance: Record<string, string>
+}
+
+interface KBUXWriting {
+  cta_copy: { rule: string; patterns: Array<{ bad: string; good: string; why: string }> }
+  error_messages: { anatomy: string; rules: string[]; patterns: Array<{ bad: string; good: string }> }
+  empty_state_copy: { rule: string; patterns: Array<{ type: string; headline: string; sub: string; cta: string | null }> }
+  toast_copy: { rule: string; patterns: Array<{ type: string; pattern: string; examples: string[] }> }
+  page_type_copy_guidance: Record<string, string>
+}
+
+interface KBIndustryEntry {
+  description: string
+  design_principles: string[]
+  typography: string
+  color: string
+  layout: string
+  components: string
+  antipatterns: string[]
+  page_type_emphasis: Record<string, string>
+  reference_brands: string[]
+}
+
+type KBIndustryPatterns = Record<string, KBIndustryEntry>
+
 // ─── KB loaders — singleton cache (loaded once, reused for every call) ────────
 
-const KB_BASE   = path.join(__dirname, '..', 'content', 'kb')
-const KB_TYPO   = path.join(KB_BASE, 'typography')
-const KB_COLOR  = path.join(KB_BASE, 'color')
-const KB_LAYOUT = path.join(KB_BASE, 'layout')
-const KB_BRAND  = path.join(KB_BASE, 'brand')
-const KB_VISUAL = path.join(KB_BASE, 'visual')
+const KB_BASE      = path.join(__dirname, '..', 'content', 'kb')
+const KB_TYPO      = path.join(KB_BASE, 'typography')
+const KB_COLOR     = path.join(KB_BASE, 'color')
+const KB_LAYOUT    = path.join(KB_BASE, 'layout')
+const KB_BRAND     = path.join(KB_BASE, 'brand')
+const KB_VISUAL    = path.join(KB_BASE, 'visual')
+const KB_A11Y      = path.join(KB_BASE, 'accessibility')
+const KB_INTERACT  = path.join(KB_BASE, 'interaction')
+const KB_COPY      = path.join(KB_BASE, 'copy')
+const KB_INDUSTRY  = path.join(KB_BASE, 'industry')
 const CONTENT_BASE = path.join(__dirname, '..', 'content')
 
 let _kbVisualPrinciples: KBVisualPrinciple[] | null = null
@@ -204,6 +242,12 @@ let _kbColorContrast: KBColorContrast | null | false = false
 let _kbColorAntipatterns: KBColorAntipatterns | null | false = false
 let _kbLayoutComponents: KBLayoutComponents | null | false = false
 let _kbLayoutSpacing: KBLayoutSpacing | null | false = false
+let _kbA11yKeyboard: KBGenericObject | null | false = false
+let _kbA11yAria: KBGenericObject | null | false = false
+let _kbInteractionPatterns: KBInteractionPatterns | null | false = false
+let _kbUXWriting: KBUXWriting | null | false = false
+let _kbIndustryPatterns: KBIndustryPatterns | null | false = false
+let _kbBrandExtended: KBBrandExample[] | null = null
 let _allPrinciples: Principle[] | null = null
 
 // Inverted indexes built once from loaded principles
@@ -305,6 +349,48 @@ function loadKBLayoutSpacing(): KBLayoutSpacing | null {
   const file = path.join(KB_LAYOUT, 'layout_spacing.json')
   _kbLayoutSpacing = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBLayoutSpacing) : null
   return _kbLayoutSpacing
+}
+
+function loadKBInteractionPatterns(): KBInteractionPatterns | null {
+  if (_kbInteractionPatterns !== false) return _kbInteractionPatterns
+  const file = path.join(KB_INTERACT, 'interaction_patterns.json')
+  _kbInteractionPatterns = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBInteractionPatterns) : null
+  return _kbInteractionPatterns
+}
+
+function loadKBUXWriting(): KBUXWriting | null {
+  if (_kbUXWriting !== false) return _kbUXWriting
+  const file = path.join(KB_COPY, 'ux_writing.json')
+  _kbUXWriting = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBUXWriting) : null
+  return _kbUXWriting
+}
+
+function loadKBIndustryPatterns(): KBIndustryPatterns | null {
+  if (_kbIndustryPatterns !== false) return _kbIndustryPatterns
+  const file = path.join(KB_INDUSTRY, 'industry_patterns.json')
+  _kbIndustryPatterns = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBIndustryPatterns) : null
+  return _kbIndustryPatterns
+}
+
+function loadKBBrandExtended(): KBBrandExample[] {
+  if (_kbBrandExtended !== null) return _kbBrandExtended
+  const file = path.join(KB_BRAND, 'brand_extended.json')
+  _kbBrandExtended = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBBrandExample[]) : []
+  return _kbBrandExtended
+}
+
+function loadKBA11yKeyboard(): KBGenericObject | null {
+  if (_kbA11yKeyboard !== false) return _kbA11yKeyboard
+  const file = path.join(KB_A11Y, 'accessibility_keyboard.json')
+  _kbA11yKeyboard = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBGenericObject) : null
+  return _kbA11yKeyboard
+}
+
+function loadKBA11yAria(): KBGenericObject | null {
+  if (_kbA11yAria !== false) return _kbA11yAria
+  const file = path.join(KB_A11Y, 'accessibility_aria.json')
+  _kbA11yAria = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBGenericObject) : null
+  return _kbA11yAria
 }
 
 function buildInvertedIndexes(principles: Principle[]): void {
@@ -867,6 +953,7 @@ export function designPage(input: DesignPageInput): string {
   // ── Load only flagged KB modules ───────────────────────────────────────────
   const kbVisualPrinciples  = flags.visual     ? loadKBVisualPrinciples()     : []
   const kbBrandExamples     = flags.brand      ? loadKBBrandExamples()        : []
+  const kbBrandExtended     = flags.brand      ? loadKBBrandExtended()        : []
   const kbTypoSpec          = flags.typography ? loadKBTypographySpec()       : null
   const kbTypoRoles         = flags.typography ? loadKBTypographyRoles()      : null
   const kbTypoPatterns      = flags.typography ? loadKBTypographyPatterns()   : []
@@ -877,6 +964,12 @@ export function designPage(input: DesignPageInput): string {
   const kbColorAntipatterns = flags.color      ? loadKBColorAntipatterns()    : null
   const kbLayoutComponents  = flags.layout     ? loadKBLayoutComponents()     : null
   const kbLayoutSpacing     = flags.layout     ? loadKBLayoutSpacing()        : null
+  // Always load cross-cutting KBs regardless of domain flags
+  const kbInteraction       = loadKBInteractionPatterns()
+  const kbUXWriting         = loadKBUXWriting()
+  const kbIndustry          = loadKBIndustryPatterns()
+  const kbA11y              = loadKBA11yKeyboard()
+  const kbA11yAria          = loadKBA11yAria()
 
   // ── Psychology gate — ALWAYS runs ─────────────────────────────────────────
   const requestContext = [
@@ -910,15 +1003,31 @@ export function designPage(input: DesignPageInput): string {
   const layoutButtonRules  = kbLayoutComponents?.buttons.rules.slice(0, 3) ?? []
   const layoutCardRules    = kbLayoutComponents?.cards.rules.slice(0, 2) ?? []
   const layoutZIndexRule   = kbLayoutSpacing?.z_index_system.rules[0] ?? ''
+  // Interaction timing for this page type
+  const interactionMotion     = kbInteraction?.page_type_motion_guidance[page_type] ?? ''
+  const interactionReducedMotion = kbInteraction?.reduced_motion.rule ?? ''
+  const copyPageGuide         = kbUXWriting?.page_type_copy_guidance[page_type] ?? ''
+  const ctaRuleExample        = kbUXWriting?.cta_copy.patterns.slice(0, 2)
+    .map(p => `'${p.bad}' → '${p.good}'`).join(', ') ?? ''
+
   const layoutKBSection = kbLayoutComponents
     ? `\n\n### Component Rules (from KB)\n` +
       (layoutButtonRules.length > 0 ? `**Buttons:** ${layoutButtonRules.join(' · ')}\n` : '') +
       (layoutCardRules.length > 0   ? `**Cards:** ${layoutCardRules.join(' · ')}\n` : '') +
       (layoutPageMaxWidth ? `**Max-width for ${page_type.replace(/_/g, ' ')}:** ${layoutPageMaxWidth}\n` : '') +
-      (layoutZIndexRule ? `**Z-index:** ${layoutZIndexRule}` : '')
+      (layoutZIndexRule ? `**Z-index:** ${layoutZIndexRule}\n` : '') +
+      (interactionMotion ? `**Motion (${page_type.replace(/_/g, ' ')}):** ${interactionMotion}\n` : '') +
+      (interactionReducedMotion ? `**Reduced-motion rule:** ${interactionReducedMotion}` : '')
     : ''
+
+  const copyKBSection = kbUXWriting
+    ? `\n\n### Copy & UX Writing Guidance\n` +
+      (copyPageGuide ? `**${page_type.replace(/_/g, ' ')} copy:** ${copyPageGuide}\n` : '') +
+      (ctaRuleExample ? `**CTA rule:** ${kbUXWriting.cta_copy.rule}\nExamples: ${ctaRuleExample}` : '')
+    : ''
+
   const layoutSection = flags.layout
-    ? `\n## Layout Recommendation\n${LAYOUT_ADVICE[page_type]?.[emphasis] ?? ''}${layoutKBSection}`
+    ? `\n## Layout Recommendation\n${LAYOUT_ADVICE[page_type]?.[emphasis] ?? ''}${layoutKBSection}${copyKBSection}`
     : ''
 
   // Typography — static advice always with KB enrichment only when flagged
@@ -1024,9 +1133,10 @@ export function designPage(input: DesignPageInput): string {
       }).join('\n\n')
     : ''
 
-  // Brand emotional direction
-  const brandMatch = kbBrandExamples.length > 0
-    ? findBrandMatch(projectCtx.industry, emphasis, kbBrandExamples)
+  // Brand emotional direction — check extended library first for better industry matches
+  const allBrandExamples = [...kbBrandExamples, ...kbBrandExtended]
+  const brandMatch = allBrandExamples.length > 0
+    ? findBrandMatch(projectCtx.industry, emphasis, allBrandExamples)
     : null
   const brandKBSection = brandMatch
     ? `\n## Emotional Direction\n` +
@@ -1038,12 +1148,25 @@ export function designPage(input: DesignPageInput): string {
       `**Color direction:** ${brandMatch.color_direction}`
     : ''
 
+  // ── Industry KB playbook (always loaded — cross-cutting) ──────────────────
+  const industryKey = Object.keys(kbIndustry ?? {}).find(k =>
+    hasAnyTermFast(ctxTermSet, k.split('_'))
+  ) ?? null
+  const industryPlaybook = industryKey && kbIndustry ? kbIndustry[industryKey] : null
+  const industryPlaybookSection = industryPlaybook
+    ? `\n\n**${industryPlaybook.description} — Key rules:**\n` +
+      industryPlaybook.design_principles.slice(0, 3).map((p: string) => `- ${p}`).join('\n') +
+      (industryPlaybook.page_type_emphasis[page_type]
+        ? `\n**Emphasis for ${page_type.replace(/_/g, ' ')}:** ${industryPlaybook.page_type_emphasis[page_type]}`
+        : '')
+    : ''
+
   // ── Adaptation layer (always included) ────────────────────────────────────
   const deviceAdvice   = projectCtx.device_targets.map(d => DEVICE_ADVICE[d.toLowerCase()]).filter(Boolean).join(' ')
   const industryAdvice = INDUSTRY_ADVICE.filter(e => hasAnyTermFast(ctxTermSet, e.terms)).map(e => e.advice).join(' ')
   const audienceAdvice = AUDIENCE_ADVICE.filter(e => hasAnyTermFast(ctxTermSet, e.terms)).map(e => e.advice).join(' ')
-  const adaptationSection = deviceAdvice || industryAdvice || audienceAdvice
-    ? `\n## Adaptation Layer\n${[deviceAdvice, industryAdvice, audienceAdvice].filter(Boolean).join('\n\n')}`
+  const adaptationSection = deviceAdvice || industryAdvice || audienceAdvice || industryPlaybookSection
+    ? `\n## Adaptation Layer\n${[deviceAdvice, industryAdvice, audienceAdvice, industryPlaybookSection].filter(Boolean).join('\n\n')}`
     : ''
 
   // ── Principles section (always included — psychology gate output) ──────────
@@ -1096,7 +1219,18 @@ export function designPage(input: DesignPageInput): string {
     `- [ ] Does the interface emotion match the product promise?\n` +
     `### Ethics and accessibility\n` +
     `- [ ] Would this flow still feel fair if the user were in a hurry or under stress?\n` +
-    `- [ ] Does the interface work with keyboard, screen reader, and reduced motion?`
+    // Inject WCAG quick-checklist items from KB (perceivable + operable are most actionable)
+    (kbA11yAria?.wcag_quick_checklist
+      ? (kbA11yAria.wcag_quick_checklist.perceivable as string[]).slice(0, 2).map((i: string) => `- [ ] ${i}`).join('\n') + '\n' +
+        (kbA11yAria.wcag_quick_checklist.operable as string[]).slice(0, 3).map((i: string) => `- [ ] ${i}`).join('\n') + '\n' +
+        (kbA11yAria.wcag_quick_checklist.understandable as string[]).slice(0, 2).map((i: string) => `- [ ] ${i}`).join('\n')
+      : `- [ ] All images have alt text\n- [ ] All functionality is keyboard accessible\n- [ ] Focus order follows reading flow`) +
+    '\n' +
+    // Global keyboard rules from keyboard KB
+    (kbA11y?.global_rules
+      ? '\n### Keyboard & focus\n' +
+        (kbA11y.global_rules as string[]).slice(0, 3).map((r: string) => `- [ ] ${r}`).join('\n')
+      : '')
 
   // ── Update resolved_domains in state ──────────────────────────────────────
   const nowResolved = new Set([

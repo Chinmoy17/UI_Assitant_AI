@@ -1,0 +1,150 @@
+{
+  "empty_states": {
+    "description": "The screen a user sees when there is no data yet, no results, or after clearing content. One of the most overlooked surfaces.",
+    "anatomy": {
+      "order": ["Illustration or icon (optional)", "Headline (required)", "Supporting message (optional)", "CTA (required if action possible)"],
+      "rule": "Never just show a blank surface or a generic 'No data' label. Tell the user why it's empty and what to do next."
+    },
+    "types": [
+      {
+        "type": "First-time empty (onboarding)",
+        "context": "User has just created an account or project — nothing exists yet",
+        "headline_pattern": "You haven't added any [X] yet",
+        "message_pattern": "Start by creating your first [X]. It only takes a minute.",
+        "cta": "Create [X]",
+        "tone": "Inviting, not intimidating. Show the possibility.",
+        "icon_style": "Friendly illustration or large soft icon in accent-subtle bg"
+      },
+      {
+        "type": "Search / filter empty",
+        "context": "User searched or filtered and got no results",
+        "headline_pattern": "No results for "[query]"",
+        "message_pattern": "Try different keywords or clear the filters.",
+        "cta": "Clear filters",
+        "tone": "Matter-of-fact. Suggest next action immediately.",
+        "icon_style": "Search icon or magnifying glass, neutral tone"
+      },
+      {
+        "type": "Cleared / completed empty",
+        "context": "User completed all tasks, cleared inbox, or resolved all issues",
+        "headline_pattern": "All caught up!" or "Nothing left to review",
+        "message_pattern": "Check back later or [alternative action].",
+        "cta": "Optional — browse, explore, or simply omit",
+        "tone": "Celebratory or calm. User achieved something.",
+        "icon_style": "Checkmark illustration, success-subtle background"
+      },
+      {
+        "type": "Error empty (failed to load)",
+        "context": "Content failed to fetch — network error, server error",
+        "headline_pattern": "Something went wrong",
+        "message_pattern": "We couldn't load [X]. Check your connection or try again.",
+        "cta": "Try again (retries the fetch)",
+        "tone": "Honest but not alarming. Offer recovery path.",
+        "icon_style": "Warning/cloud-off icon in danger-subtle background"
+      },
+      {
+        "type": "Permission / locked empty",
+        "context": "User doesn't have access to this content",
+        "headline_pattern": "You don't have access to this",
+        "message_pattern": "Contact your admin or upgrade your plan to unlock [X].",
+        "cta": "Request access or Upgrade plan",
+        "tone": "Clear about the blocker, not apologetic.",
+        "icon_style": "Lock icon in neutral bg"
+      }
+    ],
+    "rules": [
+      "Always include at least a headline + one action on empty states where action is possible",
+      "NEVER use generic placeholder text like 'No data available' — name the content type",
+      "Search empty states must always offer a way to clear/reset",
+      "First-time empty states are a sales moment — highlight the value of adding content",
+      "Error empty states must always offer a retry action"
+    ]
+  },
+  "loading_states": {
+    "when_to_use_skeleton": "For content with a known structure (cards, tables, list items) — skeletons prevent layout shift and set expectations",
+    "when_to_use_spinner": "For actions with unknown duration or no spatial location (saving, submitting a form, API calls triggered by button)",
+    "when_to_use_progress_bar": "For file uploads, multi-step processes, or long operations where progress can be measured (0–100%)",
+    "when_to_use_inline_indicator": "For optimistic UI — show 'Saving...' text inline near the changed element, not globally",
+    "skeleton_rules": [
+      "Match skeleton dimensions to actual content as closely as possible — prevents layout shift on load",
+      "Use shimmer animation (gradient moving left-to-right) at 1.5–2s loop, ease-in-out",
+      "Skeleton color: bg-muted (#E4E4E7 light / #3F3F46 dark)",
+      "Never use skeleton for content that loads in under 200ms — just show content directly",
+      "Show skeleton immediately, not after a delay — perceived performance improvement"
+    ],
+    "spinner_rules": [
+      "Global loading spinner blocks the entire UI — use only for full-page navigations or critical blocking operations",
+      "Button spinner: replace button label with spinner + 'Loading...' text, keep button width stable",
+      "NEVER show both a skeleton and a spinner at the same time for the same content",
+      "Spinner size: 16px inline, 20px button, 32px section, 48px page-level"
+    ],
+    "progress_bar_rules": [
+      "Always show percentage or step count alongside the bar",
+      "Indeterminate (bouncing) progress bar: only when progress cannot be measured",
+      "File upload: show file name + size + cancel button alongside progress bar",
+      "Animate fill with ease-in-out, not linear — progress should feel responsive"
+    ],
+    "optimistic_ui": {
+      "pattern": "Apply state change immediately on user action, then confirm or revert based on server response",
+      "use_for": "Likes, follows, toggles, reorder by drag, mark-as-read, archive",
+      "revert_pattern": "On error: revert to previous state + show toast 'Couldn't save — changes undone'",
+      "rule": "Always provide a manual undo option for optimistic actions that are hard to reverse"
+    }
+  },
+  "error_states": {
+    "types": [
+      {
+        "type": "Form validation error",
+        "placement": "Below the invalid field, immediately after submission or on field blur",
+        "color": "danger-subtle bg + danger-border + danger icon + danger text",
+        "message_pattern": "[Field name] [problem]. [How to fix].",
+        "example": "Email address is invalid. Enter a valid email like name@example.com.",
+        "rule": "Never group all errors at the top of the form. Show each error next to its field."
+      },
+      {
+        "type": "Page-level error (fetch failure)",
+        "placement": "Replace the content area with the error state (see empty states — error type)",
+        "actions": ["Try again", "Go back", "Contact support"],
+        "rule": "Show error in place of the content, not as an overlay. Preserve navigation."
+      },
+      {
+        "type": "Toast error",
+        "placement": "Bottom-right desktop, top-center mobile",
+        "duration": "Persistent — error toasts should NOT auto-dismiss. User must acknowledge.",
+        "role": "role='alert' (assertive live region — screen reader announces immediately)",
+        "rule": "Use for background operation failures (auto-save failed, sync failed) that the user didn't trigger directly"
+      },
+      {
+        "type": "Inline component error",
+        "placement": "Inside the component (e.g., data table row that failed to save, card that couldn't update)",
+        "color": "Danger icon + danger text, no background change on the whole card",
+        "rule": "Keep error message within 60 characters — be specific about what failed"
+      },
+      {
+        "type": "404 / 500 page",
+        "placement": "Full-page route",
+        "required_elements": ["Clear error type (404 / 500)", "What happened (1–2 sentences)", "What to do next (2–3 options: home, back, search)", "Support link or contact option"],
+        "rule": "Never show a stack trace or technical error in production. Show human language always."
+      }
+    ]
+  },
+  "success_states": {
+    "types": [
+      {
+        "type": "Form submission success",
+        "options": ["Toast (non-blocking, preferred)", "Inline success message replacing form", "Redirect to confirmation page"],
+        "rule": "Redirect is best for irreversible submissions (payment, order). Toast for reversible or small actions."
+      },
+      {
+        "type": "Save confirmation",
+        "pattern": "Inline 'Saved' text with checkmark near the save button, disappears after 2–3s",
+        "rule": "Keep it subtle — don't celebrate a routine auto-save. Reserve toasts for manual saves."
+      },
+      {
+        "type": "Completion / milestone",
+        "pattern": "Success illustration + celebratory headline + clear next step",
+        "rule": "Onboarding completion, first project created, first payment received — these deserve a moment. Use accent color, not danger/warning."
+      }
+    ]
+  }
+}

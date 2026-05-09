@@ -1,0 +1,143 @@
+{
+  "timing_scale": {
+    "description": "Web animation timing. Shorter than Material springs — CSS transition-based, no physics library required.",
+    "tokens": [
+      { "token": "duration-instant",   "ms": 0,   "use": "No animation — reduced-motion users, data-only updates" },
+      { "token": "duration-fast",      "ms": 100, "use": "Small element changes: checkbox tick, switch toggle, icon swap" },
+      { "token": "duration-normal",    "ms": 150, "use": "Component-level: button hover, input focus ring, tooltip appear" },
+      { "token": "duration-medium",    "ms": 200, "use": "Medium UI: dropdown open, popover, toast enter/exit" },
+      { "token": "duration-slow",      "ms": 300, "use": "Large element: sidebar expand, modal enter, page transition" },
+      { "token": "duration-slower",    "ms": 400, "use": "Full-screen transitions, onboarding step changes" }
+    ],
+    "rules": [
+      "UI animations should almost never exceed 400ms — anything longer feels like lag",
+      "Exit animations should be 20–30% faster than enter animations (brain processes exits faster)",
+      "Data changes (number count-up, skeleton-to-content) should use 150–200ms max"
+    ]
+  },
+  "easing_curves": [
+    {
+      "name": "ease-out",
+      "css": "cubic-bezier(0, 0, 0.2, 1)",
+      "use": "Elements entering the screen — starts fast, decelerates into place",
+      "example": "Modal sliding in, dropdown expanding, toast appearing"
+    },
+    {
+      "name": "ease-in",
+      "css": "cubic-bezier(0.4, 0, 1, 1)",
+      "use": "Elements leaving the screen — starts slow, accelerates away",
+      "example": "Modal closing, toast disappearing, tooltip hiding"
+    },
+    {
+      "name": "ease-in-out",
+      "css": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "use": "Elements moving on screen — smooth deceleration and acceleration",
+      "example": "Sidebar collapsing/expanding, tab panel switching, carousel slide"
+    },
+    {
+      "name": "linear",
+      "css": "linear",
+      "use": "Progress bars, loading spinners, continuous looping animations only",
+      "rule": "NEVER use linear for UI element entrance/exit — it feels mechanical and cheap"
+    },
+    {
+      "name": "spring (optional)",
+      "css": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+      "use": "Playful overshoot for consumer/marketing UI — FAB appear, success state pop",
+      "rule": "Use sparingly. Never in enterprise/healthcare/finance products. Only for a single hero moment."
+    }
+  ],
+  "micro_interactions": [
+    {
+      "trigger": "Button hover",
+      "response": "Background lightens or darkens by one step, cursor: pointer",
+      "timing": "150ms ease-out",
+      "rule": "Never animate button size on hover — it shifts surrounding content"
+    },
+    {
+      "trigger": "Button press (active)",
+      "response": "Scale to 0.97–0.98, background darkens (active state color)",
+      "timing": "100ms ease-in",
+      "rule": "Only scale-down on press, never scale-up — scale-up feels laggy"
+    },
+    {
+      "trigger": "Input focus",
+      "response": "Border color transitions to --border-focus, ring appears",
+      "timing": "150ms ease-out",
+      "rule": "NEVER animate the ring opacity on/off with delay — instant ring on focus required for accessibility"
+    },
+    {
+      "trigger": "Checkbox / Toggle check",
+      "response": "Check mark draws in (SVG stroke-dashoffset) or scale from center",
+      "timing": "100–150ms ease-out",
+      "rule": "State change must be immediate even if animation plays. Never gate the state on animation completion."
+    },
+    {
+      "trigger": "Toast / notification enter",
+      "response": "Slide in from bottom-right (or top-center mobile), fade in simultaneously",
+      "timing": "200ms ease-out enter, 150ms ease-in exit",
+      "rule": "Toast position: bottom-right desktop, top-center mobile. Stack multiple toasts vertically with 8px gap."
+    },
+    {
+      "trigger": "Accordion expand",
+      "response": "Panel height animates from 0 to auto (use CSS grid-template-rows: 0fr → 1fr)",
+      "timing": "200ms ease-in-out",
+      "rule": "Animate height with grid trick, not max-height — max-height creates visible ease lag. Icon rotates 180deg simultaneously."
+    },
+    {
+      "trigger": "Modal open",
+      "response": "Overlay fades in (opacity 0→1, 150ms), panel scales from 0.95→1 and fades (200ms ease-out)",
+      "timing": "150ms overlay, 200ms panel",
+      "rule": "Panel should feel like it drops into place from slightly above. Don't slide modals — they feel dated."
+    },
+    {
+      "trigger": "Skeleton → real content",
+      "response": "Cross-fade (skeleton fades out as content fades in)",
+      "timing": "200ms ease-in-out",
+      "rule": "Never remove skeleton abruptly. Cross-fade prevents jarring layout shift. Use layout-stable skeleton dimensions."
+    },
+    {
+      "trigger": "Form validation error appear",
+      "response": "Error message fades and slides in from slightly above, input border transitions to danger color",
+      "timing": "150ms ease-out",
+      "rule": "Error state: instant (don't delay the color). Message: can animate. NEVER animate error message out while field is still invalid."
+    },
+    {
+      "trigger": "Navigation active state change",
+      "response": "Active indicator slides (translate) to new item position",
+      "timing": "200ms ease-in-out",
+      "rule": "Sliding active indicator (like an underline or pill) looks polished. Jumping (instant switch) looks broken."
+    }
+  ],
+  "hover_intent": {
+    "rule": "Don't trigger heavy actions (API calls, panel opens) on immediate hover — add a 100–200ms delay to prevent accidental triggers while the user passes the cursor over",
+    "implementation": "CSS: transition-delay on show, no delay on hide. JavaScript: setTimeout with clearTimeout on mouseout.",
+    "tooltip_delay": "300–500ms show delay, 0ms hide delay — tooltips should disappear immediately on mouseout",
+    "dropdown_delay": "0ms show (open immediately on click, not hover). Hover-to-open menus require 200ms intent delay.",
+    "hover_card_delay": "400–600ms — long enough to prevent accidental triggers while scanning a list"
+  },
+  "reduced_motion": {
+    "css_query": "@media (prefers-reduced-motion: reduce)",
+    "rule": "All duration values collapse to 0ms or instant in reduced-motion mode. Content changes remain, animations do not.",
+    "implementation": "Define all durations as CSS custom properties. Override entire token set in @media block.",
+    "what_to_keep": "Opacity transitions ≤100ms (nearly imperceptible). Cross-fades for content swaps.",
+    "what_to_remove": "All transforms (translate, scale, rotate), sliding animations, parallax, scroll-triggered animations, looping animations",
+    "example": "@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }"
+  },
+  "performance_rules": [
+    "Only animate properties that don't trigger layout: transform, opacity, filter — NEVER animate width/height/top/left",
+    "Use will-change: transform sparingly and only on actively animating elements — it consumes GPU memory",
+    "Prefer CSS transitions over JS-driven animations for simple states — CSS is off the main thread",
+    "For complex sequences (staggered lists), use Web Animations API or a library like Framer Motion",
+    "Test animations at 50% CPU throttle in DevTools — animations that feel fluid at normal speed can stutter on mid-range devices"
+  ],
+  "page_type_motion_guidance": {
+    "dashboard":    "Minimal motion. Skeleton→content cross-fades. Metric changes: count-up 300ms. No page-level transitions.",
+    "landing_page": "Scroll-triggered section entrances (fade + translate-y, stagger 50ms between elements). Hero animation 400ms max.",
+    "form":         "Focus ring transitions. Error message entrance. Step transitions (wizard): slide left/right 300ms ease-in-out.",
+    "onboarding":   "Step changes: gentle slide. Progress bar fill: ease-in-out 300ms. Celebration on completion: scale pop 200ms.",
+    "settings":     "Toggle/switch animations only. No page transitions. Save confirmation: toast 200ms.",
+    "pricing":      "Plan highlight transitions. Annual/monthly toggle: smooth cross-fade 150ms. No aggressive motion.",
+    "navigation":   "Active indicator slide. Mobile drawer: slide in from left 250ms ease-out, overlay fade 200ms."
+  }
+}
