@@ -103,6 +103,7 @@ interface ResolvedInput {
   design_tone:        StartSessionInput['design_tone']
   density_preference: StartSessionInput['density_preference']
   change_behavior:    StartSessionInput['change_behavior']
+  session_mode:       StartSessionInput['session_mode']
   additional_notes?:  string
   // designPage fields
   page_type:          DesignPageInput['page_type']
@@ -308,6 +309,9 @@ function resolveInput(
   const change_behavior: StartSessionInput['change_behavior'] =
     input.change_behavior ?? stored.preferences?.change_behavior ?? 'suggest_only'
 
+  // -- session_mode ---
+  const session_mode: StartSessionInput['session_mode'] = 'full'
+
   return {
     working_mode,
     surface_type,
@@ -316,6 +320,7 @@ function resolveInput(
     design_tone,
     density_preference,
     change_behavior,
+    session_mode,
     additional_notes: input.additional_notes,
     page_type,
     audience_text,
@@ -372,6 +377,7 @@ function runPlanStage(resolved: ResolvedInput, log: (s: string, m: string) => vo
         design_tone:        resolved.design_tone,
         density_preference: resolved.density_preference,
         change_behavior:    resolved.change_behavior,
+        session_mode:       resolved.session_mode,
         additional_notes:   resolved.additional_notes,
       }), log
     )

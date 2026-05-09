@@ -208,15 +208,19 @@ export interface PageModel {
   open_questions: string[]
 }
 
+export type SessionMode = 'full' | 'progressive'
+
 export interface ActivePageState {
   page_id: string
   last_analyzed_at: string
   page_model: PageModel
   analysis_confidence: number
+  resolved_domains: string[]   // tracks which KB domains have been output this page
 }
 
 export interface SessionState {
   current_mode: PageMode | 'idle'
+  session_mode: SessionMode    // 'full' = complete report every call; 'progressive' = funnel narrowing
   last_tool: string
   pending_questions: string[]
   pending_recommendations: string[]
@@ -340,9 +344,11 @@ export interface StorageStateUpdate {
     last_analyzed_at?: string
     page_model?: PageModelUpdate
     analysis_confidence?: number
+    resolved_domains?: string[]
   }
   session?: {
     current_mode?: PageMode | 'idle'
+    session_mode?: SessionMode
     last_tool?: string
     pending_questions?: string[]
     pending_recommendations?: string[]
@@ -474,9 +480,11 @@ const DEFAULT_STATE: StorageState = {
     last_analyzed_at: '',
     page_model: DEFAULT_PAGE_MODEL,
     analysis_confidence: 0,
+    resolved_domains: [],
   },
   session: {
     current_mode: 'idle',
+    session_mode: 'full',
     last_tool: '',
     pending_questions: [],
     pending_recommendations: [],
@@ -625,6 +633,7 @@ function mergeState(current: StorageState, updates?: StorageStateUpdate): Storag
       ...current.active_page,
       ...(updates.active_page ?? {}),
       page_model: mergePageModel(current.active_page.page_model, updates.active_page?.page_model),
+      resolved_domains: withArrayFallback(current.active_page.resolved_domains, updates.active_page?.resolved_domains),
     },
     session: {
       ...current.session,

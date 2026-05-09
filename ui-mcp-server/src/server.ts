@@ -9,6 +9,7 @@ import {
   appendUsageEvent,
   initContextSystem,
   loadContext,
+  loadState,
   loadUsage,
   saveContext,
   type ProjectContextUpdate,
@@ -155,6 +156,43 @@ registerTool(
     return {
       content: [{ type: 'text', text: result.combinedOutput }],
     }
+  }
+)
+
+registerTool(
+  'get_session_state',
+  'Read the current session state: stage, session_mode (full/progressive), resolved domains, ' +
+  'and pending questions. Use this to understand what the assistant has already covered ' +
+  'before making the next design call.',
+  {},
+  async () => {
+    const state = loadState()
+    const { current_stage, last_tool, updated_at, active_page, session } = state
+
+    const resolvedDomains = active_page.resolved_domains ?? []
+    const allDomains = ['typography', 'color', 'layout', 'brand', 'visual']
+    const pendingDomains = allDomains.filter(d => !resolvedDomains.includes(d))
+
+    const text = [
+      '## UI Craft — Session State',
+      '',
+      `**Stage:** ${current_stage} | **Mode:** ${session.session_mode ?? 'full'} | **Last tool:** ${last_tool || 'none'}`,
+      `**Updated:** ${updated_at || 'not yet'}`,
+      `**Active page:** ${active_page.page_id || 'none'} (confidence: ${Math.round(active_page.analysis_confidence * 100)}%)`,
+      '',
+      '### Domain Resolution',
+      `**Resolved:** ${resolvedDomains.length > 0 ? resolvedDomains.join(', ') : 'none yet'}`,
+      `**Pending:** ${pendingDomains.length > 0 ? pendingDomains.join(', ') : 'all resolved'}`,
+      '',
+      session.pending_questions.length > 0
+        ? `### Open Questions\n${session.pending_questions.map(q => `- ${q}`).join('\n')}`
+        : '### Open Questions\nNone.',
+      '',
+      '> To reset resolved domains, start a new session with `run_session` or `start_session`.',
+      '> To revisit a resolved domain, include "redo [domain]" in your next `design_page` context.',
+    ].join('\n')
+
+    return { content: [{ type: 'text', text }] }
   }
 )
 

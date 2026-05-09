@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import * as fs from 'fs'
 import * as path from 'path'
-import { loadContext, type ProjectContext } from '../storage/storage.js'
+import { loadContext, loadState, saveState, type ProjectContext } from '../storage/storage.js'
 
 // ─── KB types ────────────────────────────────────────────────────────────────
 
@@ -46,6 +46,47 @@ interface KBTypographySpec {
   line_length_guidance: Record<string, string>
 }
 
+interface KBTypographyRole {
+  name: string
+  var: string
+  purpose: string
+  when_to_use: string
+  recommended: string[]
+  note: string
+}
+
+interface KBTypographyRoles {
+  roles: KBTypographyRole[]
+  role_rules: string[]
+  weight_scale: Array<{ weight: number; token: string; use: string }>
+  weight_rules: string[]
+  letter_spacing: Array<{ context: string; value: string; tailwind: string; rule: string }>
+  letter_spacing_rules: string[]
+  text_hierarchy: {
+    levels: Array<{ level: string; token: string; contrast: string; light: string; dark: string; use: string }>
+    rules: string[]
+  }
+  text_alignment: Array<{ context: string; alignment: string; rule: string }>
+  alignment_rules: string[]
+}
+
+interface KBTypographyPattern {
+  brand: string
+  tagline: string
+  font: string
+  headline_style: Record<string, string>
+  body_style: Record<string, string>
+  business_connection: string
+  takeaway: string
+  emphasis_match: string[]
+  industry_match: string[]
+}
+
+interface KBTypographyAntipatterns {
+  antipatterns: Array<{ name: string; bad: string; why: string; fix: string }>
+  checklist: Record<string, string[]>
+}
+
 // ─── KB loaders — singleton cache (loaded once, reused for every call) ────────
 
 const KB_BASE = path.join(__dirname, '..', 'content', 'kb')
@@ -54,6 +95,9 @@ const CONTENT_BASE = path.join(__dirname, '..', 'content')
 let _kbVisualPrinciples: KBVisualPrinciple[] | null = null
 let _kbBrandExamples: KBBrandExample[] | null = null
 let _kbTypographySpec: KBTypographySpec | null | false = false  // false = not yet loaded, null = file missing
+let _kbTypographyRoles: KBTypographyRoles | null | false = false
+let _kbTypographyPatterns: KBTypographyPattern[] | null = null
+let _kbTypographyAntipatterns: KBTypographyAntipatterns | null | false = false
 let _allPrinciples: Principle[] | null = null
 
 // Inverted indexes built once from loaded principles
@@ -86,6 +130,33 @@ function loadKBTypographySpec(): KBTypographySpec | null {
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographySpec)
     : null
   return _kbTypographySpec
+}
+
+function loadKBTypographyRoles(): KBTypographyRoles | null {
+  if (_kbTypographyRoles !== false) return _kbTypographyRoles
+  const file = path.join(KB_BASE, 'typography_roles.json')
+  _kbTypographyRoles = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyRoles)
+    : null
+  return _kbTypographyRoles
+}
+
+function loadKBTypographyPatterns(): KBTypographyPattern[] {
+  if (_kbTypographyPatterns !== null) return _kbTypographyPatterns
+  const file = path.join(KB_BASE, 'typography_patterns.json')
+  _kbTypographyPatterns = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyPattern[])
+    : []
+  return _kbTypographyPatterns
+}
+
+function loadKBTypographyAntipatterns(): KBTypographyAntipatterns | null {
+  if (_kbTypographyAntipatterns !== false) return _kbTypographyAntipatterns
+  const file = path.join(KB_BASE, 'typography_antipatterns.json')
+  _kbTypographyAntipatterns = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyAntipatterns)
+    : null
+  return _kbTypographyAntipatterns
 }
 
 function buildInvertedIndexes(principles: Principle[]): void {
@@ -528,6 +599,94 @@ function rankPrinciples(input: DesignPageInput, projectCtx: ProjectContext, requ
     .sort((left, right) => right.score - left.score || left.principle.title.localeCompare(right.principle.title))
 }
 
+// ─── Domain router ────────────────────────────────────────────────────────────
+
+const DOMAIN_KEYWORDS: Record<string, string[]> = {
+  typography: ['font', 'type', 'typography', 'typeface', 'heading', 'body text', 'text size',
+               'weight', 'bold', 'italic', 'line height', 'letter spacing', 'scale', 'readable', 'readability'],
+  color:      ['color', 'colour', 'contrast', 'palette', 'background', 'foreground', 'dark mode',
+               'light mode', 'hex', 'shade', 'tone', 'hue', 'saturation', 'wcag'],
+  layout:     ['layout', 'grid', 'spacing', 'placement', 'position', 'align', 'column', 'row',
+               'sidebar', 'header', 'footer', 'section', 'button', 'component', 'placement', 'hierarchy'],
+  brand:      ['brand', 'identity', 'emotion', 'tone', 'feel', 'personality', 'voice', 'style'],
+  visual:     ['visual', 'icon', 'illustration', 'image', 'graphic', 'balance', 'gestalt', 'proximity',
+               'grouping', 'whitespace', 'density'],
+}
+
+const REDO_KEYWORDS = ['redo', 'revisit', 'reconsider', 'different', 'change', 'not happy',
+                       'try again', 'another option', 'alternative', 'rethink', 'revise', 'update']
+
+interface DomainFlags {
+  typography: boolean
+  color: boolean
+  layout: boolean
+  brand: boolean
+  visual: boolean
+}
+
+/**
+ * Determines which KB domains to load for this call.
+ *
+ * In 'full' mode: always returns all domains (backward compatible, default).
+ * In 'progressive' mode:
+ *   - First call (nothing resolved): all domains
+ *   - Subsequent calls: only domains explicitly asked about or triggered by redo signal
+ *   - Redo signal + domain keyword: clears that domain from resolved and re-triggers it
+ */
+function resolveNeededDomains(
+  contextText: string,
+  sessionMode: 'full' | 'progressive',
+  resolvedDomains: string[]
+): { flags: DomainFlags; clearedByRedo: string[] } {
+  // full mode: always load everything
+  if (sessionMode === 'full') {
+    return {
+      flags: { typography: true, color: true, layout: true, brand: true, visual: true },
+      clearedByRedo: [],
+    }
+  }
+
+  // progressive mode: first call (nothing resolved yet) = full pass
+  if (resolvedDomains.length === 0) {
+    return {
+      flags: { typography: true, color: true, layout: true, brand: true, visual: true },
+      clearedByRedo: [],
+    }
+  }
+
+  const lower = contextText.toLowerCase()
+  const hasRedo = REDO_KEYWORDS.some(k => lower.includes(k))
+  const clearedByRedo: string[] = []
+
+  const flags: DomainFlags = { typography: false, color: false, layout: false, brand: false, visual: false }
+
+  for (const domain of Object.keys(DOMAIN_KEYWORDS) as Array<keyof DomainFlags>) {
+    const isResolved = resolvedDomains.includes(domain)
+    const isAsked = DOMAIN_KEYWORDS[domain].some(k => lower.includes(k))
+
+    if (isAsked) {
+      if (isResolved && hasRedo) {
+        // Redo signal + explicit domain mention = clear resolved and re-trigger
+        clearedByRedo.push(domain)
+        flags[domain] = true
+      } else if (!isResolved) {
+        flags[domain] = true
+      }
+      // isResolved && !hasRedo = already covered, skip
+    }
+  }
+
+  // Safety: if nothing triggered, still output typography + layout as baseline
+  const anyFlagged = Object.values(flags).some(Boolean)
+  if (!anyFlagged) {
+    flags.typography = !resolvedDomains.includes('typography')
+    flags.layout     = !resolvedDomains.includes('layout')
+    // If both are resolved too, fall through with all false — only intent sig outputs
+  }
+
+  return { flags, clearedByRedo }
+}
+
 export const designPageShape = {
   page_type: z.enum(['dashboard', 'landing_page', 'form', 'settings', 'onboarding', 'pricing', 'navigation']),
   audience:  z.string().describe('Who will use this page'),
@@ -547,11 +706,23 @@ export function designPage(input: DesignPageInput): string {
   const principles = loadAllPrinciples()
   const projectCtx: ProjectContext = loadContext()
 
-  // Load KB content
-  const kbVisualPrinciples = loadKBVisualPrinciples()
-  const kbBrandExamples    = loadKBBrandExamples()
-  const kbTypoSpec         = loadKBTypographySpec()
+  // ── Read session state for router ─────────────────────────────────────────
+  const state = loadState()
+  const sessionMode   = state.session.session_mode ?? 'full'
+  const resolvedDomains = state.active_page.resolved_domains ?? []
+  const contextText   = [context ?? '', projectCtx.industry, audience].join(' ')
 
+  const { flags, clearedByRedo } = resolveNeededDomains(contextText, sessionMode, resolvedDomains)
+
+  // ── Load only flagged KB modules ───────────────────────────────────────────
+  const kbVisualPrinciples = flags.visual    ? loadKBVisualPrinciples() : []
+  const kbBrandExamples    = flags.brand     ? loadKBBrandExamples()    : []
+  const kbTypoSpec         = flags.typography ? loadKBTypographySpec()           : null
+  const kbTypoRoles        = flags.typography ? loadKBTypographyRoles()           : null
+  const kbTypoPatterns     = flags.typography ? loadKBTypographyPatterns()        : []
+  const kbTypoAntipatterns = flags.typography ? loadKBTypographyAntipatterns()    : null
+
+  // ── Psychology gate — ALWAYS runs ─────────────────────────────────────────
   const requestContext = [
     context,
     projectCtx.project_name ? `Project: ${projectCtx.project_name}` : '',
@@ -561,81 +732,95 @@ export function designPage(input: DesignPageInput): string {
   ].filter(Boolean).join(' | ')
 
   const rankedPrinciples = rankPrinciples(input, projectCtx, requestContext, principles)
-  const topPrinciples = rankedPrinciples.slice(0, 3)
+  const topPrinciples    = rankedPrinciples.slice(0, 3)
 
-  const layoutAdvice   = LAYOUT_ADVICE[page_type]?.[emphasis]   ?? ''
-  const typoAdvice     = TYPOGRAPHY_ADVICE[emphasis]             ?? ''
-  const colorAdvice    = COLOR_ADVICE[emphasis]                  ?? ''
+  // Intent Signature — compact always-present block that grounds all domain output
+  const topPrincipleNames = topPrinciples.map(p => p.principle.title).join(', ')
+  const ctxTermSet        = buildTermSet(audience, requestContext, projectCtx.industry, projectCtx.audience, projectCtx.device_targets.join(' '))
+  const trustContext      = hasAnyTermFast(ctxTermSet, ['finance', 'health', 'security', 'legal', 'enterprise']) ? 'regulated/trust-critical' : ''
+  const mobileContext     = hasAnyTermFast(ctxTermSet, ['mobile', 'ios', 'android']) ? 'mobile-constrained' : ''
+  const expertContext     = hasAnyTermFast(ctxTermSet, ['developer', 'admin', 'analyst', 'operator']) ? 'expert audience' : ''
+  const intentSignature   = [
+    `**Page:** ${page_type.replace(/_/g, ' ')} · **Emphasis:** ${emphasis} · **Mode:** ${sessionMode}`,
+    `**Design frame:** ${[projectCtx.industry || emphasis, trustContext, mobileContext, expertContext].filter(Boolean).join(', ')}`,
+    `**Anchor principles:** ${topPrincipleNames}`,
+    clearedByRedo.length > 0 ? `**Re-opened by redo signal:** ${clearedByRedo.join(', ')}` : '',
+  ].filter(Boolean).join('\n')
 
-  const ctxTermSet = buildTermSet(audience, requestContext, projectCtx.industry, projectCtx.audience, projectCtx.device_targets.join(' '))
-  const deviceAdvice = projectCtx.device_targets
-    .map(device => DEVICE_ADVICE[device.toLowerCase()])
-    .filter(Boolean)
-    .join(' ')
+  // ── Conditional domain sections ────────────────────────────────────────────
 
-  const industryAdvice = INDUSTRY_ADVICE
-    .filter(entry => hasAnyTermFast(ctxTermSet, entry.terms))
-    .map(entry => entry.advice)
-    .join(' ')
-
-  const audienceAdvice = AUDIENCE_ADVICE
-    .filter(entry => hasAnyTermFast(ctxTermSet, entry.terms))
-    .map(entry => entry.advice)
-    .join(' ')
-
-  const highImpactChanges = buildHighImpactChanges(input, projectCtx, requestContext)
-
-  const principleSection = topPrinciples.map(({ principle, reasons }) => {
-    const rules = principle.rules.slice(0, 2).map(rule => `  - ${rule}`).join('\n')
-    const doItem = principle.dos[0] ? `  - Do: ${principle.dos[0]}` : ''
-    const dontItem = principle.donts[0] ? `  - Avoid: ${principle.donts[0]}` : ''
-    const whyItMatters = reasons.length > 0 ? `**Why now:** ${reasons.join('; ')}.` : ''
-    return `### ${principle.title}\n${principle.summary}\n${whyItMatters}\n\n**Key rules:**\n${rules}\n${doItem}\n${dontItem}`
-  }).join('\n\n')
-
-  const mistakes = topPrinciples
-    .flatMap(({ principle }) => principle.donts.slice(0, 1))
-    .map(d => `- ${d}`)
-    .join('\n')
-
-  const strategyContext = [
-    `Stored audience: ${projectCtx.audience || 'not set'}`,
-    `Stored industry: ${projectCtx.industry || 'not set'}`,
-    `Stored devices: ${toTitleList(projectCtx.device_targets)}`,
-  ].join(' | ')
-
-  const brandSection = projectCtx.brand.primary_color
-    ? `\n## Brand Context\nPrimary color: ${projectCtx.brand.primary_color} | Theme: ${projectCtx.brand.theme} | Font: ${projectCtx.brand.font || 'not set'}`
+  // Layout (always output when flagged — most broadly relevant)
+  const layoutSection = flags.layout
+    ? `\n## Layout Recommendation\n${LAYOUT_ADVICE[page_type]?.[emphasis] ?? ''}`
     : ''
 
-  const customRulesSection = projectCtx.custom_rules.length > 0
-    ? `\n## Project Custom Rules\n${projectCtx.custom_rules.map(r => `- ${r}`).join('\n')}`
-    : ''
+  // Typography — static advice always with KB enrichment only when flagged
+  const typoAdvice = TYPOGRAPHY_ADVICE[emphasis] ?? ''
+  const kbTypo     = kbTypoSpec ? getTypographyFonts(page_type, projectCtx.industry, emphasis, kbTypoSpec) : null
 
-  const deviceSection = deviceAdvice || industryAdvice || audienceAdvice
-    ? `\n## Adaptation Layer\n${[deviceAdvice, industryAdvice, audienceAdvice].filter(Boolean).join(' ')}`
-    : ''
-
-  const impactSection = `\n## High-Impact Changes\n${highImpactChanges.map(change => `- ${change}`).join('\n')}`
-
-  // ─── KB enrichment ──────────────────────────────────────────────────────────
-
-  // 1. Typography enrichment from KB spec
-  const kbTypo = getTypographyFonts(page_type, projectCtx.industry, emphasis, kbTypoSpec)
-  const typoEnrichmentSection = kbTypoSpec
-    ? `\n### Font Recommendations (KB)\n` +
+  const typoFontSection = kbTypoSpec && kbTypo
+    ? `\n### Font Recommendations\n` +
       `**Recommended families:** ${kbTypo.fontFamily}\n` +
-      (kbTypo.pairings ? `**Pairings for ${page_type.replace('_', ' ')}:** ${kbTypo.pairings}\n` : '') +
+      (kbTypo.pairings ? `**Pairings for ${page_type.replace(/_/g, ' ')}:** ${kbTypo.pairings}\n` : '') +
       (kbTypo.headlineGuidance ? `**Headline guidance:** ${kbTypo.headlineGuidance}\n` : '') +
       `**Body size:** ${kbTypoSpec.size_scale.find(s => s.role === 'Body')?.desktop ?? '16–18px'} desktop / ` +
       `${kbTypoSpec.size_scale.find(s => s.role === 'Body')?.mobile ?? '16–18px'} mobile\n` +
       `**Line-height (body):** ${kbTypoSpec.line_height_scale.find(l => l.role === 'Body')?.value ?? '1.45–1.7'}`
     : ''
 
-  // 2. Visual design principles from KB (top 2 for this page_type + emphasis)
-  const selectedKBPrinciples = selectKBPrinciples(page_type, emphasis, kbVisualPrinciples, 2)
-  const kbPrincipleSection = selectedKBPrinciples.length > 0
-    ? `\n## Visual Design Foundation (KB)\n\n` +
+  // Font role system (3-role model)
+  const typoRolesSection = kbTypoRoles
+    ? `\n### Font Role System\n` +
+      kbTypoRoles.roles.map(r => `- **${r.var}** (${r.purpose}) — ${r.when_to_use}`).join('\n') +
+      `\n**Weight rules:** ${kbTypoRoles.weight_rules.slice(0, 3).join(' · ')}\n` +
+      `**Spacing rules:** ${kbTypoRoles.letter_spacing_rules[0]}`
+    : ''
+
+  // Reference brand patterns matched to this project's industry + emphasis
+  const normalizedIndustry = (projectCtx.industry || '').toLowerCase()
+  const matchedPatterns = kbTypoPatterns.filter(
+    p => p.emphasis_match.includes(emphasis) || p.industry_match.some(m => normalizedIndustry.includes(m))
+  ).slice(0, 2)
+  const typoPatternsSection = matchedPatterns.length > 0
+    ? `\n### Reference Patterns\n` +
+      matchedPatterns.map(p =>
+        `**${p.brand}** — ${p.tagline}\n` +
+        `Font: ${p.font}\n` +
+        `Takeaway: ${p.takeaway}`
+      ).join('\n\n')
+    : ''
+
+  // Top 3 anti-patterns most relevant to this emphasis
+  const emphasisAntipatternMap: Record<string, string[]> = {
+    clarity:    ['Flat hierarchy', 'Arbitrary size values', 'Low-contrast "design choice"'],
+    conversion: ['Flat hierarchy', 'Center-aligned paragraphs', 'Justified text'],
+    trust:      ['Low-contrast "design choice"', 'Bold on small text', 'Flat hierarchy'],
+    speed:      ['Arbitrary size values', 'Flat hierarchy', 'Letter-spacing on body'],
+  }
+  const relevantAntipatternNames = emphasisAntipatternMap[emphasis] ?? []
+  const relevantAntipatterns = kbTypoAntipatterns
+    ? kbTypoAntipatterns.antipatterns.filter(a => relevantAntipatternNames.includes(a.name))
+    : []
+  const typoAntipatternsSection = relevantAntipatterns.length > 0
+    ? `\n### Common Typography Mistakes (for ${emphasis})\n` +
+      relevantAntipatterns.map(a => `**${a.name}:** ${a.why} → ${a.fix}`).join('\n')
+    : ''
+
+  const typographySection = flags.typography
+    ? `\n## Typography\n${typoAdvice}${typoFontSection}${typoRolesSection}${typoPatternsSection}${typoAntipatternsSection}`
+    : ''
+
+  // Color
+  const colorSection = flags.color
+    ? `\n## Color Strategy\n${COLOR_ADVICE[emphasis] ?? ''}`
+    : ''
+
+  // Visual KB principles
+  const selectedKBPrinciples = kbVisualPrinciples.length > 0
+    ? selectKBPrinciples(page_type, emphasis, kbVisualPrinciples, 2)
+    : []
+  const visualKBSection = selectedKBPrinciples.length > 0
+    ? `\n## Visual Design Foundation\n\n` +
       selectedKBPrinciples.map(p => {
         const howLines = p.how.slice(0, 2).map(h => `  - ${h}`).join('\n')
         const implLine = p.implementation[0] ? `  - ${p.implementation[0]}` : ''
@@ -645,10 +830,12 @@ export function designPage(input: DesignPageInput): string {
       }).join('\n\n')
     : ''
 
-  // 3. Brand emotional direction from KB
-  const brandMatch = findBrandMatch(projectCtx.industry, emphasis, kbBrandExamples)
-  const kbBrandSection = brandMatch
-    ? `\n## Emotional Direction (KB)\n` +
+  // Brand emotional direction
+  const brandMatch = kbBrandExamples.length > 0
+    ? findBrandMatch(projectCtx.industry, emphasis, kbBrandExamples)
+    : null
+  const brandKBSection = brandMatch
+    ? `\n## Emotional Direction\n` +
       `**Reference brand:** ${brandMatch.brand}\n` +
       `**Emotional effect:** ${brandMatch.emotional_effect}\n` +
       `**Design lesson:** ${brandMatch.design_lesson}\n` +
@@ -657,7 +844,44 @@ export function designPage(input: DesignPageInput): string {
       `**Color direction:** ${brandMatch.color_direction}`
     : ''
 
-  // ─── Enhanced checklist from KB section 9 ───────────────────────────────────
+  // ── Adaptation layer (always included) ────────────────────────────────────
+  const deviceAdvice   = projectCtx.device_targets.map(d => DEVICE_ADVICE[d.toLowerCase()]).filter(Boolean).join(' ')
+  const industryAdvice = INDUSTRY_ADVICE.filter(e => hasAnyTermFast(ctxTermSet, e.terms)).map(e => e.advice).join(' ')
+  const audienceAdvice = AUDIENCE_ADVICE.filter(e => hasAnyTermFast(ctxTermSet, e.terms)).map(e => e.advice).join(' ')
+  const adaptationSection = deviceAdvice || industryAdvice || audienceAdvice
+    ? `\n## Adaptation Layer\n${[deviceAdvice, industryAdvice, audienceAdvice].filter(Boolean).join('\n\n')}`
+    : ''
+
+  // ── Principles section (always included — psychology gate output) ──────────
+  const principleSection = topPrinciples.map(({ principle, reasons }) => {
+    const rules    = principle.rules.slice(0, 2).map(rule => `  - ${rule}`).join('\n')
+    const doItem   = principle.dos[0]   ? `  - Do: ${principle.dos[0]}`   : ''
+    const dontItem = principle.donts[0] ? `  - Avoid: ${principle.donts[0]}` : ''
+    const why      = reasons.length > 0 ? `**Why now:** ${reasons.join('; ')}.` : ''
+    return `### ${principle.title}\n${principle.summary}\n${why}\n\n**Key rules:**\n${rules}\n${doItem}\n${dontItem}`
+  }).join('\n\n')
+
+  const mistakes = topPrinciples.flatMap(p => p.principle.donts.slice(0, 1)).map(d => `- ${d}`).join('\n')
+
+  // ── Context sections ───────────────────────────────────────────────────────
+  const strategyContext = [
+    `Stored audience: ${projectCtx.audience || 'not set'}`,
+    `Stored industry: ${projectCtx.industry || 'not set'}`,
+    `Stored devices: ${toTitleList(projectCtx.device_targets)}`,
+  ].join(' | ')
+
+  const brandCtxSection = projectCtx.brand.primary_color
+    ? `\n## Brand Context\nPrimary color: ${projectCtx.brand.primary_color} | Theme: ${projectCtx.brand.theme} | Font: ${projectCtx.brand.font || 'not set'}`
+    : ''
+
+  const customRulesSection = projectCtx.custom_rules.length > 0
+    ? `\n## Project Custom Rules\n${projectCtx.custom_rules.map(r => `- ${r}`).join('\n')}`
+    : ''
+
+  const highImpactChanges = buildHighImpactChanges(input, projectCtx, requestContext)
+  const impactSection     = `\n## High-Impact Changes\n${highImpactChanges.map(c => `- ${c}`).join('\n')}`
+
+  // ── Checklist (always included) ────────────────────────────────────────────
   const kbChecklist = `\n## Review Checklist\n` +
     `### Attention and hierarchy\n` +
     `- [ ] Is there one obvious focal point?\n` +
@@ -666,52 +890,55 @@ export function designPage(input: DesignPageInput): string {
     `### Readability and contrast\n` +
     `- [ ] Is all critical text WCAG AA compliant (4.5:1 minimum)?\n` +
     `- [ ] Are supporting and primary text clearly differentiated?\n` +
-    `- [ ] Are there too many high-contrast competitors on one screen?\n` +
     `### Structure and grouping\n` +
     `- [ ] Are related items grouped tightly enough?\n` +
     `- [ ] Are actions positioned near the objects they affect?\n` +
-    `- [ ] Is the alignment clean enough to feel intentional?\n` +
     `### Interaction and psychology\n` +
     `- [ ] Is choice count low enough for fast decisions (≤7 nav items)?\n` +
     `- [ ] Are touch targets at least 44×44px on mobile?\n` +
     `- [ ] Does the system give immediate feedback for every async action?\n` +
-    `- [ ] Are defaults helping the user, not only the business?\n` +
     `### Brand and emotion\n` +
     `- [ ] Does the interface emotion match the product promise?\n` +
-    `- [ ] Do typography, color, spacing, and imagery tell the same story?\n` +
     `### Ethics and accessibility\n` +
     `- [ ] Would this flow still feel fair if the user were in a hurry or under stress?\n` +
     `- [ ] Does the interface work with keyboard, screen reader, and reduced motion?`
 
-  return `# UI Design Strategy: ${page_type.replace('_', ' ')} for ${audience}
-**Emphasis:** ${emphasis} | **Page type:** ${page_type}${context ? `\n**Context:** ${context}` : ''}\n**Resolved context:** ${strategyContext}${brandSection}${customRulesSection}${deviceSection}${impactSection}
+  // ── Update resolved_domains in state ──────────────────────────────────────
+  const nowResolved = new Set([
+    ...resolvedDomains.filter(d => !clearedByRedo.includes(d)),
+    ...Object.entries(flags).filter(([, v]) => v).map(([k]) => k),
+  ])
+  saveState({ active_page: { resolved_domains: [...nowResolved] } })
+
+  // ── Progressive mode: show what's being skipped ───────────────────────────
+  const skippedDomains = sessionMode === 'progressive'
+    ? Object.entries(flags)
+        .filter(([, v]) => !v)
+        .map(([k]) => k)
+        .filter(k => resolvedDomains.includes(k))
+    : []
+  const skippedNote = skippedDomains.length > 0
+    ? `\n> **Progressive mode:** ${skippedDomains.join(', ')} already covered — use "redo [domain]" in context to revisit.`
+    : ''
+
+  return `# UI Design Strategy: ${page_type.replace(/_/g, ' ')} for ${audience}
+
+## Intent Signature
+${intentSignature}
+${skippedNote}
+**Resolved context:** ${strategyContext}${brandCtxSection}${customRulesSection}${adaptationSection}${impactSection}
 
 ---
 
-## Layout Recommendation
-${layoutAdvice}
-
-## Typography
-${typoAdvice}
-${typoEnrichmentSection}
-
-## Color Strategy
-${colorAdvice}
-
----
-
-## Psychology Principles to Apply (Top 3)
+## Psychology Principles (Always Active)
 
 ${principleSection}
-
----
-${kbPrincipleSection}
-${kbBrandSection}
 
 ## Common Mistakes to Avoid
 ${mistakes}
 
 ---
+${layoutSection}${typographySection}${colorSection}${visualKBSection}${brandKBSection}
 ${kbChecklist}
 `
 }
