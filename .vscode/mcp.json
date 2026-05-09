@@ -1,9 +1,14 @@
 {
   "servers": {
-    "ui-craft": {
+    "ui-craft-local": {
       "type": "stdio",
       "command": "node",
       "args": ["c:/Program Files/Project/UI_Expert/ui-mcp-server/dist/server.js"]
+    },
+    "ui-craft-published": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@chinmoy_mitra/ui-craft@latest"]
     }
   }
 }

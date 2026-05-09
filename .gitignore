@@ -20,6 +20,7 @@ npm-debug.log*
 
 ARCHITECTURE.md
 
-phase_plan.md
+# Internal dev docs (local only)
+docs/
 
 deployment.txt
