@@ -46,26 +46,65 @@ interface KBTypographySpec {
   line_length_guidance: Record<string, string>
 }
 
-// ─── KB loaders ──────────────────────────────────────────────────────────────
+// ─── KB loaders — singleton cache (loaded once, reused for every call) ────────
 
 const KB_BASE = path.join(__dirname, '..', 'content', 'kb')
+const CONTENT_BASE = path.join(__dirname, '..', 'content')
+
+let _kbVisualPrinciples: KBVisualPrinciple[] | null = null
+let _kbBrandExamples: KBBrandExample[] | null = null
+let _kbTypographySpec: KBTypographySpec | null | false = false  // false = not yet loaded, null = file missing
+let _allPrinciples: Principle[] | null = null
+
+// Inverted indexes built once from loaded principles
+const _pageTypeIndex = new Map<string, Set<string>>()   // page_type → principle ids
+const _emphasisIndex = new Map<string, Set<string>>()   // emphasis  → principle ids
+let _indexesBuilt = false
 
 function loadKBVisualPrinciples(): KBVisualPrinciple[] {
+  if (_kbVisualPrinciples !== null) return _kbVisualPrinciples
   const file = path.join(KB_BASE, 'visual_principles.json')
-  if (!fs.existsSync(file)) return []
-  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBVisualPrinciple[]
+  _kbVisualPrinciples = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBVisualPrinciple[])
+    : []
+  return _kbVisualPrinciples
 }
 
 function loadKBBrandExamples(): KBBrandExample[] {
+  if (_kbBrandExamples !== null) return _kbBrandExamples
   const file = path.join(KB_BASE, 'brand_examples.json')
-  if (!fs.existsSync(file)) return []
-  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBBrandExample[]
+  _kbBrandExamples = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBBrandExample[])
+    : []
+  return _kbBrandExamples
 }
 
 function loadKBTypographySpec(): KBTypographySpec | null {
+  if (_kbTypographySpec !== false) return _kbTypographySpec
   const file = path.join(KB_BASE, 'typography_spec.json')
-  if (!fs.existsSync(file)) return null
-  return JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographySpec
+  _kbTypographySpec = fs.existsSync(file)
+    ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographySpec)
+    : null
+  return _kbTypographySpec
+}
+
+function buildInvertedIndexes(principles: Principle[]): void {
+  if (_indexesBuilt) return
+  for (const p of principles) {
+    // page_type index
+    for (const pt of p.applies_to) {
+      if (!_pageTypeIndex.has(pt)) _pageTypeIndex.set(pt, new Set())
+      _pageTypeIndex.get(pt)!.add(p.id)
+    }
+    // emphasis index via EMPHASIS_PRINCIPLE_BONUS keys
+    for (const emphasis of Object.keys(EMPHASIS_PRINCIPLE_BONUS) as Array<DesignPageInput['emphasis']>) {
+      if ((EMPHASIS_PRINCIPLE_BONUS[emphasis][p.id] ?? 0) > 0) {
+        if (!_emphasisIndex.has(emphasis)) _emphasisIndex.set(emphasis, new Set())
+        _emphasisIndex.get(emphasis)!.add(p.id)
+      }
+    }
+  }
+  _indexesBuilt = true
 }
 
 // ─── KB selection helpers ────────────────────────────────────────────────────
@@ -152,19 +191,19 @@ interface PrincipleMatch {
 }
 
 function loadAllPrinciples(): Principle[] {
+  if (_allPrinciples !== null) return _allPrinciples
   const categories = ['cognitive', 'visual', 'interaction', 'persuasion', 'aesthetics']
-  const contentBase = path.join(__dirname, '..', 'content')
   const all: Principle[] = []
-
   for (const cat of categories) {
-    const file = path.join(contentBase, cat, 'principles.json')
+    const file = path.join(CONTENT_BASE, cat, 'principles.json')
     if (fs.existsSync(file)) {
       const items = JSON.parse(fs.readFileSync(file, 'utf-8')) as Principle[]
       all.push(...items)
     }
   }
-
-  return all
+  _allPrinciples = all
+  buildInvertedIndexes(all)
+  return _allPrinciples
 }
 
 const PAGE_TYPE_PRINCIPLES: Record<string, string[]> = {
@@ -338,6 +377,22 @@ function normalizeText(...values: Array<string | undefined>): string {
     .toLowerCase()
 }
 
+// Term-set lookup: O(1) per check vs O(n×m) string scan
+function buildTermSet(...values: Array<string | undefined>): Set<string> {
+  const words = values
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase()
+    .split(/[\s,;|/\-_]+/)
+    .filter(w => w.length > 1)
+  return new Set(words)
+}
+
+function hasAnyTermFast(termSet: Set<string>, terms: string[]): boolean {
+  return terms.some(t => termSet.has(t))
+}
+
+// Legacy string scan — kept for backward compat inside rankPrinciples combined text
 function hasAnyTerm(haystack: string, terms: string[]): boolean {
   return terms.some(term => haystack.includes(term))
 }
@@ -355,8 +410,8 @@ function dedupe(values: string[]): string[] {
 }
 
 function buildHighImpactChanges(input: DesignPageInput, projectCtx: ProjectContext, requestContext: string): string[] {
-  const combined = normalizeText(input.audience, projectCtx.audience, projectCtx.industry, requestContext)
-  const isExistingSurface = hasAnyTerm(combined, ['existing', 'current', 'legacy', 'redesign', 'improve', 'audit', 'refactor'])
+  const termSet = buildTermSet(input.audience, projectCtx.audience, projectCtx.industry, requestContext)
+  const isExistingSurface = hasAnyTermFast(termSet, ['existing', 'current', 'legacy', 'redesign', 'improve', 'audit', 'refactor'])
 
   const baseline = isExistingSurface
     ? [
@@ -382,11 +437,11 @@ function buildHighImpactChanges(input: DesignPageInput, projectCtx: ProjectConte
     baseline.push('Compress the story into proof, value, and action. Every extra section must earn its place by reducing doubt or increasing motivation.')
   }
 
-  if (hasAnyTerm(combined, ['mobile', 'ios', 'android'])) {
+  if (hasAnyTermFast(termSet, ['mobile', 'ios', 'android'])) {
     baseline.push('Collapse lateral complexity. A mobile surface should read top-to-bottom with one primary action per viewport.')
   }
 
-  if (hasAnyTerm(combined, ['finance', 'health', 'security', 'enterprise', 'b2b'])) {
+  if (hasAnyTermFast(termSet, ['finance', 'health', 'security', 'enterprise', 'b2b'])) {
     baseline.push('Increase trust density: add plain-language labels, explicit system status, and visible proof of reliability near moments of commitment.')
   }
 
@@ -394,7 +449,8 @@ function buildHighImpactChanges(input: DesignPageInput, projectCtx: ProjectConte
 }
 
 function rankPrinciples(input: DesignPageInput, projectCtx: ProjectContext, requestContext: string, principles: Principle[]): PrincipleMatch[] {
-  const combined = normalizeText(
+  // Build term set once per call — O(1) lookups thereafter
+  const termSet = buildTermSet(
     input.audience,
     input.context,
     requestContext,
@@ -431,32 +487,32 @@ function rankPrinciples(input: DesignPageInput, projectCtx: ProjectContext, requ
       reasons.push(`high leverage for ${input.emphasis}`)
     }
 
-    if (hasAnyTerm(combined, ['beginner', 'first-time', 'new user', 'novice']) && ['cognitive_load', 'progressive_disclosure', 'affordance'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['beginner', 'first-time', 'novice']) && ['cognitive_load', 'progressive_disclosure', 'affordance'].includes(principle.id)) {
       score += 3
       reasons.push('reduces confusion for first-time users')
     }
 
-    if (hasAnyTerm(combined, ['expert', 'admin', 'developer', 'analyst', 'operator']) && ['visual_hierarchy', 'feedback_latency', 'fitts_law'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['expert', 'admin', 'developer', 'analyst', 'operator']) && ['visual_hierarchy', 'feedback_latency', 'fitts_law'].includes(principle.id)) {
       score += 2
       reasons.push('supports expert-speed workflows')
     }
 
-    if (hasAnyTerm(combined, ['existing', 'current', 'legacy', 'redesign', 'improve', 'audit', 'refactor']) && ['feedback_latency', 'cognitive_load', 'affordance', 'halo_effect'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['existing', 'current', 'legacy', 'redesign', 'improve', 'audit', 'refactor']) && ['feedback_latency', 'cognitive_load', 'affordance', 'halo_effect'].includes(principle.id)) {
       score += 2
       reasons.push('high-impact for refactoring existing UI')
     }
 
-    if (hasAnyTerm(combined, ['mobile', 'ios', 'android']) && ['fitts_law', 'hicks_law', 'progressive_disclosure', 'feedback_latency'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['mobile', 'ios', 'android']) && ['fitts_law', 'hicks_law', 'progressive_disclosure', 'feedback_latency'].includes(principle.id)) {
       score += 3
       reasons.push('important for constrained mobile flows')
     }
 
-    if (hasAnyTerm(combined, ['fintech', 'finance', 'bank', 'insurance', 'health', 'healthcare', 'medical', 'legal', 'security']) && ['halo_effect', 'feedback_latency', 'visual_hierarchy', 'affordance'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['fintech', 'finance', 'bank', 'insurance', 'health', 'healthcare', 'medical', 'legal', 'security']) && ['halo_effect', 'feedback_latency', 'visual_hierarchy', 'affordance'].includes(principle.id)) {
       score += 3
       reasons.push('supports trust in regulated contexts')
     }
 
-    if (hasAnyTerm(combined, ['ecommerce', 'retail', 'consumer', 'marketplace', 'sales']) && ['anchoring_bias', 'halo_effect', 'f_pattern', 'color_psychology'].includes(principle.id)) {
+    if (hasAnyTermFast(termSet, ['ecommerce', 'retail', 'consumer', 'marketplace', 'sales']) && ['anchoring_bias', 'halo_effect', 'f_pattern', 'color_psychology'].includes(principle.id)) {
       score += 3
       reasons.push('improves persuasion on commercial pages')
     }
@@ -511,19 +567,19 @@ export function designPage(input: DesignPageInput): string {
   const typoAdvice     = TYPOGRAPHY_ADVICE[emphasis]             ?? ''
   const colorAdvice    = COLOR_ADVICE[emphasis]                  ?? ''
 
-  const combinedContext = normalizeText(audience, requestContext, projectCtx.industry, projectCtx.audience, projectCtx.device_targets.join(' '))
+  const ctxTermSet = buildTermSet(audience, requestContext, projectCtx.industry, projectCtx.audience, projectCtx.device_targets.join(' '))
   const deviceAdvice = projectCtx.device_targets
     .map(device => DEVICE_ADVICE[device.toLowerCase()])
     .filter(Boolean)
     .join(' ')
 
   const industryAdvice = INDUSTRY_ADVICE
-    .filter(entry => hasAnyTerm(combinedContext, entry.terms))
+    .filter(entry => hasAnyTermFast(ctxTermSet, entry.terms))
     .map(entry => entry.advice)
     .join(' ')
 
   const audienceAdvice = AUDIENCE_ADVICE
-    .filter(entry => hasAnyTerm(combinedContext, entry.terms))
+    .filter(entry => hasAnyTermFast(ctxTermSet, entry.terms))
     .map(entry => entry.advice)
     .join(' ')
 

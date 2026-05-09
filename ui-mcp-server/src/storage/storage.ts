@@ -1,10 +1,31 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import * as os from 'os'
+import { randomUUID } from 'crypto'
 
 const HISTORY_LIMIT = 10
 const STORAGE_DIRNAME = 'ui-assistant'
 const WORKSPACE_DIR_ENV = 'UI_CRAFT_WORKSPACE_DIR'
 const STORAGE_DIR_ENV = 'UI_CRAFT_STORAGE_DIR'
+
+// ─── Usage tracking ──────────────────────────────────────────────────────────
+
+/**
+ * Local-only, anonymous usage record stored in usage.json.
+ * install_id is a random UUID stable per install location — NOT a user identifier.
+ * No PII is stored here.
+ */
+export interface UsageRecord {
+  install_id: string
+  version: string
+  first_seen: string
+  last_seen: string
+  total_sessions: number
+  page_types: Record<string, number>
+  tool_calls: Record<string, number>
+}
+
+// ─── Core types ───────────────────────────────────────────────────────────────
 
 export type AssistantStage = 'INIT' | 'PLAN' | 'ANALYZE' | 'DESIGN' | 'GENERATE' | 'EVALUATE' | 'IMPROVE' | 'DONE'
 export type WorkingMode = 'improve_existing' | 'start_from_scratch' | 'analyze_only' | 'preview_redesign' | 'apply_safe_changes'
@@ -630,23 +651,76 @@ function resolveStageForTool(tool: string): AssistantStage {
 
 function isLikelyInstallPath(candidate: string): boolean {
   const normalized = candidate.toLowerCase()
-  return normalized.includes('node_modules') || normalized.includes('npm-cache')
+  return (
+    normalized.includes('node_modules') ||
+    normalized.includes('npm-cache') ||
+    normalized.includes('_npx') ||
+    normalized.includes('appdata\\roaming\\npm') ||
+    normalized.includes('.npm/_npx')
+  )
 }
 
+/**
+ * Walk up from `startDir` looking for a `.git` directory.
+ * Returns the git root if found, null otherwise.
+ * Stops at filesystem root to avoid infinite loops.
+ */
+function findGitRoot(startDir: string): string | null {
+  let current = path.resolve(startDir)
+  const { root } = path.parse(current)
+  while (current !== root) {
+    if (fs.existsSync(path.join(current, '.git'))) return current
+    const parent = path.dirname(current)
+    if (parent === current) break   // reached root
+    current = parent
+  }
+  return null
+}
+
+/**
+ * Resolve where to write .vscode/ui-assistant/ files.
+ *
+ * Priority (highest to lowest):
+ *  1. UI_CRAFT_STORAGE_DIR env var  → use that directory directly
+ *  2. UI_CRAFT_WORKSPACE_DIR env var → <dir>/.vscode/ui-assistant/
+ *  3. Git root detected from INIT_CWD or cwd → <git-root>/.vscode/ui-assistant/
+ *  4. INIT_CWD or cwd (not an install path) → <cwd>/.vscode/ui-assistant/
+ *  5. Home directory fallback → ~/.ui-craft/global/
+ *
+ * This ensures global MCP installs still write project-scoped files when
+ * running inside a git repo, and fall back to a stable home dir location
+ * when no project context is detectable.
+ */
 function resolveWorkspaceRoot(): string {
+  // 1. Explicit storage dir override
   const configuredStorageDir = process.env[STORAGE_DIR_ENV]
   if (configuredStorageDir) {
     return path.resolve(configuredStorageDir)
   }
 
+  // 2. Explicit workspace dir override
   const configuredWorkspaceDir = process.env[WORKSPACE_DIR_ENV]
   if (configuredWorkspaceDir) {
     return path.join(path.resolve(configuredWorkspaceDir), '.vscode', STORAGE_DIRNAME)
   }
 
+  // 3. Git root detection — most reliable for global MCP installs
   const seeds = [process.env.INIT_CWD, process.cwd()].filter(Boolean) as string[]
   const preferredSeed = seeds.find(seed => !isLikelyInstallPath(seed)) ?? seeds[0] ?? process.cwd()
-  return path.join(path.resolve(preferredSeed), '.vscode', STORAGE_DIRNAME)
+
+  const gitRoot = findGitRoot(preferredSeed)
+  if (gitRoot && !isLikelyInstallPath(gitRoot)) {
+    return path.join(gitRoot, '.vscode', STORAGE_DIRNAME)
+  }
+
+  // 4. Non-install cwd
+  if (!isLikelyInstallPath(preferredSeed)) {
+    return path.join(path.resolve(preferredSeed), '.vscode', STORAGE_DIRNAME)
+  }
+
+  // 5. Home directory fallback — used when MCP is global and no project detected
+  const homeDir = process.env.USERPROFILE ?? process.env.HOME ?? os.homedir()
+  return path.join(homeDir, '.ui-craft', 'global')
 }
 
 function getStoragePaths() {
@@ -657,6 +731,7 @@ function getStoragePaths() {
     stateFile: path.join(storageDir, 'state.json'),
     historyFile: path.join(storageDir, 'history.json'),
     notesFile: path.join(storageDir, 'notes.md'),
+    usageFile: path.join(storageDir, 'usage.json'),
   }
 }
 
@@ -688,9 +763,61 @@ export function initContextSystem(): void {
   if (!fs.existsSync(storagePaths.notesFile)) {
     fs.writeFileSync(storagePaths.notesFile, '# UI Craft Notes\n\n')
   }
+
+  if (!fs.existsSync(storagePaths.usageFile)) {
+    const defaultUsage: UsageRecord = {
+      install_id: randomUUID(),
+      version: '0.3.0',
+      first_seen: new Date().toISOString(),
+      last_seen: new Date().toISOString(),
+      total_sessions: 0,
+      page_types: {},
+      tool_calls: {},
+    }
+    fs.writeFileSync(storagePaths.usageFile, JSON.stringify(defaultUsage, null, 2))
+  }
 }
 
 export const initStorage = initContextSystem
+
+export function loadUsage(): UsageRecord | null {
+  try {
+    initContextSystem()
+    const { usageFile } = getStoragePaths()
+    const raw = fs.readFileSync(usageFile, 'utf-8')
+    return JSON.parse(raw) as UsageRecord
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Record a tool call event in local usage.json.
+ * Never throws — usage tracking must not break tool execution.
+ */
+export function appendUsageEvent(
+  toolName: string,
+  options: { page_type?: string; version?: string; is_session?: boolean } = {}
+): void {
+  try {
+    initContextSystem()
+    const { usageFile } = getStoragePaths()
+    const raw = fs.readFileSync(usageFile, 'utf-8')
+    const usage = JSON.parse(raw) as UsageRecord
+
+    usage.last_seen = new Date().toISOString()
+    if (options.version) usage.version = options.version
+    if (options.is_session) usage.total_sessions = (usage.total_sessions ?? 0) + 1
+    usage.tool_calls[toolName] = (usage.tool_calls[toolName] ?? 0) + 1
+    if (options.page_type) {
+      usage.page_types[options.page_type] = (usage.page_types[options.page_type] ?? 0) + 1
+    }
+
+    fs.writeFileSync(usageFile, JSON.stringify(usage, null, 2))
+  } catch {
+    // intentionally silent — usage tracking must never break tool execution
+  }
+}
 
 export function loadContext(): ProjectContext {
   initContextSystem()
