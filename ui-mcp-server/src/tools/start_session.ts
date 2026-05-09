@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { DEFAULT_PAGE_MODEL, saveContext, saveState, type ChangeBehavior, type DensityPreference, type DesignGoal, type PageMode, type PageType, type SourceType, type WorkingMode } from '../storage/storage.js'
+import { DEFAULT_PAGE_MODEL, saveContext, saveState, type ChangeBehavior, type DensityPreference, type DesignGoal, type PageMode, type PageType, type SessionMode, type SourceType, type WorkingMode } from '../storage/storage.js'
 
 const WORKING_MODE_OPTIONS = ['improve_existing', 'start_from_scratch', 'analyze_only', 'preview_redesign', 'apply_safe_changes'] as const
 const SURFACE_OPTIONS = ['dashboard', 'landing_page', 'form', 'settings', 'onboarding', 'pricing', 'navigation', 'content_page', 'other'] as const
@@ -19,6 +19,12 @@ export const startSessionShape = {
   design_tone: z.enum(DESIGN_TONE_OPTIONS).describe('The desired visual and emotional tone.'),
   density_preference: z.enum(DENSITY_OPTIONS).describe('How compact or spacious the UI should feel.'),
   change_behavior: z.enum(CHANGE_BEHAVIOR_OPTIONS).describe('How aggressively the assistant should propose or apply changes.'),
+  session_mode: z.enum(['full', 'progressive']).default('full').describe(
+    'Report style. "full" = complete design report every call (default, best for first-time use). ' +
+    '"progressive" = full report on first call, then narrows to only what changed or was asked — ' +
+    'ideal for iterative sessions where typography, color, and layout are refined one at a time. ' +
+    'Ask the user which they prefer before setting this.'
+  ),
   existing_input: z.enum(EXISTING_INPUT_OPTIONS).optional().describe('For existing UI work, what evidence is already available.'),
   brief_completeness: z.enum(BRIEF_COMPLETENESS_OPTIONS).optional().describe('For greenfield work, how complete the current brief is.'),
   additional_notes: z.string().optional().describe('Optional freeform notes such as constraints, must-keep elements, or brand references.'),
@@ -32,6 +38,7 @@ export type StartSessionInput = {
   design_tone: typeof DESIGN_TONE_OPTIONS[number]
   density_preference: typeof DENSITY_OPTIONS[number]
   change_behavior: typeof CHANGE_BEHAVIOR_OPTIONS[number]
+  session_mode: SessionMode
   existing_input?: typeof EXISTING_INPUT_OPTIONS[number]
   brief_completeness?: typeof BRIEF_COMPLETENESS_OPTIONS[number]
   additional_notes?: string
@@ -177,9 +184,11 @@ export function startSession(input: StartSessionInput): string {
       last_analyzed_at: '',
       page_model: pageModel,
       analysis_confidence: 0.35,
+      resolved_domains: [],   // reset on every new session
     },
     session: {
       current_mode: pageMode,
+      session_mode: (input.session_mode ?? 'full') as SessionMode,
       pending_questions: openQuestions,
       pending_recommendations: [],
     },
