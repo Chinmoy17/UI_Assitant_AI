@@ -9,6 +9,10 @@ build/
 .env
 .env.local
 
+# Python virtual environments
+venv/
+.venv/
+
 # Editor
 .vscode/settings.json
 **/.vscode/ui-assistant/
