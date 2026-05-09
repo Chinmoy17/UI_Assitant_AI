@@ -1,0 +1,263 @@
+[
+  {
+    "id": "balance",
+    "title": "Balance",
+    "summary": "Distribution of visual weight across a composition — symmetrical for calm and stability, asymmetrical for energy with control.",
+    "how": [
+      "Use symmetrical balance for finance, healthcare, settings, and admin surfaces.",
+      "Use asymmetrical balance for landing pages, editorial, and creative brand work.",
+      "Balance density, not only geometry — a saturated red card outweighs a larger gray panel."
+    ],
+    "implementation": [
+      "One heavy focal area per viewport is usually enough.",
+      "If the left side has dense text, counterweight with image mass, a stronger CTA block, or more spacing on the right.",
+      "On dashboards, avoid stacking every KPI and alert into the top-left corner."
+    ],
+    "examples": [
+      "Apple product pages: large product visual opposite short controlled copy and a clear CTA.",
+      "Symmetrical: headers, pricing tables, settings panels."
+    ],
+    "failure_mode": "Too much dense content in one quadrant makes the UI feel unstable. Empty dead zones combined with overloaded corners look unfinished.",
+    "best_page_types": ["dashboard", "settings", "landing_page", "pricing"],
+    "best_emphasis": ["clarity", "trust"]
+  },
+  {
+    "id": "contrast",
+    "title": "Contrast",
+    "summary": "Difference in light versus dark, large versus small, thick versus thin — creates distinction, readability, and focus.",
+    "how": [
+      "Build contrast with color, size, weight, spacing, and shape.",
+      "Reserve your strongest contrast for the most important action or message.",
+      "Use low contrast for supportive text, never for critical text."
+    ],
+    "implementation": [
+      "Body text should meet at least 4.5:1 contrast (WCAG AA).",
+      "Large headings can go lower, but AA compliance is the safer floor for production.",
+      "Primary and secondary buttons must not rely only on label wording to differentiate intent."
+    ],
+    "examples": [
+      "Nike: bold black-and-white with a single urgent accent, product and headline dominate instantly.",
+      "Spotify: high-contrast surfaces with vivid green reserved for action and brand recall."
+    ],
+    "failure_mode": "Many high-contrast colors at once destroy hierarchy. Low-contrast labels on tinted cards make dashboards unreadable despite looking polished.",
+    "best_page_types": ["landing_page", "pricing", "dashboard", "form"],
+    "best_emphasis": ["clarity", "conversion", "trust"]
+  },
+  {
+    "id": "emphasis_hierarchy",
+    "title": "Emphasis and Hierarchy",
+    "summary": "Emphasis identifies the focal point; hierarchy ranks everything else beneath it. If everything shouts, the interface becomes silent.",
+    "how": [
+      "Decide the first thing the user should notice in under 2 seconds.",
+      "Support it with second-level context, then tertiary details.",
+      "Keep hierarchy to three clear levels on a single screen whenever possible."
+    ],
+    "implementation": [
+      "Use a size jump of at least 1.3× to 1.5× between hierarchy levels.",
+      "Give the primary action the strongest contrast, strongest label, and clearest position.",
+      "On dense screens, emphasis can come from whitespace as much as from color."
+    ],
+    "examples": [
+      "Stripe: one sentence, one product visual, one CTA — then proof and detail.",
+      "Meta: content creation and feed engagement emphasized; secondary settings stay visually quiet."
+    ],
+    "failure_mode": "Multiple primary CTAs create indecision. Making every number, card title, and badge bold removes rank entirely.",
+    "best_page_types": ["landing_page", "dashboard", "pricing", "onboarding"],
+    "best_emphasis": ["clarity", "conversion"]
+  },
+  {
+    "id": "placement_proximity",
+    "title": "Placement and Proximity",
+    "summary": "The eye assumes nearby items are related. Actions should live next to the objects they control.",
+    "how": [
+      "Place actions near the object they control.",
+      "Put labels, helper text, and validation near the field they describe.",
+      "Group related content before adding visual dividers."
+    ],
+    "implementation": [
+      "Primary actions belong at the end of the reading path or directly adjacent to the object they affect.",
+      "Top-left and center-left remain high-value areas for scanning.",
+      "For pricing tables, keep plan name, price, main benefit, and CTA tightly grouped."
+    ],
+    "examples": [
+      "Amazon: product title, rating, price, delivery promise, and purchase action in one tight decision cluster.",
+      "AJIO: icon plus label reduces ambiguity and increases tap target area in navigation."
+    ],
+    "failure_mode": "Global actions too far from affected objects increase friction. Wide gaps between label and field create comprehension lag.",
+    "best_page_types": ["form", "dashboard", "pricing", "navigation"],
+    "best_emphasis": ["clarity", "speed"]
+  },
+  {
+    "id": "alignment",
+    "title": "Alignment",
+    "summary": "Invisible structure that makes interfaces feel intentional. Aligned elements reduce visual noise and support scanning.",
+    "how": [
+      "Align text to a consistent edge.",
+      "Use shared baselines and card widths.",
+      "Keep input fields, labels, and controls lined up within a form."
+    ],
+    "implementation": [
+      "Prefer left-aligned body text for interfaces using Latin scripts.",
+      "Use one dominant column edge per section.",
+      "Avoid floating objects that ignore grid logic unless that break is deliberate and rare."
+    ],
+    "examples": [
+      "Linear's interface feels premium partly because alignment is extremely strict across type, panels, list items, and controls."
+    ],
+    "failure_mode": "Near-alignment is worse than obvious misalignment because it looks accidental — the eye notices the imprecision without understanding why.",
+    "best_page_types": ["form", "settings", "dashboard", "onboarding"],
+    "best_emphasis": ["clarity", "trust"]
+  },
+  {
+    "id": "movement_rhythm",
+    "title": "Movement and Rhythm",
+    "summary": "How the eye travels across a layout. Repeated intervals make that movement feel predictable and guide the user through narrative beats.",
+    "how": [
+      "Build flows from headline to explanation to proof to action.",
+      "Use repeated card heights, margins, and content blocks to create scroll rhythm.",
+      "Use animation to confirm action, not to perform theater."
+    ],
+    "implementation": [
+      "Keep entrance animations short — 150 to 300 ms.",
+      "Use stagger only when it supports comprehension.",
+      "For onboarding, number steps or use a visible progress system."
+    ],
+    "examples": [
+      "Apple launch pages: controlled scroll choreography moves the eye through narrative beats.",
+      "Notion: spatial progression and progressive disclosure lets users discover features without overwhelming the first screen."
+    ],
+    "failure_mode": "Animated backgrounds, autoplay motion, or attention-grabbing loaders overwhelm the core task and signal low confidence.",
+    "best_page_types": ["landing_page", "onboarding"],
+    "best_emphasis": ["conversion", "clarity"]
+  },
+  {
+    "id": "white_space",
+    "title": "White Space",
+    "summary": "Deliberate absence of clutter. Creates focus, separation, elegance, and breathing room — especially important for trust-heavy and premium surfaces.",
+    "how": [
+      "Use it to define groups before adding borders.",
+      "Increase space around primary actions and major sections.",
+      "Use dense spacing only when the audience benefits from density and already understands the system."
+    ],
+    "implementation": [
+      "Premium and trust-heavy brands often benefit from more white space.",
+      "Internal tools can be denser but should still preserve clear grouping with consistent spacing tokens.",
+      "Section spacing: 48–96 px on desktop, 24–40 px on mobile between major sections."
+    ],
+    "examples": [
+      "Apple and luxury commerce: white space signals confidence and premium value.",
+      "Stripe's documentation: generous space makes dense technical content scannable."
+    ],
+    "failure_mode": "Too little space feels noisy. Too much space without hierarchy feels empty and under-designed.",
+    "best_page_types": ["landing_page", "pricing", "settings"],
+    "best_emphasis": ["clarity", "trust"]
+  },
+  {
+    "id": "proportion_scale",
+    "title": "Proportion and Scale",
+    "summary": "Scale signals importance before language does. The relationship between sizes creates visual rank and emotional weight.",
+    "how": [
+      "Make the most important object obviously larger.",
+      "Use modular type and spacing scales.",
+      "Adjust scale by device, not by percentage alone."
+    ],
+    "implementation": [
+      "A dashboard KPI should be larger than surrounding labels by at least one clear step.",
+      "Hero headlines can be oversized, but supporting text must remain readable beside them.",
+      "Use a type scale with at least 1.25× ratio between adjacent levels."
+    ],
+    "examples": [
+      "Nike: oversized typography and dominant photography create energy and urgency.",
+      "Bloomberg: controlled scale highlights key numbers without making the whole screen noisy."
+    ],
+    "failure_mode": "Huge logos, oversized icons, or tiny body copy create amateur proportion immediately. Everything large means nothing is large.",
+    "best_page_types": ["dashboard", "landing_page", "pricing"],
+    "best_emphasis": ["clarity", "conversion"]
+  },
+  {
+    "id": "pattern_repetition",
+    "title": "Pattern and Repetition",
+    "summary": "Consistent visual and interaction patterns lower interpretation cost. Users stop re-learning the interface with each screen.",
+    "how": [
+      "Keep cards, list rows, nav sections, and tables structurally consistent.",
+      "Repeat type scale, icon style, radius, elevation logic, and spacing rules.",
+      "Repeat interaction states: hover, press, focus, success, and error."
+    ],
+    "implementation": [
+      "Define reusable components, not just reusable colors.",
+      "Audit whether a component still works at mobile and dense desktop states.",
+      "If two buttons perform equivalent roles, they should look equivalent."
+    ],
+    "examples": [
+      "Airbnb search results: repeating card patterns help the brain compare listings quickly.",
+      "Meta: repeated icon treatments, chip styles, avatars, and modal patterns make large systems learnable."
+    ],
+    "failure_mode": "Blind repetition without context makes products feel generic. Decorative patterns behind text reduce readability and feel dated.",
+    "best_page_types": ["dashboard", "settings", "navigation", "form"],
+    "best_emphasis": ["speed", "trust"]
+  },
+  {
+    "id": "unity",
+    "title": "Unity",
+    "summary": "The sense that the whole interface belongs to one system. Unity creates trust — disconnected styles look improvised and unreliable.",
+    "how": [
+      "Standardize palette, component logic, type pairings, radius, spacing, and interaction tone.",
+      "Let one design language run across marketing, app, support, and settings.",
+      "Use design tokens for color, type, spacing, and motion."
+    ],
+    "implementation": [
+      "Keep illustration style, icon stroke, and border logic coherent.",
+      "One component that breaks pattern should document the reason.",
+      "Limit typeface families to two: one for display, one for body."
+    ],
+    "examples": [
+      "Apple: consistent materials, type, spacing, and motion language across product, marketing, and OS surfaces.",
+      "Stripe: code-forward visuals, strong hierarchy, and disciplined spacing feel coherent across docs, dashboard, and marketing."
+    ],
+    "failure_mode": "Mixing three button styles, two card philosophies, and unrelated type systems kills credibility instantly.",
+    "best_page_types": ["landing_page", "onboarding", "settings"],
+    "best_emphasis": ["trust", "clarity"]
+  },
+  {
+    "id": "variety",
+    "title": "Variety",
+    "summary": "Controlled difference that prevents the interface from becoming flat or predictable. Unity without variety is sterile; variety without unity is chaos.",
+    "how": [
+      "Vary scale, imagery, section backgrounds, or component arrangement while keeping the underlying system consistent.",
+      "Use variety at the section level more often than at the component level.",
+      "Let one accent, one hero visual, or one alternate card treatment provide lift."
+    ],
+    "implementation": [
+      "Introduce variety through full-bleed sections, alternating image-text layouts, or a distinct hero treatment.",
+      "Keep variety to 20% of the design; repetition should dominate."
+    ],
+    "examples": [
+      "Spotify: variety in album art, gradients, and playlist imagery while the system beneath remains highly repetitive."
+    ],
+    "failure_mode": "Too much novelty in every section makes the brand feel unstable and exhausting to read.",
+    "best_page_types": ["landing_page", "onboarding"],
+    "best_emphasis": ["conversion"]
+  },
+  {
+    "id": "design_ethics",
+    "title": "Designed Constraints and Ethics",
+    "summary": "Digital products encode permission, restriction, sequence, and power into the object itself — not just presentation but behavior.",
+    "how": [
+      "Ask: what are we helping the user do? And: what are we silently forcing, preventing, or biasing?",
+      "Treat defaults, required paths, and disabled states as policy decisions, not just visual choices.",
+      "Distinguish good constraints (validation, safety, privacy) from dark patterns (hidden cancellation, obscured export, forced upgrades)."
+    ],
+    "implementation": [
+      "Good: disable submit until required fields are valid; warn before destructive actions; rate limits; privacy permissions.",
+      "Avoid: obscuring cancellation; hiding export behind confusing flows; countdown timer dark patterns; making comparison impossible.",
+      "Run the ethics check: would this flow still feel fair if the user were in a hurry or under stress?"
+    ],
+    "examples": [
+      "Shopify: hides logistics complexity behind guided flows and prebuilt templates — complexity moved to where users are ready for it.",
+      "LinkedIn profile completion: uses Zeigarnik Effect honestly — shows remaining steps to motivate, not to trap."
+    ],
+    "failure_mode": "Good UX that converts well by hiding alternatives may be effective but is not good design. Interface-encoded manipulation is still manipulation.",
+    "best_page_types": ["onboarding", "pricing", "settings"],
+    "best_emphasis": ["trust"]
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "anatomy": {
+    "required_parts": ["Column headers (th)", "Data rows", "Empty state", "Loading state"],
+    "recommended_parts": ["Row actions", "Pagination or infinite scroll", "Column sort", "Selection checkboxes (if bulk actions exist)"],
+    "optional_parts": ["Column resize", "Column reorder", "Sticky first column", "Row expand/collapse", "Inline editing"]
+  },
+  "column_alignment": {
+    "rule": "Alignment must be semantic — it helps the eye compare values instantly.",
+    "patterns": [
+      { "content_type": "Text (names, labels, status)", "alignment": "left",   "reason": "Matches natural reading direction" },
+      { "content_type": "Numbers (amounts, counts, IDs)", "alignment": "right", "reason": "Decimal points align, enabling instant comparison" },
+      { "content_type": "Currency",                      "alignment": "right", "reason": "Currency symbol + decimal alignment. Use tabular-nums font variant." },
+      { "content_type": "Dates",                         "alignment": "right", "reason": "YYYY-MM-DD right-aligned columns sort visually" },
+      { "content_type": "Percentage",                    "alignment": "right", "reason": "Same as numbers — comparison by decimal position" },
+      { "content_type": "Checkbox / icon",               "alignment": "center","reason": "Small visual element, centering reduces dead space" },
+      { "content_type": "Action buttons",                "alignment": "right", "reason": "Row actions always right-aligned (reading endpoint = decision point)" }
+    ]
+  },
+  "sorting": {
+    "visual": "Sort indicator: ↑↓ icon next to column header. Active sort: accent color, filled arrow direction.",
+    "default_state": "Both arrows visible but dimmed = sortable but not currently sorted",
+    "active_state": "One arrow filled in accent color = currently sorted by this column in this direction",
+    "aria": "aria-sort='ascending|descending|none' on sortable column <th>",
+    "rule": "Default sort should be the most natural (date desc for logs, name asc for lists). State survives pagination."
+  },
+  "row_selection": {
+    "pattern": "Checkbox in first column. Header checkbox = select/deselect all on current page.",
+    "indeterminate_header": "When some-but-not-all rows on current page are selected: header checkbox is aria-checked='mixed'",
+    "bulk_actions": "Appear in a sticky bar above the table when ≥1 row is selected. Bar shows selected count + bulk action buttons.",
+    "rule": "NEVER hide primary row actions behind selection. Selection is for bulk — single-row actions stay visible in the row."
+  },
+  "pagination": {
+    "patterns": [
+      {
+        "name": "Classic pagination",
+        "use": "When users need to navigate to a specific page or go back. Common in admin/data tables.",
+        "controls": "< Prev | 1 2 3 … 12 | Next >",
+        "rule": "Show max 7 page numbers. Truncate with ellipsis beyond. Always show first and last page."
+      },
+      {
+        "name": "Load more button",
+        "use": "When users scan sequentially and back-navigation is rare. Comments, activity feeds.",
+        "controls": "Load more button at bottom of list",
+        "rule": "Show how many more items will load: 'Load 20 more (140 remaining)'"
+      },
+      {
+        "name": "Infinite scroll",
+        "use": "When content is continuous and destination matters less than discovery. Social feeds, image galleries.",
+        "rule": "Provide footer access — infinite scroll traps users above the footer. Fix: sticky 'Jump to footer' link.",
+        "accessibility": "Announce loaded content count to screen readers with aria-live='polite'"
+      }
+    ],
+    "page_size_selector": "Common sizes: 10, 25, 50, 100. Default to 25. Position: bottom-left or top-right of table.",
+    "rule": "Always show total count: 'Showing 26–50 of 234 items'"
+  },
+  "row_actions": {
+    "visible_actions": "For 1–2 actions: show always in row (icon buttons or text links)",
+    "overflow_menu": "For 3+ actions: use overflow menu (⋯ or ⋮) that appears on row hover",
+    "destructive_placement": "Destructive action must be at the bottom of overflow menu, separated by a divider, in danger color",
+    "hover_reveal": "Actions can be invisible by default and reveal on row hover. Must also appear on row keyboard focus.",
+    "rule": "Never use hover-only actions without a keyboard-accessible equivalent"
+  },
+  "density": {
+    "modes": [
+      { "mode": "Comfortable", "row_height": "52px", "padding": "py-3 px-4", "use": "Default for mixed content with avatars/tags" },
+      { "mode": "Default",     "row_height": "44px", "padding": "py-2.5 px-4", "use": "Standard data tables" },
+      { "mode": "Compact",     "row_height": "36px", "padding": "py-1.5 px-4", "use": "Power users, admin tools, financial data — many rows needed" }
+    ],
+    "rule": "Offer density control for data-heavy tools. Default to comfortable for consumer products, default for B2B, compact only on explicit user preference."
+  },
+  "styling_rules": [
+    "Header row: bg-subtle (slightly different from body rows), font-medium or font-semibold, text-secondary",
+    "Body rows: alternating zebra striping OR hover highlight — NEVER both",
+    "Hover row: bg-subtle (2px brighter than row bg)",
+    "Selected row: bg-accent-subtle border-l-2 border-accent",
+    "Sticky header: position:sticky top-0 z-[200] with box-shadow-sm (simulates separation from content)",
+    "Sticky first column: position:sticky left-0 with right-edge box-shadow to indicate overflow"
+  ],
+  "accessibility": [
+    "Static tables: role='table' (or native <table>), thead/tbody/th/td with scope='col'",
+    "Interactive tables: role='grid' — allows arrow key navigation",
+    "Column sort: aria-sort on <th>",
+    "Row selection: aria-selected='true|false' on <tr>",
+    "Table must have accessible name: aria-label or aria-labelledby pointing to a caption or heading"
+  ]
+}

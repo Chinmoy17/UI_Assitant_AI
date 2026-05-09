@@ -1,0 +1,159 @@
+{
+  "source": "WCAG 2.2 + WAI-ARIA 1.2 + inclusive design principles",
+  "landmark_roles": [
+    { "role": "banner",      "element": "<header>",  "use": "Site-wide header. One per page." },
+    { "role": "navigation",  "element": "<nav>",     "use": "Navigation region. Multiple allowed — label each with aria-label." },
+    { "role": "main",        "element": "<main>",    "use": "Primary content. Exactly one per page." },
+    { "role": "complementary","element": "<aside>",  "use": "Supporting content (sidebar). Label with aria-label if multiple." },
+    { "role": "contentinfo", "element": "<footer>",  "use": "Site-wide footer. One per page." },
+    { "role": "search",      "element": "none",      "use": "Search region. Apply role='search' to the <form> wrapping a search input." },
+    { "role": "form",        "element": "<form>",    "use": "Form region. Only use when form is significant — needs aria-label or aria-labelledby." },
+    { "role": "region",      "element": "<section>", "use": "Generic landmark for important sections. Requires aria-label to appear in landmark list." }
+  ],
+  "aria_attributes": [
+    {
+      "attribute": "aria-label",
+      "use": "Provides an invisible text label for an element",
+      "when": "Element has no visible text label (icon buttons, nav with no heading, search input)",
+      "example": "<button aria-label='Close dialog'><XIcon /></button>"
+    },
+    {
+      "attribute": "aria-labelledby",
+      "use": "Points to the element that labels this element",
+      "when": "Element's label is a visible heading or other element on screen",
+      "example": "<dialog aria-labelledby='dialog-title'><h2 id='dialog-title'>Confirm Delete</h2></dialog>"
+    },
+    {
+      "attribute": "aria-describedby",
+      "use": "Points to supplementary description text",
+      "when": "Additional context helps assistive tech users understand an element (form hint, tooltip content)",
+      "example": "<input aria-describedby='email-hint' /><p id='email-hint'>We'll never share your email.</p>"
+    },
+    {
+      "attribute": "aria-hidden",
+      "use": "Hides element from assistive technology",
+      "when": "Decorative icons, duplicated text, visual-only elements (loading spinners with text label nearby)",
+      "example": "<svg aria-hidden='true' focusable='false'>...</svg>"
+    },
+    {
+      "attribute": "aria-live",
+      "use": "Announces dynamic content changes",
+      "values": { "polite": "Wait for user idle — success messages, counts, form validation", "assertive": "Interrupt immediately — critical errors, alerts only" },
+      "rule": "Prefer polite. Use assertive only for urgent errors. Never put decorative changes in a live region."
+    },
+    {
+      "attribute": "aria-expanded",
+      "use": "Indicates whether a controlled element (dropdown, accordion, disclosure) is open or closed",
+      "when": "Any trigger that shows/hides content",
+      "example": "<button aria-expanded='false' aria-controls='menu'>Options</button>"
+    },
+    {
+      "attribute": "aria-controls",
+      "use": "Points to the element this element controls",
+      "when": "Disclosure triggers, tab buttons, accordion headers, combobox triggers",
+      "example": "<button aria-controls='panel-1' aria-expanded='true'>Section 1</button>"
+    },
+    {
+      "attribute": "aria-current",
+      "use": "Marks the current item in a set (breadcrumbs, nav, step indicator)",
+      "values": { "page": "Current page in navigation", "step": "Current step in wizard", "true": "Generic current item" },
+      "example": "<a href='/dashboard' aria-current='page'>Dashboard</a>"
+    },
+    {
+      "attribute": "aria-required",
+      "use": "Marks a form field as required",
+      "when": "Custom form elements (native <input required> preferred)",
+      "note": "Still show visual * indicator in label — aria-required is for screen readers only"
+    },
+    {
+      "attribute": "aria-invalid",
+      "use": "Marks a form field as having an invalid value",
+      "when": "After failed validation",
+      "values": { "true": "Invalid", "false": "Valid (default)", "grammar": "Grammar error", "spelling": "Spelling error" },
+      "example": "<input aria-invalid='true' aria-describedby='email-error' />"
+    },
+    {
+      "attribute": "aria-disabled",
+      "use": "Marks an element as disabled but keeps it in focus order",
+      "difference_from_disabled": "HTML disabled removes from focus order. aria-disabled keeps it focusable — better for explaining why it's disabled via tooltip.",
+      "when": "Form submit button disabled until valid — keep it focusable so user can tab to it and get hint"
+    },
+    {
+      "attribute": "aria-busy",
+      "use": "Indicates a region is loading/updating",
+      "example": "<div role='status' aria-busy='true' aria-label='Loading results'>...</div>",
+      "note": "Set aria-busy='false' when content finishes loading"
+    }
+  ],
+  "screen_reader_patterns": [
+    {
+      "scenario": "Icon-only button",
+      "wrong": "<button><TrashIcon /></button>",
+      "right": "<button aria-label='Delete item'><TrashIcon aria-hidden='true' /></button>",
+      "why": "Without aria-label, screen reader reads 'button' with no action context"
+    },
+    {
+      "scenario": "Image with meaningful content",
+      "wrong": "<img src='chart.png' />",
+      "right": "<img src='chart.png' alt='Bar chart showing Q1 revenue up 23% year-over-year' />",
+      "why": "Decorative images: alt=''. Informational images: describe what the image conveys, not its appearance"
+    },
+    {
+      "scenario": "Error message linked to field",
+      "wrong": "<p class='error'>Email is required</p>",
+      "right": "<input aria-invalid='true' aria-describedby='email-error' /><p id='email-error' role='alert'>Email is required</p>",
+      "why": "Screen readers don't associate floating error text with an input unless explicitly linked"
+    },
+    {
+      "scenario": "Loading spinner",
+      "wrong": "<div class='spinner'></div>",
+      "right": "<div role='status' aria-label='Loading'><div class='spinner' aria-hidden='true'></div></div>",
+      "why": "Pure CSS spinners are invisible to screen readers. Wrap with role='status' and a label."
+    },
+    {
+      "scenario": "Dynamic content update (search results)",
+      "wrong": "Update DOM silently",
+      "right": "<div aria-live='polite' aria-atomic='true'>Showing 42 results for 'dashboard'</div>",
+      "why": "Screen readers don't announce DOM changes unless a live region is present"
+    },
+    {
+      "scenario": "Navigation with multiple nav elements",
+      "wrong": "<nav>...<nav>...</nav></nav>",
+      "right": "<nav aria-label='Main'><nav aria-label='Breadcrumb'>",
+      "why": "Screen reader landmark lists show all nav elements. Labels distinguish them."
+    }
+  ],
+  "color_and_visual": [
+    "NEVER rely on color alone to convey meaning — always add icon, text label, or pattern",
+    "Ensure 4.5:1 contrast for normal text, 3:1 for large text and UI components (WCAG AA)",
+    "All interactive elements need a visible focus indicator with at least 3:1 contrast against adjacent colors",
+    "Provide text alternatives for all charts, graphs, and data visualizations",
+    "Animations must respect prefers-reduced-motion — provide instant/snap alternative"
+  ],
+  "wcag_quick_checklist": {
+    "perceivable": [
+      "All images have alt text (or alt='' if decorative)",
+      "Color is not the only visual means of conveying information",
+      "Contrast ratio meets 4.5:1 for text, 3:1 for UI components",
+      "Text can be resized to 200% without loss of content"
+    ],
+    "operable": [
+      "All functionality available from keyboard",
+      "No keyboard traps outside of intentional modals",
+      "Focus order is logical and follows content flow",
+      "Focus indicator is visible on all interactive elements",
+      "Users have enough time to read content (no auto-advancing carousels without control)"
+    ],
+    "understandable": [
+      "Page language is set (<html lang='en'>)",
+      "Form inputs have labels, hints, and error descriptions",
+      "Error messages identify the field and describe how to fix",
+      "Consistent navigation across pages"
+    ],
+    "robust": [
+      "HTML is valid — no unclosed tags, duplicate IDs",
+      "ARIA is used correctly and only when semantic HTML is insufficient",
+      "Interactive widgets work with current screen readers (NVDA + Firefox, JAWS + Chrome)"
+    ]
+  }
+}

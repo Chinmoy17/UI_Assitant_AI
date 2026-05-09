@@ -1,0 +1,58 @@
+{
+  "grid": {
+    "sizes": [12, 16, 20, 24],
+    "rule": "All icons in a product must use a consistent grid size. Don't mix 16px and 24px icons in the same context.",
+    "recommended": "20px for most UI. 16px for dense/inline contexts. 24px for action buttons. Never use 18px or 22px.",
+    "optical_sizing": "Filled icons appear heavier — optically reduce by 1px. Stroke icons at same size feel lighter. Match visual weight, not pixel dimensions."
+  },
+  "style": {
+    "stroke_vs_filled": {
+      "stroke": "Outline/line icons — lighter, modern, preferred for navigation, text-adjacent, labels",
+      "filled": "Solid icons — heavier, used for active states, important alerts, and emphasis",
+      "rule": "Pick one style for the product and use it consistently. Mix only intentionally: stroke=inactive, filled=active (tabs, sidebar nav)."
+    },
+    "stroke_weight": {
+      "recommended": "1.5px for 20px grid, 2px for 24px grid",
+      "rule": "Don't use 1px strokes — they become invisible at small sizes and in dark mode"
+    },
+    "corner_radius": "Match icon corner radius to the product's border-radius language. Rounded product → rounded icons. Sharp product → sharp icons.",
+    "consistency": "All icons should share: same grid, same stroke weight, same corner radius, same optical weight. One off-brand icon makes the system look amateurish."
+  },
+  "usage_rules": [
+    "Icons without labels must have aria-label or be paired with tooltip — never rely on icon meaning alone",
+    "Decorative icons (purely visual) must have aria-hidden='true' and focusable='false'",
+    "Icon + label: minimum 8px gap (gap-2). Never vertically misaligned — use flex items-center.",
+    "Interactive icon buttons: minimum 44×44px touch target. 32×32px visible icon area with invisible padding to 44px.",
+    "NEVER scale icons with font-size (em units) unless intentionally coupling them to text size",
+    "Color: inherit from parent text color by default (currentColor). Override only when semantic (danger icon = danger color)."
+  ],
+  "color_rules": [
+    { "context": "Default icon next to text", "color": "currentColor (inherits text color)" },
+    { "context": "Muted / secondary icon",    "color": "--text-tertiary or text-muted" },
+    { "context": "Danger icon (error state)", "color": "--color-danger" },
+    { "context": "Success icon",              "color": "--color-success" },
+    { "context": "Warning icon",              "color": "--color-warning" },
+    { "context": "Active nav icon",           "color": "--accent" },
+    { "context": "Inactive nav icon",         "color": "--text-secondary" }
+  ],
+  "size_map": [
+    { "size_px": 12, "use": "Badge indicator, meta text icon" },
+    { "size_px": 16, "use": "Dense tables, inline text, tags, breadcrumbs" },
+    { "size_px": 20, "use": "Default UI — sidebar nav, form labels, menu items" },
+    { "size_px": 24, "use": "Button icons, card header actions, primary nav" },
+    { "size_px": 32, "use": "Feature icons in marketing sections, onboarding illustrations" },
+    { "size_px": 40, "use": "Empty state icons, hero feature icons" },
+    { "size_px": 48, "use": "Large empty states, step indicators in onboarding" }
+  ],
+  "library_guidance": {
+    "recommended": ["Lucide React (open source, consistent, Tailwind-friendly)", "Heroicons (Tailwind Labs, solid + outline)", "Phosphor Icons (wide range, 6 weights)"],
+    "avoid": ["Font Awesome (heavy, inconsistent styles)", "Mixing libraries (creates visual inconsistency)", "Custom SVGs that don't match chosen library's stroke weight"]
+  },
+  "antipatterns": [
+    "Using icons from multiple libraries — visual weight mismatch is immediately obvious",
+    "14px icons next to 16px body text — icon is too small to be legible",
+    "Colored icons for decoration, not meaning — if color doesn't communicate state, remove it",
+    "Interactive icon button with no visible label and no tooltip — fails accessibility",
+    "Scaling icons with CSS transform:scale() — use width/height directly for consistent rendering"
+  ]
+}

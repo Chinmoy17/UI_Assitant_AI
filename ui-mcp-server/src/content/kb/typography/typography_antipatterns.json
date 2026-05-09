@@ -1,0 +1,89 @@
+{
+  "antipatterns": [
+    {
+      "name": "Flat hierarchy",
+      "bad": "All text is 14px / font-weight: 400 / same color",
+      "why": "Users cannot scan — every element competes equally",
+      "fix": "Apply at least 3 distinct size/weight/color levels per screen"
+    },
+    {
+      "name": "ALL-CAPS body text",
+      "bad": "<p className=\"uppercase\">Terms and conditions apply...</p>",
+      "why": "ALL CAPS removes word shape silhouettes — reading speed drops ~12%",
+      "fix": "Reserve uppercase for overlines (11px, tracking-widest) only"
+    },
+    {
+      "name": "Bold on small text",
+      "bad": "<span className=\"text-xs font-bold\">Error message</span>",
+      "why": "Bold at 11–12px causes ink trapping — counters (a, e, o) fill in visually",
+      "fix": "Use font-medium (500) at small sizes, reserve bold for 16px+"
+    },
+    {
+      "name": "Low-contrast 'design choice'",
+      "bad": "text-gray-300 on white background (#D1D5DB = 1.6:1 — fails WCAG)",
+      "why": "10% of users have some form of visual impairment",
+      "fix": "text-secondary (#52525B) minimum for any meaningful text"
+    },
+    {
+      "name": "Arbitrary size values",
+      "bad": "className=\"text-[13.5px]\" or className=\"text-[15px]\"",
+      "why": "Breaks the scale — 6 developers each pick different 'between' sizes",
+      "fix": "Add a missing token to the scale config instead"
+    },
+    {
+      "name": "Letter-spacing on body",
+      "bad": "<p className=\"tracking-wide\">This paragraph has wide tracking...</p>",
+      "why": "Increases visual noise, reduces reading speed — font designer already set spacing",
+      "fix": "tracking-normal on all body and mixed-case UI text. Always."
+    },
+    {
+      "name": "Justified text",
+      "bad": "<p className=\"text-justify\">Long paragraph...</p>",
+      "why": "CSS justification creates irregular word spacing — 'rivers' of whitespace",
+      "fix": "text-left always for paragraphs"
+    },
+    {
+      "name": "Center-aligned paragraphs",
+      "bad": "<p className=\"text-center\">This is a long description that spans multiple lines...</p>",
+      "why": "Ragged left edge makes each line's start position unpredictable — hard to read",
+      "fix": "text-center only for 1–2 line standalone copy (hero taglines, empty states)"
+    }
+  ],
+  "checklist": {
+    "scale": [
+      "All font sizes use defined tokens — no arbitrary text-[Npx] values",
+      "Adjacent heading levels are visually distinct when placed side by side",
+      "text-display is used only in marketing/hero contexts"
+    ],
+    "hierarchy": [
+      "Every screen has at least 3 distinct visual levels (size, weight, or color)",
+      "Primary action / most important content is visually dominant",
+      "There is no element competing for 'most important' with the actual primary element"
+    ],
+    "weight": [
+      "No font-bold on text below 16px",
+      "No font-bold on body copy or descriptions",
+      "At most 2 weights used within any single component"
+    ],
+    "color": [
+      "No text-tertiary on interactive or meaningful text",
+      "Semantic colors (danger, success) always paired with an icon",
+      "All text passes WCAG AA contrast (4.5:1 normal, 3:1 large)"
+    ],
+    "spacing": [
+      "Body copy containers have max-width: 65ch",
+      "More space above headings than below (heading belongs to content that follows)",
+      "No letter-spacing on mixed-case body or UI text"
+    ],
+    "alignment": [
+      "No justified text",
+      "No center-aligned paragraphs (>2 lines)",
+      "Numbers in tables are right-aligned"
+    ],
+    "accessibility": [
+      "No color as the only differentiator for interactive text (underline or border also present)",
+      "No opacity-40 on text that carries meaning without aria-disabled or equivalent",
+      "Font size minimum 16px for body, 14px absolute floor for any text"
+    ]
+  }
+}

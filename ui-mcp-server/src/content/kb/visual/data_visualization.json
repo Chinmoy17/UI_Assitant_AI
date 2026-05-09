@@ -1,0 +1,98 @@
+{
+  "chart_selection": {
+    "rule": "Choose a chart by the relationship in the data, not by what looks impressive.",
+    "by_relationship": [
+      {
+        "relationship": "Comparison (how things differ)",
+        "chart_types": ["Bar chart (categorical)", "Grouped bar chart (multiple series)", "Radar/spider chart (multi-attribute comparison)"],
+        "best": "Bar chart",
+        "avoid": "Pie chart for more than 5 segments, 3D charts",
+        "rule": "Horizontal bars when labels are long. Vertical bars for time series with few periods."
+      },
+      {
+        "relationship": "Trend over time",
+        "chart_types": ["Line chart", "Area chart", "Spark line (inline, no axes)"],
+        "best": "Line chart for multiple series, area chart for single series showing volume",
+        "avoid": "Bar chart for time series with many data points — becomes a wall",
+        "rule": "Always start y-axis at 0 for absolute values. Truncated y-axis only for percentage-change charts."
+      },
+      {
+        "relationship": "Part-to-whole (composition)",
+        "chart_types": ["Pie chart (≤5 segments)", "Donut chart (≤5 segments)", "Stacked bar chart", "Treemap (for many categories)"],
+        "best": "Donut chart for 2–5 segments with clear labels. Stacked bar for showing composition change over time.",
+        "avoid": "Pie charts with more than 5 slices — use a bar chart instead",
+        "rule": "Always label percentages directly on slices, not just in legend."
+      },
+      {
+        "relationship": "Distribution (spread of values)",
+        "chart_types": ["Histogram", "Box plot", "Violin plot"],
+        "best": "Histogram for frequency distribution. Box plot for showing outliers.",
+        "avoid": "Average alone — it hides distribution. Always pair with standard deviation or range.",
+        "rule": "Consumer products rarely need distribution charts. B2B/analytics products: prefer them over averages alone."
+      },
+      {
+        "relationship": "Correlation (relationship between two variables)",
+        "chart_types": ["Scatter plot", "Bubble chart (adds third variable as size)"],
+        "best": "Scatter plot — simplest and most honest",
+        "rule": "Add a regression/trend line if correlation is meaningful. Label outliers explicitly."
+      },
+      {
+        "relationship": "Geospatial",
+        "chart_types": ["Choropleth map (filled regions)", "Dot map (point locations)", "Heat map (density)"],
+        "best": "Choropleth for regional comparison. Dot map for individual locations.",
+        "rule": "Never use 3D maps — they distort perception by perspective."
+      },
+      {
+        "relationship": "Flow / process",
+        "chart_types": ["Sankey diagram", "Funnel chart"],
+        "best": "Funnel chart for conversion stages. Sankey for multi-path flows.",
+        "rule": "Funnel charts: show actual numbers AND percentages. Drop-off % between each stage."
+      }
+    ]
+  },
+  "color_in_data": {
+    "rules": [
+      "NEVER use red and green as the only differentiators — 8% of males are red-green colorblind",
+      "Use shape + pattern in addition to color for any categorical distinction",
+      "Sequential data (low→high intensity): single-hue scale (light to dark of one color)",
+      "Diverging data (negative to positive): two-hue scale from neutral center (e.g., red→white→blue)",
+      "Categorical data (unordered groups): distinct hue palette (max 7 colors — more than 7 and users can't track)",
+      "Highlight a single data point: use accent color, keep everything else neutral gray",
+      "Data colors are separate from UI colors — never reuse --accent for chart bars"
+    ],
+    "colorblind_safe_palette": {
+      "description": "Okabe-Ito palette — distinguishable by all forms of color vision deficiency",
+      "colors": ["#E69F00 (orange)", "#56B4E9 (sky blue)", "#009E73 (bluish green)", "#F0E442 (yellow)", "#0072B2 (blue)", "#D55E00 (vermillion)", "#CC79A7 (reddish purple)", "#000000 (black)"],
+      "rule": "Use this palette as default for categorical charts. Never use pure red (#FF0000) or pure green (#00FF00) as chart colors."
+    }
+  },
+  "axis_and_labels": [
+    "Y-axis labels: left-aligned, horizontal — never rotated y-axis labels",
+    "X-axis labels: rotate 45° only if labels are too long to fit horizontally",
+    "Grid lines: light gray (--border-muted), horizontal only for bar/line charts, minimal density (4–6 lines)",
+    "Data labels: show on hover tooltip by default. Static labels only for small datasets (≤10 points) or key highlights.",
+    "Legend: place above or below chart, never inside data area. Clicking legend item should toggle series visibility.",
+    "Zero line: always visible if chart includes negative values. Bold the zero line.",
+    "Truncation warning: if y-axis doesn't start at 0, add a visual break indicator and annotate clearly"
+  ],
+  "dashboard_data_display": {
+    "metric_cards": {
+      "anatomy": "Primary number (large, font-bold) → label (text-secondary, text-sm) → trend indicator (delta % with arrow + semantic color)",
+      "trend_colors": { "positive": "success color", "negative": "danger color", "neutral": "text-secondary" },
+      "rule": "Always show the context — '23% vs last month' not just '23%'. Numbers without context mean nothing."
+    },
+    "sparklines": {
+      "use": "Inline trend visualization inside metric cards — no axes, no labels, just the shape of the trend",
+      "size": "40–60px tall, full card width",
+      "color": "Use semantic color matching trend direction (success green for up, danger red for down) or just accent",
+      "rule": "Sparklines are supplementary — never the only trend indicator. Pair with percentage label."
+    }
+  },
+  "rules": [
+    "Simplify before you visualize — if a table communicates better than a chart, use a table",
+    "One insight per chart — if you need to explain a chart, it needs to be simpler",
+    "Mobile: stack charts vertically, reduce data series to 1–2, use shorter time ranges",
+    "Provide accessible text alternative for every chart (summary table or aria-label with key finding)",
+    "Animate chart entrance in 300–400ms ease-out. Data updates: cross-fade or morph, not rebuild."
+  ]
+}

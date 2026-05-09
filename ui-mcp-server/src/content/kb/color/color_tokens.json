@@ -1,0 +1,74 @@
+{
+  "background_roles": [
+    { "token": "--bg-base",    "light": "#FFFFFF",           "dark": "#09090B",  "use": "Page background" },
+    { "token": "--bg-surface", "light": "#FAFAFA",           "dark": "#18181B",  "use": "Cards, panels, sidebars" },
+    { "token": "--bg-subtle",  "light": "#F4F4F5",           "dark": "#27272A",  "use": "Inputs, inner sections, code blocks" },
+    { "token": "--bg-muted",   "light": "#E4E4E7",           "dark": "#3F3F46",  "use": "Skeleton loaders, dividers" },
+    { "token": "--bg-overlay", "light": "rgba(0,0,0,0.5)",   "dark": "rgba(0,0,0,0.7)", "use": "Modal backdrop" }
+  ],
+  "border_roles": [
+    { "token": "--border-default", "light": "#E4E4E7", "dark": "#27272A", "use": "Default card / input border" },
+    { "token": "--border-strong",  "light": "#D4D4D8", "dark": "#3F3F46", "use": "Emphasized separator" },
+    { "token": "--border-focus",   "light": "#6366F1", "dark": "#818CF8", "use": "Focus ring color" },
+    { "token": "--border-danger",  "light": "#FCA5A5", "dark": "#7F1D1D", "use": "Error state border" },
+    { "token": "--border-success", "light": "#86EFAC", "dark": "#14532D", "use": "Success state border" }
+  ],
+  "accent_roles": [
+    { "token": "--accent",        "light": "#6366F1", "dark": "#818CF8", "use": "Primary brand — buttons, links, active" },
+    { "token": "--accent-hover",  "light": "#4F46E5", "dark": "#6366F1", "use": "Hover state" },
+    { "token": "--accent-active", "light": "#4338CA", "dark": "#4F46E5", "use": "Pressed / active state" },
+    { "token": "--accent-subtle", "light": "#EEF2FF", "dark": "#1E1B4B", "use": "Tinted background for accent elements" },
+    { "token": "--accent-text",   "light": "#4338CA", "dark": "#A5B4FC", "use": "Accent text on white (7:1 contrast)" }
+  ],
+  "semantic_roles": [
+    { "group": "danger",  "foreground": "--color-danger",         "background": "--color-danger-subtle",  "border": "--color-danger-border",  "light_fg": "#DC2626", "dark_fg": "#F87171" },
+    { "group": "success", "foreground": "--color-success",        "background": "--color-success-subtle", "border": "--color-success-border", "light_fg": "#16A34A", "dark_fg": "#4ADE80" },
+    { "group": "warning", "foreground": "--color-warning",        "background": "--color-warning-subtle", "border": "--color-warning-border", "light_fg": "#D97706", "dark_fg": "#FCD34D" },
+    { "group": "info",    "foreground": "--color-info",           "background": "--color-info-subtle",    "border": "--color-info-border",    "light_fg": "#2563EB", "dark_fg": "#60A5FA" }
+  ],
+  "elevation_system": {
+    "description": "Depth is created through background color steps, not shadows. Shadows are supplemental.",
+    "levels": [
+      { "level": 0, "token": "bg-base",    "light": "#FFFFFF", "dark": "#09090B", "use": "Page background" },
+      { "level": 1, "token": "bg-surface", "light": "#FAFAFA", "dark": "#18181B", "use": "Cards, sidebars, nav" },
+      { "level": 2, "token": "bg-subtle",  "light": "#F4F4F5", "dark": "#27272A", "use": "Inputs, inner panels, code" },
+      { "level": 3, "token": "bg-muted",   "light": "#E4E4E7", "dark": "#3F3F46", "use": "Skeletons, disabled fills" }
+    ],
+    "shadow_scale": [
+      { "name": "xs", "css": "0 1px 2px 0 rgb(0 0 0 / 0.04)",                                                    "use": "Inline card on bg-base" },
+      { "name": "sm", "css": "0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.04)",                 "use": "Sticky header" },
+      { "name": "md", "css": "0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.04)",              "use": "Floating card / popover, tooltip" },
+      { "name": "lg", "css": "0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04)",            "use": "Dropdown menu" },
+      { "name": "xl", "css": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04)",            "use": "Modal / dialog" }
+    ],
+    "shadow_element_map": [
+      { "element": "Inline card on bg-base",    "shadow": "shadow-xs + border-default" },
+      { "element": "Floating card / popover",   "shadow": "shadow-md" },
+      { "element": "Dropdown menu",             "shadow": "shadow-lg" },
+      { "element": "Modal / dialog",            "shadow": "shadow-xl" },
+      { "element": "Tooltip",                   "shadow": "shadow-md" },
+      { "element": "Sticky header",             "shadow": "shadow-sm" }
+    ],
+    "rules": [
+      "NEVER use heavy shadows (shadow-xl) on flat, inline elements — reserve for floating layers",
+      "In dark mode: reduce shadow opacity by 50% — dark surfaces naturally recede",
+      "Border + subtle background is enough for inline cards — no shadow needed",
+      "Shadows should communicate Z-axis position, not decoration"
+    ]
+  },
+  "component_states": {
+    "matrix": {
+      "default":  "bg-bg-surface border-border-default text-primary",
+      "hover":    "bg-bg-subtle   border-border-strong  text-primary",
+      "focus":    "ring-2 ring-accent/30 border-border-focus outline-none",
+      "active":   "bg-bg-muted    border-border-strong  text-primary",
+      "selected": "bg-accent-subtle border-accent/40   text-accent-text",
+      "disabled": "bg-bg-muted    border-border-default text-disabled opacity-60 cursor-not-allowed",
+      "error":    "bg-danger-subtle border-border-danger text-primary ring-danger/20",
+      "success":  "bg-success-subtle border-border-success text-primary",
+      "loading":  "opacity-70 cursor-wait"
+    },
+    "focus_ring_pattern": "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/30 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-base",
+    "rule": "ALWAYS define all states before implementing any interactive component. Never remove focus-visible without replacement."
+  }
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "brand": "Figma",
+    "industry_match": ["saas", "b2b", "design", "developer"],
+    "emphasis_match": ["speed", "clarity"],
+    "design_signals": [
+      "Compact, dense UI chrome — maximum space for the canvas",
+      "Left panel for layers, right panel for properties — classic CAD spatial model",
+      "Dark sidebar with neutral content area — reduces distraction from the work",
+      "Keyboard shortcut system visible everywhere — tool respects power users",
+      "Real-time collaboration indicators (avatars) in the toolbar — presence as a feature"
+    ],
+    "emotional_effect": "Focus, craft, professional mastery",
+    "design_lesson": "When the product IS the canvas, the UI must disappear. Every pixel of chrome is a pixel of distraction.",
+    "type_direction": "Inter (system-forward). Compact, dense. Tabular numbers for coordinates and measurements.",
+    "color_direction": "Near-black sidebar (#1e1e1e), white canvas, accent only for selection and interactive states. Status colors strictly for collaboration avatars and component states."
+  },
+  {
+    "brand": "Linear",
+    "industry_match": ["saas", "b2b", "developer", "productivity"],
+    "emphasis_match": ["speed", "clarity"],
+    "design_signals": [
+      "Keyboard-first — every action has a shortcut, Cmd+K opens a full command palette",
+      "Near-pixel-perfect alignment — every element on exactly the right grid position",
+      "Minimal color usage — status represented by icons and muted semantic colors, not bright fills",
+      "Frictionless issue creation — one keyboard shortcut, minimal required fields",
+      "Dark mode as default, light mode as option — developer audience expectation"
+    ],
+    "emotional_effect": "Speed, calm confidence, professional competence",
+    "design_lesson": "Removing every unnecessary click is a product feature, not just a UX preference. The best interaction is no interaction.",
+    "type_direction": "Inter, compact weights, mono for IDs and codes.",
+    "color_direction": "Near-black dark mode (#0f0f0f), neutral gray palette, single vivid accent. Status colors desaturated — important enough to notice, calm enough not to alarm."
+  },
+  {
+    "brand": "Notion",
+    "industry_match": ["saas", "b2b", "education", "productivity", "consumer"],
+    "emphasis_match": ["clarity", "trust"],
+    "design_signals": [
+      "Block-based document metaphor — the entire product is an extension of a blank page",
+      "Progressive disclosure everywhere — features hide until needed, surface when relevant",
+      "Neutral chrome that matches document aesthetics — UI and content share the same visual language",
+      "Slash command interface — actions discovered in context, not in menus",
+      "Cover images and icons personalise without forcing structure"
+    ],
+    "emotional_effect": "Creative freedom within calm structure",
+    "design_lesson": "Hiding complexity is not the same as removing it. Notion teaches that progressive disclosure enables both beginners and experts in the same interface.",
+    "type_direction": "Default sans (Georgia serif for doc mode). Generous line-height. Large, readable body text.",
+    "color_direction": "White/off-white default. Neutral sidebar (#f7f7f5). Accent only for links and interactive elements. Color used for page icons and covers, not for chrome."
+  },
+  {
+    "brand": "Headspace",
+    "industry_match": ["health", "healthcare", "wellness", "consumer", "education"],
+    "emphasis_match": ["trust", "clarity"],
+    "design_signals": [
+      "Warm, rounded aesthetic — oval shapes, no sharp corners anywhere",
+      "Muted earthy palette — orange, warm beige, deep navy — calming without being clinical",
+      "Generous whitespace — slow, deliberate pace communicated through space",
+      "Playful illustrations without being childish — friendly, approachable expertise",
+      "Single-focus screens — one content item or action at a time"
+    ],
+    "emotional_effect": "Calm, safety, approachable expertise",
+    "design_lesson": "Emotional design for sensitive domains (health, mental wellness) requires every element to reinforce safety. Rounded shapes, warm colors, and breathing room are not decorative — they're clinical.",
+    "type_direction": "Rounded sans-serif (similar to GT Walsheim). Warm, soft weight. Large, unhurried body text.",
+    "color_direction": "Warm orange accent (#FF7B54-range). Deep navy and warm white backgrounds. No stark black/white. Semantic colors softened (no angry red)."
+  },
+  {
+    "brand": "Vercel",
+    "industry_match": ["developer", "saas", "infrastructure", "hosting"],
+    "emphasis_match": ["clarity", "speed"],
+    "design_signals": [
+      "Black and white as a full design language — not a limitation but a statement",
+      "Monochrome palette forces hierarchy through spacing and size, not color",
+      "Data-forward dashboard — deployment status, performance metrics, edge function logs front and center",
+      "Code always visible — terminal output, build logs, function traces are hero content",
+      "Micro-animations for deploy status — loading states as performance art"
+    ],
+    "emotional_effect": "Technical mastery, confidence, speed",
+    "design_lesson": "Constraint breeds creativity. When you remove color as a tool, spacing and typography must carry all hierarchy — the result is a product that looks inevitable, not designed.",
+    "type_direction": "Geist (proprietary, similar to Inter). Mono for all code/logs. Heavy type weights for KPIs.",
+    "color_direction": "Black (#000), white (#fff), gray scale. One accent color only — electric blue or green for active/live states. Semantic colors standard (red/green/yellow for deploy status)."
+  },
+  {
+    "brand": "Shopify",
+    "industry_match": ["ecommerce", "saas", "b2b", "retail"],
+    "emphasis_match": ["trust", "conversion"],
+    "design_signals": [
+      "Polaris design system — highly consistent, component-driven, merchant-focused",
+      "Business-first dashboard — revenue, orders, products always center stage",
+      "Progressive complexity — simple store setup, advanced inventory/shipping hidden until needed",
+      "Merchant onboarding: guided checklist visible until complete — celebrates each step",
+      "Trust-first tone in copy — never assumes merchant expertise, explains consequences clearly"
+    ],
+    "emotional_effect": "Trusted partner, business confidence, supportive system",
+    "design_lesson": "B2B products that serve non-technical users (small business owners) must balance power with guidance. Shopify shows you don't have to choose — progressive disclosure enables both.",
+    "type_direction": "Inter or system font. Readable at all sizes. Clear heading hierarchy for settings and navigation.",
+    "color_direction": "Green (#008060 brand green) for primary actions. Neutral dashboard palette. Semantic semantic colors. No color for decoration — every color choice is functional."
+  },
+  {
+    "brand": "Bloomberg Terminal",
+    "industry_match": ["fintech", "finance", "trading", "enterprise"],
+    "emphasis_match": ["speed", "clarity"],
+    "design_signals": [
+      "Maximum information density — every pixel occupied with data",
+      "Monochrome + semantic color only — no decorative color ever",
+      "Keyboard-first interaction — terminal commands, function keys, no mouse required",
+      "Real-time data update everywhere — the UI is always moving",
+      "Color semantics: orange = Bloomberg brand, red = negative, green = positive, white on black = base"
+    ],
+    "emotional_effect": "Authority, data mastery, professional exclusivity",
+    "design_lesson": "For power users in time-critical environments, efficiency IS the UX. Every concession to aesthetics or discoverability is a tradeoff against speed. Know your user and serve them without compromise.",
+    "type_direction": "Monospace throughout. Small sizes (12–14px standard). Function key labels. No web fonts.",
+    "color_direction": "Black background, white text, orange brand, green positive, red negative. Zero decorative color. Maximum semantic precision."
+  },
+  {
+    "brand": "SSENSE",
+    "industry_match": ["luxury", "fashion", "ecommerce", "retail"],
+    "emphasis_match": ["trust", "clarity"],
+    "design_signals": [
+      "Extreme whitespace — product photography breathes, no chrome competes",
+      "Minimal navigation — luxury signals restraint, not abundance",
+      "Typography as identity — editorial serif headlines, whisper-quiet captions",
+      "Product is the content — the entire UI is a frame for photography",
+      "No promotional banners, countdown timers, or urgency signals — luxury rejects pressure"
+    ],
+    "emotional_effect": "Exclusivity, refinement, curated trust",
+    "design_lesson": "Luxury products communicate value through restraint. Less chrome, more space, fewer words. The absence of noise is the message.",
+    "type_direction": "Serif display typeface (Canela-range). Light weight. Generous tracking. No bold weights for body text.",
+    "color_direction": "White dominant. Black text. No accent color — navigation and interactive elements are black/dark gray. Zero semantic color for decorative purposes."
+  }
+]
