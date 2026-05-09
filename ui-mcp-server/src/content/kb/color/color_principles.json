@@ -1,0 +1,63 @@
+{
+  "rule_60_30_10": {
+    "description": "Every page distributes color across three proportional layers.",
+    "layers": [
+      { "percent": 60, "role": "Dominant",  "use": "Page background, large surface areas",                       "token": "bg-base" },
+      { "percent": 30, "role": "Secondary", "use": "Cards, sidebars, panels, secondary buttons",                 "token": "bg-surface" },
+      { "percent": 10, "role": "Accent",    "use": "Primary buttons, active states, links, highlights",          "token": "accent" }
+    ],
+    "rules": [
+      "NEVER exceed 10% accent color on any page — if it's everywhere, it signals nothing",
+      "NEVER use more than one accent color per product — two accent colors require explicit brand justification",
+      "The 30% layer creates depth through surface elevation, not color variety",
+      "On dark mode: the 60% is darkest, 30% is slightly lighter, 10% is your accent"
+    ]
+  },
+  "semantic_usage": [
+    {
+      "color": "Danger / Red",
+      "meaning": "Destructive, error, irreversible",
+      "use_for": "Delete buttons, error messages, form validation failures",
+      "never_use_for": "Warnings, information, decorative"
+    },
+    {
+      "color": "Success / Green",
+      "meaning": "Completed, saved, confirmed",
+      "use_for": "Success toasts, completion states, positive metrics",
+      "never_use_for": "Neutral actions, decorative"
+    },
+    {
+      "color": "Warning / Amber",
+      "meaning": "Caution, review needed, approaching limit",
+      "use_for": "Rate limit warnings, unsaved changes, expiry alerts",
+      "never_use_for": "Errors, success states"
+    },
+    {
+      "color": "Info / Blue",
+      "meaning": "Neutral information, guidance",
+      "use_for": "Tips, documentation callouts, neutral status",
+      "never_use_for": "Errors, success, warnings"
+    }
+  ],
+  "semantic_pattern": {
+    "correct": "subtle background + matching border + colored icon + colored text",
+    "example_classes": "bg-danger-subtle border border-danger-border rounded-lg p-4 flex gap-3",
+    "wrong": "Solid semantic color as background (bg-danger text-white) — aggressive, hard to read",
+    "rule": "Always use all three layers together: subtle bg + border + icon/text. Never solid semantic fill."
+  },
+  "emphasis_color_guidance": {
+    "clarity":    "Neutral surface hierarchy. One accent call-to-action. Low color noise.",
+    "conversion": "Accent color on primary CTA only. Use subtle danger/success for urgency signals. Avoid competitive saturation.",
+    "trust":      "Conservative accent use. Prefer --text-secondary for supporting content. Never use warning/danger for decorative purposes.",
+    "speed":      "High contrast on interactive elements. Strong hover states. Minimal color transitions — snap, not fade."
+  },
+  "page_type_color_guidance": {
+    "dashboard":    "Use bg-subtle for data table rows (alternating or hover). Semantic colors for metric deltas. Accent only on primary action.",
+    "landing_page": "Accent in hero CTA + 2–3 feature highlights max. Use bg-accent-subtle for section tinting sparingly.",
+    "form":         "Error state must use all three: danger border + danger-subtle bg + danger icon + message. Success state on completion.",
+    "settings":     "Mostly neutral. Accent only on active toggle/radio. Danger only on destructive settings (delete account).",
+    "onboarding":   "Warm, inviting. Accent on progress indicators. Avoid danger completely unless showing a blocking error.",
+    "pricing":      "Accent on the recommended plan. Use bg-accent-subtle for highlighted tier. Danger sparingly for urgency.",
+    "navigation":   "Active item: accent text + accent-subtle background. Hover: bg-subtle. Never accent on all items."
+  }
+}

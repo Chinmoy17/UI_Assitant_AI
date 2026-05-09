@@ -1,0 +1,191 @@
+{
+  "buttons": {
+    "hierarchy": [
+      { "type": "Primary",   "classes": "bg-accent text-white",                             "use": "THE action on this view" },
+      { "type": "Secondary", "classes": "border-default bg-transparent text-primary",        "use": "Supporting action" },
+      { "type": "Ghost",     "classes": "no border no bg text-secondary",                    "use": "Low priority / cancel" },
+      { "type": "Danger",    "classes": "bg-danger text-white",                              "use": "Destructive — separate visually" },
+      { "type": "Link",      "classes": "no bg no border text-accent underline",             "use": "Navigation-style action" }
+    ],
+    "sizing": [
+      { "size": "sm", "classes": "h-8  px-3 text-sm  gap-1.5", "px": 32,  "use": "Inline actions, table rows" },
+      { "size": "md", "classes": "h-10 px-4 text-sm  gap-2",   "px": 40,  "use": "Default" },
+      { "size": "lg", "classes": "h-12 px-6 text-base gap-2",  "px": 48,  "use": "Primary CTA, hero" },
+      { "size": "xl", "classes": "h-14 px-8 text-lg  gap-3",   "px": 56,  "use": "Marketing hero only" }
+    ],
+    "placement_patterns": [
+      {
+        "pattern": "Form submission",
+        "layout": "right-aligned, cancel LEFT of submit",
+        "rule": "Primary on the right — matches LTR reading flow. Cancel always left of primary."
+      },
+      {
+        "pattern": "Destructive confirmation dialog",
+        "layout": "Cancel far left, danger action far right",
+        "rule": "Maximize distance between cancel and destructive (Fitts's Law — make misclick harder)"
+      },
+      {
+        "pattern": "Page-level CTA (dashboard / landing)",
+        "layout": "Left-aligned with content; centered only in hero with centered text",
+        "rule": "Left-aligned when accompanying left-aligned content"
+      },
+      {
+        "pattern": "Mobile",
+        "layout": "Full-width stacked, primary always on top",
+        "rule": "Full-width stacked buttons on mobile (< 640px). Primary above secondary. Min 44px height, 8px gap."
+      }
+    ],
+    "rules": [
+      "One primary button per view — NEVER two primary buttons side by side",
+      "NEVER place destructive and primary buttons adjacent — always separate them",
+      "NEVER use ghost buttons as primary CTAs — they disappear visually",
+      "ALWAYS define all 5 states: default, hover, focus, disabled, loading",
+      "Destructive actions should be SMALLER and FURTHER from the primary action",
+      "Mobile: always at least h-11 (44px) on touch surfaces"
+    ]
+  },
+  "forms": {
+    "input_anatomy": {
+      "order": ["Label (always visible)", "Helper text / optional badge", "Input field", "Error message or character count"],
+      "rule": "NEVER use placeholder-only labels — placeholder disappears on focus"
+    },
+    "input_states": [
+      { "state": "default",  "classes": "border border-default bg-bg-subtle text-primary placeholder:text-tertiary" },
+      { "state": "focus",    "classes": "focus:border-border-focus focus:ring-2 focus:ring-accent/20 focus:outline-none" },
+      { "state": "error",    "classes": "border-border-danger bg-danger-subtle focus:ring-danger/20" },
+      { "state": "disabled", "classes": "border-border-default bg-bg-muted text-disabled cursor-not-allowed opacity-60" },
+      { "state": "success",  "classes": "border-border-success bg-success-subtle" }
+    ],
+    "layout_patterns": [
+      {
+        "pattern": "Single column",
+        "use": "Default — always correct",
+        "rule": "Always revert to single column on mobile (< 768px)"
+      },
+      {
+        "pattern": "Two column",
+        "use": "Desktop only, genuinely related fields (first/last name, city/zip)",
+        "rule": "NEVER two columns for unrelated fields — it forces the eye to zigzag"
+      },
+      {
+        "pattern": "Inline form",
+        "use": "Search / subscribe — single field only",
+        "rule": "Button height must match input height exactly"
+      }
+    ],
+    "rules": [
+      "Labels always ABOVE inputs — never to the left on mobile",
+      "Helper text BELOW label, before the input (not after)",
+      "Error messages BELOW the input they describe",
+      "Required indicator (*) in label, not in placeholder",
+      "NEVER rely on placeholder as the label — placeholder disappears on focus"
+    ]
+  },
+  "cards": {
+    "variants": [
+      { "variant": "Default",     "bg": "bg-surface",      "border": "border-default", "shadow": "none",            "use": "Content cards on bg-base" },
+      { "variant": "Elevated",    "bg": "bg-surface",      "border": "none",           "shadow": "shadow-md",       "use": "Floating elements" },
+      { "variant": "Subtle",      "bg": "bg-subtle",       "border": "border-default", "shadow": "none",            "use": "Nested / inner cards" },
+      { "variant": "Interactive", "bg": "bg-surface",      "border": "border-default", "shadow": "hover:shadow-sm", "use": "Clickable cards" },
+      { "variant": "Highlighted", "bg": "bg-accent-subtle","border": "border-accent/30","shadow": "none",           "use": "Featured / selected" },
+      { "variant": "Danger",      "bg": "bg-danger-subtle","border": "border-danger-border","shadow": "none",       "use": "Error or alert cards" }
+    ],
+    "grid_patterns": {
+      "content_cards":    "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+      "dashboard_stats":  "grid grid-cols-2 gap-3 lg:grid-cols-4",
+      "feature_cards":    "grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+    },
+    "padding": {
+      "default":  "p-5 (20px)",
+      "spacious":  "p-6 (24px)",
+      "dense":    "p-4 (16px)"
+    },
+    "border_radius": {
+      "standalone": "rounded-xl (12px)",
+      "inside_panel": "rounded-lg (8px)"
+    },
+    "rules": [
+      "NEVER nest a bg-surface card inside another bg-surface card — step down to bg-subtle",
+      "Interactive cards need hover state: hover:border-strong hover:shadow-sm transition-all",
+      "Consistent internal padding across all cards of same type",
+      "Border-radius matches context: rounded-xl standalone, rounded-lg inside panels"
+    ]
+  },
+  "navigation": {
+    "top_nav": {
+      "height": "56–64px (h-14 to h-16)",
+      "layout": "Logo top-left | Primary nav center or left-of-center | Auth/CTA top-right",
+      "active_state": "accent color text + optional accent underline (2px bottom border)"
+    },
+    "sidebar": {
+      "widths": { "default": "240px (w-60)", "spacious": "280px (w-70)", "icon_only": "64px (w-16)" },
+      "active_state": "bg-accent-subtle text-accent-text font-medium rounded-lg",
+      "hover_state": "bg-bg-subtle text-primary",
+      "icon_size": "16px (w-4) with 8px gap to label",
+      "pinned_bottom": "User profile / settings"
+    },
+    "mobile": {
+      "patterns": ["Hamburger menu (full-screen overlay from left)", "Bottom tab bar (iOS/Android)"],
+      "bottom_tab": { "max_items": 5, "min_touch_target": "44px" },
+      "hamburger": "Full-screen overlay slides in from left, closes with × top-right"
+    },
+    "rules": [
+      "Logo always top-left",
+      "Auth actions / CTA always top-right",
+      "Active nav item must be visually distinct (not just bold)",
+      "Mobile navigation must be defined before shipping"
+    ]
+  },
+  "modals": {
+    "anatomy": {
+      "overlay": "bg-overlay full screen",
+      "header": "Title + close × — p-6, border-b",
+      "content": "p-6",
+      "footer": "p-4, border-t, flex justify-end — Cancel left, Primary right"
+    },
+    "sizing": [
+      { "size": "sm",   "class": "max-w-sm",   "px": 384, "use": "Simple confirm dialogs" },
+      { "size": "md",   "class": "max-w-md",   "px": 448, "use": "Standard forms" },
+      { "size": "lg",   "class": "max-w-lg",   "px": 512, "use": "Content-heavy forms" },
+      { "size": "xl",   "class": "max-w-xl",   "px": 576, "use": "Complex forms" },
+      { "size": "2xl",  "class": "max-w-2xl",  "px": 672, "use": "Large content, multi-column forms" },
+      { "size": "full", "class": "max-w-full m-4", "px": null, "use": "Editors, media viewers" }
+    ],
+    "rules": [
+      "Modal always centered vertically and horizontally",
+      "Overlay click closes modal (unless destructive action is in progress)",
+      "ESC key always closes modal",
+      "Focus trapped inside modal when open (accessibility)",
+      "Never stack two modals — use a wizard/stepper pattern instead",
+      "Mobile: modals become bottom sheets (slide up from bottom, full width)"
+    ]
+  },
+  "checklist": {
+    "buttons": [
+      "Exactly one primary button per view",
+      "Destructive action separated from primary action spatially",
+      "All 5 button states defined: default, hover, focus, disabled, loading",
+      "Primary button ≥ 44px height on mobile",
+      "Cancel is left of confirm, never right"
+    ],
+    "forms": [
+      "All inputs have visible labels (not placeholder-only)",
+      "Helper text below label, error message below input",
+      "All 5 input states defined: default, focus, error, success, disabled",
+      "Single column layout on mobile",
+      "Required fields marked in label with *"
+    ],
+    "cards_layout": [
+      "No bg-surface card nested inside another bg-surface card",
+      "Consistent internal padding across all cards of same type",
+      "Shadow level matches actual Z-axis position of element",
+      "Interactive cards have hover state defined"
+    ],
+    "navigation": [
+      "Logo top-left",
+      "Auth/CTA top-right",
+      "Active state visually distinct (not just bold)",
+      "Mobile navigation defined (hamburger or bottom tabs)"
+    ]
+  }
+}

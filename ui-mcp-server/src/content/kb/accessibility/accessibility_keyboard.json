@@ -1,0 +1,152 @@
+{
+  "source": "W3C ARIA Authoring Practices Guide (APG) — https://www.w3.org/WAI/ARIA/apg/patterns/",
+  "global_rules": [
+    "All interactive elements must be reachable and operable by keyboard alone",
+    "Focus order must follow DOM order unless a logical alternative is explicitly coded",
+    "Focus must never be trapped outside of a modal — within a modal, it must be trapped",
+    "Never remove focus outline without replacing it with an equally visible alternative",
+    "Avoid tabindex values > 0 — they break natural DOM order and create maintenance nightmares"
+  ],
+  "component_keyboard_patterns": [
+    {
+      "component": "Button",
+      "keys": [
+        { "key": "Enter / Space", "action": "Activate the button" },
+        { "key": "Tab", "action": "Move focus to next focusable element" },
+        { "key": "Shift+Tab", "action": "Move focus to previous focusable element" }
+      ],
+      "role": "button",
+      "notes": "Native <button> gets this for free. Avoid role='button' on <div> — also requires keydown handler."
+    },
+    {
+      "component": "Modal / Dialog",
+      "keys": [
+        { "key": "Tab", "action": "Move to next focusable element inside dialog (wraps at last element)" },
+        { "key": "Shift+Tab", "action": "Move to previous focusable element inside dialog (wraps at first element)" },
+        { "key": "Escape", "action": "Close the dialog and return focus to the trigger element" }
+      ],
+      "role": "dialog",
+      "required_aria": ["aria-modal='true'", "aria-labelledby (pointing to dialog title)", "aria-describedby (optional, for summary)"],
+      "focus_management": "On open: move focus to first focusable element (or dialog title if content is complex). On close: return focus to the element that triggered the dialog.",
+      "notes": "NEVER stack two modal layers — use wizard patterns instead. Focus must be trapped inside the open modal."
+    },
+    {
+      "component": "Tabs",
+      "keys": [
+        { "key": "Tab", "action": "Move focus into the tablist (lands on active tab), then to tab panel content" },
+        { "key": "Left / Right Arrow", "action": "Move focus between tabs in horizontal tablist (wraps)" },
+        { "key": "Up / Down Arrow", "action": "Move focus between tabs in vertical tablist (wraps)" },
+        { "key": "Home", "action": "Move focus to first tab" },
+        { "key": "End", "action": "Move focus to last tab" },
+        { "key": "Enter / Space", "action": "Activate tab if not automatically activated on focus" },
+        { "key": "Delete (optional)", "action": "Remove tab if deletion is supported" }
+      ],
+      "role_structure": "tablist (container) → tab (each tab button) → tabpanel (each panel)",
+      "required_aria": ["aria-selected='true' on active tab", "aria-controls on each tab pointing to its tabpanel", "aria-labelledby on each tabpanel pointing to its tab"],
+      "notes": "Auto-activate on focus only if panel content loads instantly. If there is latency, require Enter/Space to avoid slow navigation."
+    },
+    {
+      "component": "Dropdown / Select Menu",
+      "keys": [
+        { "key": "Enter / Space / Down Arrow", "action": "Open the dropdown" },
+        { "key": "Up / Down Arrow", "action": "Move between options" },
+        { "key": "Home / End", "action": "Jump to first / last option" },
+        { "key": "Enter", "action": "Select focused option and close menu" },
+        { "key": "Escape", "action": "Close without selecting, return focus to trigger" },
+        { "key": "Type-ahead", "action": "Focus option matching typed character(s)" }
+      ],
+      "role": "combobox or listbox",
+      "notes": "Native <select> handles this automatically. Custom dropdowns require all of the above manually."
+    },
+    {
+      "component": "Accordion",
+      "keys": [
+        { "key": "Enter / Space", "action": "Toggle panel expand/collapse" },
+        { "key": "Tab", "action": "Move focus to next focusable element" },
+        { "key": "Down / Up Arrow (optional)", "action": "Move between accordion headers" },
+        { "key": "Home / End (optional)", "action": "Jump to first / last accordion header" }
+      ],
+      "role_structure": "button (each header trigger) → region (each panel, aria-labelledby pointing to its header)",
+      "required_aria": ["aria-expanded on each trigger button", "aria-controls pointing to panel id"],
+      "notes": "The trigger must be a <button> element. Never an <h2> directly — wrap inside."
+    },
+    {
+      "component": "Checkbox",
+      "keys": [
+        { "key": "Space", "action": "Toggle checked / unchecked" }
+      ],
+      "role": "checkbox",
+      "required_aria": ["aria-checked='true|false|mixed' (for tri-state)", "aria-labelledby or visible label"],
+      "notes": "Tri-state (indeterminate) for 'select all' where some children are selected. Use aria-checked='mixed'."
+    },
+    {
+      "component": "Radio Group",
+      "keys": [
+        { "key": "Tab", "action": "Move focus into the group (lands on selected option or first)" },
+        { "key": "Left / Up Arrow", "action": "Move to previous radio and select it" },
+        { "key": "Right / Down Arrow", "action": "Move to next radio and select it" }
+      ],
+      "role_structure": "radiogroup (container) → radio (each option)",
+      "required_aria": ["aria-labelledby on radiogroup", "aria-checked='true|false' on each radio"],
+      "notes": "Only selected radio is in tab order — arrow keys move within group. This differs from checkboxes."
+    },
+    {
+      "component": "Combobox / Autocomplete",
+      "keys": [
+        { "key": "Down Arrow", "action": "Open listbox, move focus to first suggestion" },
+        { "key": "Up Arrow", "action": "Open listbox, move focus to last suggestion" },
+        { "key": "Escape", "action": "Close listbox, restore original value" },
+        { "key": "Enter", "action": "Accept focused suggestion" },
+        { "key": "Alt+Down Arrow", "action": "Open listbox without moving focus to suggestion" }
+      ],
+      "role": "combobox",
+      "required_aria": ["aria-expanded on input", "aria-haspopup='listbox'", "aria-autocomplete='list|inline|both'", "aria-controls pointing to listbox id"],
+      "notes": "Live region (aria-live='polite') should announce count of matching suggestions as user types."
+    },
+    {
+      "component": "Data Table (interactive)",
+      "keys": [
+        { "key": "Tab", "action": "Move focus between interactive cells" },
+        { "key": "Arrow Keys", "action": "Navigate between cells in a grid role" },
+        { "key": "Enter", "action": "Activate cell action or enter edit mode" },
+        { "key": "Escape", "action": "Cancel edit mode, exit cell" },
+        { "key": "Space", "action": "Select row if row selection is supported" }
+      ],
+      "role": "table (static) or grid (interactive)",
+      "required_aria": ["aria-sort on sortable column headers", "aria-label on table", "scope='col' on <th>"],
+      "notes": "Static data tables use role='table'. Interactive (sortable, editable, selectable) use role='grid'."
+    },
+    {
+      "component": "Tooltip",
+      "keys": [
+        { "key": "Focus (keyboard)", "action": "Show tooltip" },
+        { "key": "Blur", "action": "Hide tooltip" },
+        { "key": "Escape", "action": "Hide tooltip while keeping focus on trigger" }
+      ],
+      "role": "tooltip",
+      "required_aria": ["aria-describedby on trigger pointing to tooltip id"],
+      "notes": "Tooltip delay on hover: 300–500ms to prevent flicker. Tooltip must NOT contain interactive content (links, buttons) — use a popover instead."
+    },
+    {
+      "component": "Toast / Alert",
+      "keys": [],
+      "role": "alert (assertive) or status (polite)",
+      "required_aria": ["role='alert' for urgent messages (NVDA/JAWS announce immediately)", "role='status' for non-urgent confirmations"],
+      "notes": "Success toasts: role='status'. Error alerts: role='alert'. Never use both on same element. Auto-dismiss after 5–7s minimum. Provide manual dismiss."
+    }
+  ],
+  "focus_management_rules": [
+    "On modal open: move focus inside the modal immediately",
+    "On modal close: return focus to the element that triggered it",
+    "On route change (SPA): move focus to page heading (h1) or a skip-link target",
+    "On dynamic content load: if content replaces focused element, move focus to replacement",
+    "For wizard/multi-step: on step change, move focus to the new step heading",
+    "For toast notifications: do NOT move focus — they are supplemental, use role='status'"
+  ],
+  "skip_links": {
+    "rule": "Every page must have a skip navigation link as the first focusable element",
+    "implementation": "Position off-screen (not display:none) by default, reveal on focus with position:fixed top-left",
+    "targets": ["Skip to main content", "Skip to navigation (optional on complex apps)"],
+    "example_class": "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:p-3 focus:bg-bg-surface focus:border focus:border-accent focus:rounded"
+  }
+}

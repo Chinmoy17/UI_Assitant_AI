@@ -1,0 +1,87 @@
+{
+  "fintech": {
+    "description": "Finance, banking, insurance, payments, trading, accounting tools",
+    "design_principles": [
+      "Trust is the product — every UI decision is a trust decision",
+      "Clarity over cleverness — ambiguity costs money",
+      "Density is acceptable, confusion is not",
+      "Error states must be explicit, specific, and reversible where possible",
+      "Every destructive action (send payment, close account) needs a confirmation with named consequences"
+    ],
+    "typography": "Tabular numbers (font-variant-numeric: tabular-nums) for all monetary values. High-contrast body text. No italic for important data. Mono for transaction IDs and account numbers.",
+    "color": "Conservative palette. Blue = primary trust color. Red = strictly for negative values and errors, never decoration. Green = positive delta only. Avoid warm/playful colors for core product surfaces.",
+    "layout": "Data density is welcome for power users. Generous spacing in consumer fintech. Always show running totals. Date ranges clearly labeled. Currency + locale handling visible.",
+    "components": "Input masks for card numbers and phone numbers. Numeric keypads on mobile for monetary inputs. Progress indicators for multi-step financial flows. Lock icon on sensitive fields.",
+    "antipatterns": ["Hiding fees until checkout", "Vague error messages on payment failure", "Small 'cancel' links for subscriptions", "Autoplay or animation near monetary values (distracting)"],
+    "page_type_emphasis": { "dashboard": "trust + clarity", "form": "trust + clarity", "onboarding": "trust + conversion", "settings": "trust" },
+    "reference_brands": ["Stripe (developer-first, clean, dense)", "Wise (consumer-friendly, clear fees)", "Robinhood (conversion-first — controversial)", "QuickBooks (power user density)"]
+  },
+  "healthcare": {
+    "description": "Patient portals, clinical tools, health tracking, telemedicine, medical records",
+    "design_principles": [
+      "Patient safety > conversion > everything else",
+      "Plain language only — medical jargon must always have a plain translation",
+      "Cognitive load reduction is critical — users may be stressed, ill, or anxious",
+      "Accessibility compliance is often legally required (ADA, Section 508)",
+      "Error states must be recoverable — no dead ends in clinical flows"
+    ],
+    "typography": "Minimum 16px body. Maximum readability — high line-height (1.6). Clear heading hierarchy. Avoid all-caps. Serif optional for clinical document feel (patient-facing literature).",
+    "color": "Blue or teal primary (calm, clinical). Avoid aggressive reds for primary actions. Use semantic red strictly for alerts and critical values. Warm, muted palette for patient-facing. Cooler for clinical/provider tools.",
+    "layout": "Single-column for patient forms. Clear step indicators. Back button always available. Print-friendly consideration for any documentation screens. Mobile-first for patient portals.",
+    "components": "Clearly labeled numeric inputs with units (mg, mmHg, bpm). Date pickers with clear format labels. Confirmation for any irreversible submission (prescription request, appointment booking).",
+    "antipatterns": ["Autoplay video in clinical context", "Small touch targets on mobile (patients may have limited dexterity)", "Color-only status indicators", "Ambiguous confirmation dialogs"],
+    "page_type_emphasis": { "form": "trust + clarity", "dashboard": "clarity", "onboarding": "trust", "settings": "clarity" },
+    "reference_brands": ["One Medical (consumer health — warm + clear)", "Epic MyChart (clinical density)", "Headspace (mental health — calm palette, generous spacing)"]
+  },
+  "developer_tools": {
+    "description": "IDEs, CLIs, API consoles, documentation, SDKs, developer dashboards",
+    "design_principles": [
+      "Respect expertise — experienced users want density and control, not hand-holding",
+      "Keyboard-first navigation is expected",
+      "Code is content — monospace, syntax highlighting, copy-to-clipboard are baseline requirements",
+      "Dark mode is the default preference (not an afterthought)",
+      "Documentation lives alongside the tool — not separate"
+    ],
+    "typography": "Inter or system font for UI. Mono (JetBrains Mono, Fira Code, Cascadia Code) for all code, IDs, commands, paths. Smaller default body size acceptable (14px) for dense data. Strong hierarchy between headings and body.",
+    "color": "Dark mode first. Accent color for interactive elements only. Syntax highlighting follows established conventions (strings: green/orange, keywords: blue/purple, errors: red). Status: green=running, red=failed, yellow=warning, blue=info.",
+    "layout": "Information density is valued. Sidebar navigation (collapsible). Command palette (Cmd+K). Split panes. Resizable panels. Log output area with scroll-lock toggle.",
+    "components": "Code blocks with line numbers, copy button, language label. Terminal/log output with ANSI color support. API key display with partial mask and reveal toggle. Diff views for version comparison.",
+    "antipatterns": ["Required splash screens or walkthroughs before reaching the console", "Hiding raw JSON behind UI abstractions without toggle", "Modal confirmations for non-destructive developer actions", "Decorative animations in code-adjacent surfaces"],
+    "page_type_emphasis": { "dashboard": "clarity + speed", "settings": "clarity", "form": "speed + clarity", "onboarding": "clarity" },
+    "reference_brands": ["Linear (speed + density + keyboard nav)", "Vercel (clean, dark-first, code-forward)", "Raycast (keyboard-first, command palette)", "Supabase (developer dashboard done right)"]
+  },
+  "ecommerce": {
+    "description": "Online stores, marketplaces, D2C brands, fashion, consumer goods",
+    "design_principles": [
+      "Merchandise the decision — lead with the product, reduce friction to purchase",
+      "Social proof reduces purchase anxiety — reviews, ratings, purchase counts",
+      "Urgency signals work but must be honest — fake countdown timers destroy trust",
+      "The checkout flow is the highest-value surface — minimize steps ruthlessly",
+      "Photography is a first-class design element — UI is the frame, product is the content"
+    ],
+    "typography": "Serif or display font for product names and marketing. System font for UI chrome (cart, checkout). Large product names on PDP. Price: large + bold + high contrast. Sale price: crossed-out original + prominent new price.",
+    "color": "Brand palette in hero and marketing. Neutral for product chrome (don't compete with product imagery). Add-to-cart: accent or brand color, high contrast. Sale badge: accent or warm red. Trust badges: neutral/subtle.",
+    "layout": "Product grid: 2-col mobile, 3–4 col desktop. PDP: product image dominant left, info right (or stacked mobile). Sticky add-to-cart on PDP. Persistent cart icon in nav with item count badge.",
+    "components": "Image gallery with zoom. Size/variant selector (swatches > dropdowns). Quantity selector with +/- buttons. Persistent checkout button. Progress indicator in checkout. Address autocomplete.",
+    "antipatterns": ["Fake scarcity ('Only 2 left!' when it's not true)", "Hidden shipping costs until checkout", "Forced account creation before checkout", "Autoplaying video on product pages", "Removing back button during checkout"],
+    "page_type_emphasis": { "landing_page": "conversion + trust", "pricing": "conversion + trust", "form": "conversion + clarity", "onboarding": "conversion" },
+    "reference_brands": ["Allbirds (clean, minimal, trust-first)", "Nike (high-impact, conversion-focused)", "Shopify (B2B ecom — clarity + conversion)", "SSENSE (luxury — white space + editorial)"]
+  },
+  "saas_b2b": {
+    "description": "Business software, admin tools, project management, CRM, analytics, internal tools",
+    "design_principles": [
+      "Efficiency over emotion — users are at work, not shopping",
+      "Discoverability of advanced features matters more than simplicity for power users",
+      "Keyboard navigation and shortcuts are expected by frequent users",
+      "Onboarding must reach time-to-value as fast as possible",
+      "Role-based access means multiple distinct user journeys in one product"
+    ],
+    "typography": "System font or Inter — no web font loading delay for productivity tools. 14–16px body. Compact line-height (1.4–1.5) acceptable for information-dense surfaces. Tabular numbers for data.",
+    "color": "Neutral, functional palette. Accent for primary actions only. Semantic colors strictly for status (red=error/danger, green=success/active, amber=warning/pending). Avoid decoration color.",
+    "layout": "Left sidebar navigation (always). Content area with clear header (breadcrumbs + page actions). Dense data tables. Expandable detail panels. Sticky action bars for bulk operations.",
+    "components": "Command palette (Cmd+K). Multi-select dropdowns for filters. Date range pickers. Data export (CSV/PDF). Role/permission selectors. Audit log display.",
+    "antipatterns": ["Forcing long onboarding before core feature access", "No keyboard shortcut system", "Pagination on every list (infinite scroll or load-more is better)", "Modal for information that could be inline"],
+    "page_type_emphasis": { "dashboard": "clarity + speed", "settings": "clarity + trust", "form": "clarity", "onboarding": "conversion + clarity" },
+    "reference_brands": ["Notion (flexible, learnable)", "Jira (power-user density)", "Linear (speed-first, clarity)", "Salesforce (enterprise — information density)"]
+  }
+}

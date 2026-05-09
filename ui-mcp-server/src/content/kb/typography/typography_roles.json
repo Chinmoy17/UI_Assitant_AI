@@ -1,0 +1,89 @@
+{
+  "roles": [
+    {
+      "name": "ui",
+      "var": "--font-ui",
+      "purpose": "Interface chrome",
+      "when_to_use": "Buttons, labels, nav, forms, tables, dashboards",
+      "tailwind_key": "ui",
+      "recommended": ["Inter", "system-ui", "-apple-system", "sans-serif"],
+      "note": "System font stack is always acceptable — loads instantly, feels native, zero FOUT"
+    },
+    {
+      "name": "display",
+      "var": "--font-display",
+      "purpose": "Marketing / brand",
+      "when_to_use": "Hero headlines, landing pages, splash screens",
+      "tailwind_key": "display",
+      "recommended": ["Geist", "Inter", "system-ui", "sans-serif"],
+      "note": "Swap for your brand font. If no brand font exists, set equal to --font-ui"
+    },
+    {
+      "name": "mono",
+      "var": "--font-mono",
+      "purpose": "Code and data",
+      "when_to_use": "Code blocks, API keys, IDs, terminal output",
+      "tailwind_key": "mono",
+      "recommended": ["JetBrains Mono", "Fira Code", "ui-monospace", "monospace"],
+      "note": "Never use for prose or UI text"
+    }
+  ],
+  "role_rules": [
+    "NEVER use --font-display in UI chrome (buttons, inputs, nav, tables)",
+    "NEVER use --font-mono for any prose or UI text",
+    "If no brand font is available, --font-display = --font-ui (one font is fine)",
+    "System font stack (-apple-system, BlinkMacSystemFont, Segoe UI) is always acceptable for --font-ui"
+  ],
+  "weight_scale": [
+    { "weight": 400, "token": "font-normal",   "use": "All body and UI text" },
+    { "weight": 500, "token": "font-medium",   "use": "Emphasis, headings H3–H4, labels, active states" },
+    { "weight": 600, "token": "font-semibold", "use": "Headings H1–H2 only" },
+    { "weight": 700, "token": "font-bold",     "use": "Display headlines only (32px+)" }
+  ],
+  "weight_rules": [
+    "NEVER use font-bold on body text — it reads like shouting",
+    "NEVER use font-bold at sizes below 16px — ink trapping reduces legibility",
+    "Weight alone is not sufficient to distinguish interactive from non-interactive text",
+    "font-medium (500) is the workhorse for UI — prefer it over bold for component labels",
+    "Use at most 2 weights in any UI component, 3 weights maximum across an entire page"
+  ],
+  "letter_spacing": [
+    { "context": "Display headlines (48px+)", "value": "-0.03em to -0.04em", "tailwind": "tracking-tight or tracking-tighter", "rule": "Compensates for optical looseness at large sizes" },
+    { "context": "Large headings (32px+)",   "value": "-0.02em",              "tailwind": "tracking-tight",                   "rule": "" },
+    { "context": "Body / UI text",           "value": "0",                    "tailwind": "tracking-normal",                  "rule": "NEVER change — font designer set this" },
+    { "context": "ALL-CAPS overlines",       "value": "+0.06em to +0.12em",   "tailwind": "tracking-widest",                  "rule": "Compensates for optical tightness of capitals" }
+  ],
+  "letter_spacing_rules": [
+    "NEVER add positive letter-spacing to mixed-case text — looks amateur, reduces readability",
+    "NEVER add negative letter-spacing below 24px — characters collide",
+    "ALL-CAPS text REQUIRES tracking-wide or tracking-widest to be readable",
+    "When in doubt: tracking-normal is always correct"
+  ],
+  "text_hierarchy": {
+    "levels": [
+      { "level": "primary",   "token": "--text-primary",   "contrast": "~18:1 on white", "light": "#09090B", "dark": "#FAFAFA",  "use": "Main content" },
+      { "level": "secondary", "token": "--text-secondary", "contrast": "~5.7:1, WCAG AA", "light": "#52525B", "dark": "#A1A1AA", "use": "Supporting info" },
+      { "level": "tertiary",  "token": "--text-tertiary",  "contrast": "~2.8:1, decorative only", "light": "#A1A1AA", "dark": "#71717A", "use": "Metadata, decorative" }
+    ],
+    "rules": [
+      "NEVER use text-tertiary for interactive or meaningful text — fails WCAG AA",
+      "NEVER use text-primary for placeholder text — use text-tertiary",
+      "Color is NOT the only differentiator for interactive elements — always pair with underline or border",
+      "Semantic colors (danger, success, warning) must be paired with an icon — never color alone"
+    ]
+  },
+  "text_alignment": [
+    { "context": "Body paragraphs",                 "alignment": "Left",   "rule": "Always" },
+    { "context": "UI labels, descriptions",         "alignment": "Left",   "rule": "Always" },
+    { "context": "Hero / marketing taglines",       "alignment": "Center", "rule": "Only for ≤2 lines of short standalone copy" },
+    { "context": "Empty state messages",            "alignment": "Center", "rule": "Only with an icon above" },
+    { "context": "Table cells — text",              "alignment": "Left",   "rule": "Always" },
+    { "context": "Table cells — numbers",           "alignment": "Right",  "rule": "Always — enables column scanning" },
+    { "context": "Buttons",                         "alignment": "Center", "rule": "Always" }
+  ],
+  "alignment_rules": [
+    "NEVER justify text on the web — CSS justification creates rivers of whitespace",
+    "NEVER center-align paragraphs — only short, isolated copy (1–2 lines max)",
+    "Center alignment must be intentional and rare — if everything is centered, nothing is"
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "cta_copy": {
+    "rule": "Button copy = verb + value. Never just a verb. Never just a noun.",
+    "patterns": [
+      { "bad": "Submit",            "good": "Send message",          "why": "Submit is mechanical. The action has a human purpose." },
+      { "bad": "OK",                "good": "Got it / Done / Close", "why": "OK is ambiguous and lazy. Be specific about what the user is confirming." },
+      { "bad": "Get started",       "good": "Start free trial",      "why": "Generic. Name the concrete action and remove friction with 'free'." },
+      { "bad": "Click here",        "good": "Download the report",   "why": "Screen readers list links by text — 'click here' means nothing out of context." },
+      { "bad": "Sign up",           "good": "Create account",        "why": "Sign up is old-fashioned. 'Create account' sets expectations about what happens next." },
+      { "bad": "Learn more",        "good": "See how it works",      "why": "Learn more is overused and vague. Specific framing reduces hesitation." },
+      { "bad": "Continue",          "good": "Save and continue",     "why": "Tell the user what happens when they click. Removes anxiety about data loss." },
+      { "bad": "Upgrade",           "good": "Unlock [feature]",      "why": "Upgrade feels like a tax. Unlocking a benefit is motivating." },
+      { "bad": "Delete",            "good": "Delete [item name]",    "why": "Scoped destructive copy makes it clear exactly what will be destroyed." },
+      { "bad": "Yes / No",          "good": "Delete project / Cancel","why": "Never confirm destructive actions with ambiguous Yes/No. Name the action." }
+    ]
+  },
+  "error_messages": {
+    "anatomy": "[What went wrong] + [Why it went wrong (if helpful)] + [How to fix it]",
+    "rules": [
+      "Never blame the user — 'Invalid email' not 'You entered an invalid email'",
+      "Never show technical error codes to users without a human translation",
+      "Be specific about the field and the fix — 'Password must be at least 8 characters' not 'Invalid password'",
+      "In form validation: present tense, plain language, actionable fix",
+      "In empty states / fetch errors: what went wrong + 1-click recovery path"
+    ],
+    "patterns": [
+      { "bad": "An error occurred",                       "good": "Couldn't save your changes. Check your connection and try again." },
+      { "bad": "Invalid input",                           "good": "Email address is required. Enter a valid email like name@example.com." },
+      { "bad": "403 Forbidden",                           "good": "You don't have permission to view this. Contact your admin to request access." },
+      { "bad": "Password is too weak",                    "good": "Password must be at least 8 characters and include a number." },
+      { "bad": "Network error",                           "good": "Couldn't connect. Check your internet connection, then try again." },
+      { "bad": "Something went wrong. Please try again.", "good": "Couldn't load your dashboard. Try refreshing the page." }
+    ]
+  },
+  "empty_state_copy": {
+    "rule": "Empty states are a conversation with the user — name what's missing, why, and what to do.",
+    "patterns": [
+      { "type": "First-time",  "headline": "No [items] yet",            "sub": "Create your first [item] to get started.", "cta": "Create [item]" },
+      { "type": "Search",      "headline": "No results for '[query]'",  "sub": "Try different keywords or clear the filters.", "cta": "Clear filters" },
+      { "type": "Completed",   "headline": "All caught up",             "sub": "Check back later for new [items].", "cta": null },
+      { "type": "Error",       "headline": "Couldn't load [content]",   "sub": "Check your connection or try again.", "cta": "Try again" },
+      { "type": "No access",   "headline": "You need access to view this", "sub": "Ask your admin to invite you.", "cta": "Request access" }
+    ]
+  },
+  "toast_copy": {
+    "rule": "Toast messages are 4–8 words. Present tense. Specific. No exclamation marks on errors.",
+    "patterns": [
+      { "type": "Success", "pattern": "[Item] [past verb]",      "examples": ["Project saved", "Invitation sent", "Password updated"] },
+      { "type": "Error",   "pattern": "Couldn't [verb]. [Fix].", "examples": ["Couldn't save. Try again.", "Upload failed. Check your file size."] },
+      { "type": "Info",    "pattern": "[Context statement]",     "examples": ["Changes published in 1–2 minutes", "You're now offline"] },
+      { "type": "Undo",    "pattern": "[Item] [verb]. [Undo link]", "examples": ["Project archived. Undo"] }
+    ]
+  },
+  "placeholder_and_hint_copy": {
+    "rules": [
+      "Placeholder text is supplementary — not a replacement for a visible label",
+      "Input placeholder should show format (e.g., 'name@example.com') or a useful example (e.g., 'Search by name or email')",
+      "NEVER use placeholder for instructions — they disappear on focus and fail accessibility",
+      "Helper text below the label: for persistent format hints (e.g., 'Must be at least 8 characters')",
+      "Character count: show below the input, especially when limit is < 280 characters"
+    ]
+  },
+  "confirmation_dialogs": {
+    "anatomy": {
+      "title": "Short, specific action: 'Delete project?' or 'Remove team member?'",
+      "body": "Exactly what will happen. What data is lost. Whether it can be undone.",
+      "primary_button": "Confirm action: 'Delete project' (not 'Yes', not 'OK')",
+      "cancel_button": "Always present: 'Cancel' (or 'Keep project' for extra reassurance)"
+    },
+    "rules": [
+      "Destructive confirmation button is always in danger color (bg-danger text-white)",
+      "Destructive button is on the RIGHT, cancel on LEFT",
+      "For high-stakes actions (delete account, bulk delete), require typing confirmation: 'Type [item name] to confirm'",
+      "Never auto-confirm after timeout — always require explicit user action"
+    ]
+  },
+  "onboarding_copy": {
+    "welcome_screen": {
+      "headline": "One sentence: what the product does for the user",
+      "sub": "One sentence: the first action they should take or the key benefit",
+      "cta": "Verb + value: 'Set up your workspace' not 'Continue'",
+      "rule": "The welcome screen is not for explaining features — it's for setting a direction. Cut everything else."
+    },
+    "step_labels": {
+      "rule": "Name each step by its outcome, not its action",
+      "examples": [
+        { "bad": "Step 1: Enter your name", "good": "Your profile" },
+        { "bad": "Step 2: Choose a plan",   "good": "Pick what fits" },
+        { "bad": "Step 3: Invite teammates","good": "Bring your team" }
+      ]
+    }
+  },
+  "page_type_copy_guidance": {
+    "landing_page": "Headline: bold claim or result. Subheadline: who it's for + what they get. CTA: first action, no commitment implied. Social proof: specific numbers over vague adjectives ('Used by 50,000 teams' not 'Loved by many').",
+    "dashboard":    "Section labels: noun + verb ('Revenue this month' not just 'Revenue'). KPI labels: concise and consistent. Empty metric: show '—' not '0' for 'not yet measured'.",
+    "form":         "Field labels: noun (what it IS, not what to do with it). 'Email address' not 'Enter your email'. Submit: name the outcome.",
+    "pricing":      "Plan names: character-based ('Starter', 'Pro', 'Enterprise') or feature-based ('Basic', 'Team', 'Scale'). Feature list: benefits not technical specs. CTA per tier: different copy for each tier.",
+    "settings":     "Section headers: plain nouns ('Account', 'Notifications', 'Security'). Dangerous settings: warn in text before the action button. Saved state: 'Saved' not 'Changes saved successfully'.",
+    "onboarding":   "Progress label: 'Step 2 of 4' not 'Progress: 50%'. Next button: names the next step, not just 'Next'. Skip option: always present for optional steps as a text link, not a button."
+  }
+}

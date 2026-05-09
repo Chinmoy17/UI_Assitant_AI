@@ -1,0 +1,68 @@
+[
+  {
+    "brand": "Apple",
+    "tagline": "Tight tracking, generous line height",
+    "font": "SF Pro (proprietary), system-ui fallback",
+    "headline_style": { "font_weight": "700", "letter_spacing": "-0.04em", "context": "hero text" },
+    "body_style":    { "line_height": "1.5", "note": "never denser" },
+    "business_connection": "Premium perception — tight headline tracking is now synonymous with Apple quality",
+    "takeaway": "Marketing type can be expressive; product type stays neutral",
+    "emphasis_match": ["trust", "conversion"],
+    "industry_match": ["consumer", "premium", "hardware", "mobile"]
+  },
+  {
+    "brand": "Google / Material Design 3",
+    "tagline": "Functional, role-based type system",
+    "font": "Google Sans (headings), Roboto (UI) — both humanist sans",
+    "headline_style": { "font_weight": "500–700", "role_system": "Display / Headline / Title / Body / Label each with Large/Medium/Small" },
+    "body_style":    { "note": "Strict role enforcement — no arbitrary sizes" },
+    "business_connection": "Scales across Android, web, and TV without inconsistency",
+    "takeaway": "Naming roles (not sizes) forces intentional usage",
+    "emphasis_match": ["clarity", "speed"],
+    "industry_match": ["saas", "developer", "enterprise", "consumer"]
+  },
+  {
+    "brand": "Linear",
+    "tagline": "Density with opacity hierarchy",
+    "font": "Inter throughout, no display font",
+    "headline_style": { "size": "11–13px labels", "note": "compact, precise" },
+    "body_style":    { "opacity_hierarchy": "opacity-90 primary / opacity-65 secondary / opacity-40 tertiary" },
+    "business_connection": "Professional tool perception — developers pay premium for dense, precise UIs",
+    "takeaway": "Opacity hierarchy adapts automatically to dark mode — no separate dark tokens needed for text",
+    "emphasis_match": ["speed", "clarity"],
+    "industry_match": ["developer", "saas", "b2b", "productivity", "devtools"]
+  },
+  {
+    "brand": "Stripe",
+    "tagline": "Expressive marketing, neutral product",
+    "font": "Söhne (marketing), Inter (dashboard)",
+    "headline_style": { "font_weight": "700", "letter_spacing": "-0.03em", "context": "marketing headlines" },
+    "body_style":    { "font_weight": "400/500 only", "note": "dashboard stays calm" },
+    "business_connection": "The gap between expressive marketing and calm product type signals 'trustworthy financial tool'",
+    "takeaway": "The tone of your product type says as much as the content",
+    "emphasis_match": ["trust", "conversion"],
+    "industry_match": ["fintech", "finance", "payments", "b2b", "saas"]
+  },
+  {
+    "brand": "Vercel / Geist",
+    "tagline": "Developer-first, open-source influence",
+    "font": "Geist Sans + Geist Mono (both open-source, available on Google Fonts)",
+    "headline_style": { "note": "Slightly condensed proportions, space-efficient" },
+    "body_style":    { "note": "Premium without being cold" },
+    "business_connection": "Became the default in Next.js 14+ — type became infrastructure",
+    "takeaway": "Investing in type system pays compound interest — every project using Next.js promotes it",
+    "emphasis_match": ["speed", "clarity"],
+    "industry_match": ["developer", "devtools", "infrastructure", "api", "technical"]
+  },
+  {
+    "brand": "Anthropic / Claude",
+    "tagline": "Calm authority",
+    "font": "Anthropic Sans (proprietary), system mono fallback for code",
+    "headline_style": { "font_weight": "400/500 only, never 700", "letter_spacing": "-0.02em on headings" },
+    "body_style":    { "note": "No aggressive contrast in type" },
+    "business_connection": "AI product that needs to feel intelligent but not intimidating",
+    "takeaway": "Restraint in weight (never bold) communicates confidence without aggression",
+    "emphasis_match": ["trust", "clarity"],
+    "industry_match": ["ai", "saas", "enterprise", "research", "consumer"]
+  }
+]
