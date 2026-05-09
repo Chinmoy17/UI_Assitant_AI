@@ -87,9 +87,109 @@ interface KBTypographyAntipatterns {
   checklist: Record<string, string[]>
 }
 
+interface KBColorTokens {
+  background_roles: Array<{ token: string; light: string; dark: string; use: string }>
+  border_roles: Array<{ token: string; light: string; dark: string; use: string }>
+  accent_roles: Array<{ token: string; light: string; dark: string; use: string }>
+  semantic_roles: Array<{ group: string; foreground: string; background: string; border: string; light_fg: string; dark_fg: string }>
+  elevation_system: {
+    description: string
+    levels: Array<{ level: number; token: string; light: string; dark: string; use: string }>
+    shadow_scale: Array<{ name: string; css: string; use: string }>
+    shadow_element_map: Array<{ element: string; shadow: string }>
+    rules: string[]
+  }
+  component_states: {
+    matrix: Record<string, string>
+    focus_ring_pattern: string
+    rule: string
+  }
+}
+
+interface KBColorPrinciples {
+  rule_60_30_10: {
+    description: string
+    layers: Array<{ percent: number; role: string; use: string; token: string }>
+    rules: string[]
+  }
+  semantic_usage: Array<{ color: string; meaning: string; use_for: string; never_use_for: string }>
+  semantic_pattern: { correct: string; example_classes: string; wrong: string; rule: string }
+  emphasis_color_guidance: Record<string, string>
+  page_type_color_guidance: Record<string, string>
+}
+
+interface KBColorContrast {
+  wcag_requirements: Array<{ text_type: string; minimum_ratio: string; level: string }>
+  quick_reference: Array<{ combo: string; ratio: string; passes: boolean; use: string }>
+  rules: string[]
+  dark_mode_notes: string[]
+}
+
+interface KBColorAntipatterns {
+  antipatterns: Array<{ name: string; bad: string; why: string; fix: string; emphasis_match: string[] }>
+  checklist: { color_system: string[] }
+}
+
+interface KBLayoutComponents {
+  buttons: {
+    hierarchy: Array<{ type: string; classes: string; use: string }>
+    sizing: Array<{ size: string; classes: string; px: number; use: string }>
+    placement_patterns: Array<{ pattern: string; layout: string; rule: string }>
+    rules: string[]
+  }
+  forms: {
+    input_anatomy: { order: string[]; rule: string }
+    input_states: Array<{ state: string; classes: string }>
+    layout_patterns: Array<{ pattern: string; use: string; rule: string }>
+    rules: string[]
+  }
+  cards: {
+    variants: Array<{ variant: string; bg: string; border: string; shadow: string; use: string }>
+    grid_patterns: Record<string, string>
+    padding: Record<string, string>
+    border_radius: Record<string, string>
+    rules: string[]
+  }
+  navigation: {
+    top_nav: { height: string; layout: string; active_state: string }
+    sidebar: { widths: Record<string, string>; active_state: string; hover_state: string; icon_size: string; pinned_bottom: string }
+    mobile: { patterns: string[]; bottom_tab: { max_items: number; min_touch_target: string }; hamburger: string }
+    rules: string[]
+  }
+  modals: {
+    anatomy: Record<string, string>
+    sizing: Array<{ size: string; class: string; px: number | null; use: string }>
+    rules: string[]
+  }
+  checklist: Record<string, string[]>
+}
+
+interface KBLayoutSpacing {
+  spacing_tokens: Array<{ token: string; px: number; rem: string; use: string }>
+  contextual_rules: Array<{ element: string; spacing: string }>
+  grid_system: {
+    columns: Record<string, string>
+    page_max_width: Record<string, string>
+    responsive_patterns: Array<{ breakpoint: string; min_px: number; use: string }>
+    page_type_max_width: Record<string, string>
+    rules: string[]
+  }
+  z_index_system: {
+    scale: Array<{ name: string; value: string; use: string }>
+    css_vars: string[]
+    rules: string[]
+  }
+  checklist: Record<string, string[]>
+}
+
 // ─── KB loaders — singleton cache (loaded once, reused for every call) ────────
 
-const KB_BASE = path.join(__dirname, '..', 'content', 'kb')
+const KB_BASE   = path.join(__dirname, '..', 'content', 'kb')
+const KB_TYPO   = path.join(KB_BASE, 'typography')
+const KB_COLOR  = path.join(KB_BASE, 'color')
+const KB_LAYOUT = path.join(KB_BASE, 'layout')
+const KB_BRAND  = path.join(KB_BASE, 'brand')
+const KB_VISUAL = path.join(KB_BASE, 'visual')
 const CONTENT_BASE = path.join(__dirname, '..', 'content')
 
 let _kbVisualPrinciples: KBVisualPrinciple[] | null = null
@@ -98,6 +198,12 @@ let _kbTypographySpec: KBTypographySpec | null | false = false  // false = not y
 let _kbTypographyRoles: KBTypographyRoles | null | false = false
 let _kbTypographyPatterns: KBTypographyPattern[] | null = null
 let _kbTypographyAntipatterns: KBTypographyAntipatterns | null | false = false
+let _kbColorTokens: KBColorTokens | null | false = false
+let _kbColorPrinciples: KBColorPrinciples | null | false = false
+let _kbColorContrast: KBColorContrast | null | false = false
+let _kbColorAntipatterns: KBColorAntipatterns | null | false = false
+let _kbLayoutComponents: KBLayoutComponents | null | false = false
+let _kbLayoutSpacing: KBLayoutSpacing | null | false = false
 let _allPrinciples: Principle[] | null = null
 
 // Inverted indexes built once from loaded principles
@@ -107,7 +213,7 @@ let _indexesBuilt = false
 
 function loadKBVisualPrinciples(): KBVisualPrinciple[] {
   if (_kbVisualPrinciples !== null) return _kbVisualPrinciples
-  const file = path.join(KB_BASE, 'visual_principles.json')
+  const file = path.join(KB_VISUAL, 'visual_principles.json')
   _kbVisualPrinciples = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBVisualPrinciple[])
     : []
@@ -116,7 +222,7 @@ function loadKBVisualPrinciples(): KBVisualPrinciple[] {
 
 function loadKBBrandExamples(): KBBrandExample[] {
   if (_kbBrandExamples !== null) return _kbBrandExamples
-  const file = path.join(KB_BASE, 'brand_examples.json')
+  const file = path.join(KB_BRAND, 'brand_examples.json')
   _kbBrandExamples = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBBrandExample[])
     : []
@@ -125,7 +231,7 @@ function loadKBBrandExamples(): KBBrandExample[] {
 
 function loadKBTypographySpec(): KBTypographySpec | null {
   if (_kbTypographySpec !== false) return _kbTypographySpec
-  const file = path.join(KB_BASE, 'typography_spec.json')
+  const file = path.join(KB_TYPO, 'typography_spec.json')
   _kbTypographySpec = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographySpec)
     : null
@@ -134,7 +240,7 @@ function loadKBTypographySpec(): KBTypographySpec | null {
 
 function loadKBTypographyRoles(): KBTypographyRoles | null {
   if (_kbTypographyRoles !== false) return _kbTypographyRoles
-  const file = path.join(KB_BASE, 'typography_roles.json')
+  const file = path.join(KB_TYPO, 'typography_roles.json')
   _kbTypographyRoles = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyRoles)
     : null
@@ -143,7 +249,7 @@ function loadKBTypographyRoles(): KBTypographyRoles | null {
 
 function loadKBTypographyPatterns(): KBTypographyPattern[] {
   if (_kbTypographyPatterns !== null) return _kbTypographyPatterns
-  const file = path.join(KB_BASE, 'typography_patterns.json')
+  const file = path.join(KB_TYPO, 'typography_patterns.json')
   _kbTypographyPatterns = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyPattern[])
     : []
@@ -152,11 +258,53 @@ function loadKBTypographyPatterns(): KBTypographyPattern[] {
 
 function loadKBTypographyAntipatterns(): KBTypographyAntipatterns | null {
   if (_kbTypographyAntipatterns !== false) return _kbTypographyAntipatterns
-  const file = path.join(KB_BASE, 'typography_antipatterns.json')
+  const file = path.join(KB_TYPO, 'typography_antipatterns.json')
   _kbTypographyAntipatterns = fs.existsSync(file)
     ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBTypographyAntipatterns)
     : null
   return _kbTypographyAntipatterns
+}
+
+function loadKBColorTokens(): KBColorTokens | null {
+  if (_kbColorTokens !== false) return _kbColorTokens
+  const file = path.join(KB_COLOR, 'color_tokens.json')
+  _kbColorTokens = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBColorTokens) : null
+  return _kbColorTokens
+}
+
+function loadKBColorPrinciples(): KBColorPrinciples | null {
+  if (_kbColorPrinciples !== false) return _kbColorPrinciples
+  const file = path.join(KB_COLOR, 'color_principles.json')
+  _kbColorPrinciples = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBColorPrinciples) : null
+  return _kbColorPrinciples
+}
+
+function loadKBColorContrast(): KBColorContrast | null {
+  if (_kbColorContrast !== false) return _kbColorContrast
+  const file = path.join(KB_COLOR, 'color_contrast.json')
+  _kbColorContrast = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBColorContrast) : null
+  return _kbColorContrast
+}
+
+function loadKBColorAntipatterns(): KBColorAntipatterns | null {
+  if (_kbColorAntipatterns !== false) return _kbColorAntipatterns
+  const file = path.join(KB_COLOR, 'color_antipatterns.json')
+  _kbColorAntipatterns = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBColorAntipatterns) : null
+  return _kbColorAntipatterns
+}
+
+function loadKBLayoutComponents(): KBLayoutComponents | null {
+  if (_kbLayoutComponents !== false) return _kbLayoutComponents
+  const file = path.join(KB_LAYOUT, 'layout_components.json')
+  _kbLayoutComponents = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBLayoutComponents) : null
+  return _kbLayoutComponents
+}
+
+function loadKBLayoutSpacing(): KBLayoutSpacing | null {
+  if (_kbLayoutSpacing !== false) return _kbLayoutSpacing
+  const file = path.join(KB_LAYOUT, 'layout_spacing.json')
+  _kbLayoutSpacing = fs.existsSync(file) ? (JSON.parse(fs.readFileSync(file, 'utf-8')) as KBLayoutSpacing) : null
+  return _kbLayoutSpacing
 }
 
 function buildInvertedIndexes(principles: Principle[]): void {
@@ -717,12 +865,18 @@ export function designPage(input: DesignPageInput): string {
   const { flags, clearedByRedo } = resolveNeededDomains(contextText, sessionMode, resolvedDomains)
 
   // ── Load only flagged KB modules ───────────────────────────────────────────
-  const kbVisualPrinciples = flags.visual    ? loadKBVisualPrinciples() : []
-  const kbBrandExamples    = flags.brand     ? loadKBBrandExamples()    : []
-  const kbTypoSpec         = flags.typography ? loadKBTypographySpec()           : null
-  const kbTypoRoles        = flags.typography ? loadKBTypographyRoles()           : null
-  const kbTypoPatterns     = flags.typography ? loadKBTypographyPatterns()        : []
-  const kbTypoAntipatterns = flags.typography ? loadKBTypographyAntipatterns()    : null
+  const kbVisualPrinciples  = flags.visual     ? loadKBVisualPrinciples()     : []
+  const kbBrandExamples     = flags.brand      ? loadKBBrandExamples()        : []
+  const kbTypoSpec          = flags.typography ? loadKBTypographySpec()       : null
+  const kbTypoRoles         = flags.typography ? loadKBTypographyRoles()      : null
+  const kbTypoPatterns      = flags.typography ? loadKBTypographyPatterns()   : []
+  const kbTypoAntipatterns  = flags.typography ? loadKBTypographyAntipatterns() : null
+  const kbColorTokens       = flags.color      ? loadKBColorTokens()          : null
+  const kbColorPrinciples   = flags.color      ? loadKBColorPrinciples()      : null
+  const kbColorContrast     = flags.color      ? loadKBColorContrast()        : null
+  const kbColorAntipatterns = flags.color      ? loadKBColorAntipatterns()    : null
+  const kbLayoutComponents  = flags.layout     ? loadKBLayoutComponents()     : null
+  const kbLayoutSpacing     = flags.layout     ? loadKBLayoutSpacing()        : null
 
   // ── Psychology gate — ALWAYS runs ─────────────────────────────────────────
   const requestContext = [
@@ -752,8 +906,19 @@ export function designPage(input: DesignPageInput): string {
   // ── Conditional domain sections ────────────────────────────────────────────
 
   // Layout (always output when flagged — most broadly relevant)
+  const layoutPageMaxWidth = kbLayoutSpacing?.grid_system.page_type_max_width[page_type] ?? ''
+  const layoutButtonRules  = kbLayoutComponents?.buttons.rules.slice(0, 3) ?? []
+  const layoutCardRules    = kbLayoutComponents?.cards.rules.slice(0, 2) ?? []
+  const layoutZIndexRule   = kbLayoutSpacing?.z_index_system.rules[0] ?? ''
+  const layoutKBSection = kbLayoutComponents
+    ? `\n\n### Component Rules (from KB)\n` +
+      (layoutButtonRules.length > 0 ? `**Buttons:** ${layoutButtonRules.join(' · ')}\n` : '') +
+      (layoutCardRules.length > 0   ? `**Cards:** ${layoutCardRules.join(' · ')}\n` : '') +
+      (layoutPageMaxWidth ? `**Max-width for ${page_type.replace(/_/g, ' ')}:** ${layoutPageMaxWidth}\n` : '') +
+      (layoutZIndexRule ? `**Z-index:** ${layoutZIndexRule}` : '')
+    : ''
   const layoutSection = flags.layout
-    ? `\n## Layout Recommendation\n${LAYOUT_ADVICE[page_type]?.[emphasis] ?? ''}`
+    ? `\n## Layout Recommendation\n${LAYOUT_ADVICE[page_type]?.[emphasis] ?? ''}${layoutKBSection}`
     : ''
 
   // Typography — static advice always with KB enrichment only when flagged
@@ -813,8 +978,35 @@ export function designPage(input: DesignPageInput): string {
     : ''
 
   // Color
+  const colorPageGuide    = kbColorPrinciples?.page_type_color_guidance[page_type] ?? ''
+  const colorEmphGuide    = kbColorPrinciples?.emphasis_color_guidance[emphasis] ?? ''
+  const sixtyThirtyTen    = kbColorPrinciples?.rule_60_30_10.layers
+    .map(l => `${l.percent}% ${l.role}: ${l.use}`)
+    .join(' · ') ?? ''
+  const contrastQuickRef  = kbColorContrast?.quick_reference
+    .slice(0, 3)
+    .map(c => `${c.combo} → ${c.ratio} (${c.passes ? 'passes' : 'FAILS'})`)
+    .join(', ') ?? ''
+  const focusRingPattern  = kbColorTokens?.component_states.focus_ring_pattern ?? ''
+  const elevationRules    = kbColorTokens?.elevation_system.rules.slice(0, 2) ?? []
+  const colorAntipatterns = kbColorAntipatterns?.antipatterns
+    .filter(a => a.emphasis_match.includes(emphasis))
+    .slice(0, 3) ?? []
+  const colorKBSection = kbColorPrinciples
+    ? `\n\n### Color System Rules (from KB)\n` +
+      (colorEmphGuide  ? `**${emphasis} emphasis:** ${colorEmphGuide}\n` : '') +
+      (colorPageGuide  ? `**${page_type.replace(/_/g, ' ')} guidance:** ${colorPageGuide}\n` : '') +
+      (sixtyThirtyTen  ? `**60/30/10 distribution:** ${sixtyThirtyTen}\n` : '') +
+      (contrastQuickRef ? `**Contrast quick-ref:** ${contrastQuickRef}\n` : '') +
+      (elevationRules.length > 0 ? `**Elevation:** ${elevationRules.join(' · ')}\n` : '') +
+      (focusRingPattern ? `**Focus ring:** \`${focusRingPattern}\`\n` : '') +
+      (colorAntipatterns.length > 0
+        ? `\n**Anti-patterns to avoid (${emphasis}):**\n` +
+          colorAntipatterns.map(a => `- **${a.name}:** ${a.why} → ${a.fix}`).join('\n')
+        : '')
+    : ''
   const colorSection = flags.color
-    ? `\n## Color Strategy\n${COLOR_ADVICE[emphasis] ?? ''}`
+    ? `\n## Color Strategy\n${COLOR_ADVICE[emphasis] ?? ''}${colorKBSection}`
     : ''
 
   // Visual KB principles

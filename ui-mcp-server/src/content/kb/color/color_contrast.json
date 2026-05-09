@@ -1,0 +1,29 @@
+{
+  "wcag_requirements": [
+    { "text_type": "Normal text (< 18px / < 14px bold)", "minimum_ratio": "4.5:1", "level": "AA" },
+    { "text_type": "Large text (≥ 18px or ≥ 14px bold)", "minimum_ratio": "3:1",   "level": "AA" },
+    { "text_type": "UI components (borders, icons)",      "minimum_ratio": "3:1",   "level": "AA" },
+    { "text_type": "Decorative / disabled",              "minimum_ratio": "none",  "level": "exempt" },
+    { "text_type": "Target: all meaningful text",        "minimum_ratio": "7:1",   "level": "AAA" }
+  ],
+  "quick_reference": [
+    { "combo": "#09090B on #FFFFFF", "ratio": "21:1",  "passes": true,  "use": "Primary text — maximum contrast" },
+    { "combo": "#52525B on #FFFFFF", "ratio": "7.4:1", "passes": true,  "use": "Secondary text — comfortably passes AA + AAA" },
+    { "combo": "#71717A on #FFFFFF", "ratio": "4.6:1", "passes": true,  "use": "Tertiary — barely passes AA, use carefully" },
+    { "combo": "#A1A1AA on #FFFFFF", "ratio": "2.6:1", "passes": false, "use": "Decorative only — fails AA" },
+    { "combo": "#6366F1 on #FFFFFF", "ratio": "4.9:1", "passes": true,  "use": "Accent text on white — passes AA" },
+    { "combo": "#FFFFFF on #6366F1", "ratio": "4.9:1", "passes": true,  "use": "White on accent button — passes AA" }
+  ],
+  "rules": [
+    "ALWAYS check contrast when using accent color as text on white",
+    "NEVER use semantic colors (danger red, success green) as background without checking contrast",
+    "Color is NEVER the only signal — always pair with icon, label, or border pattern",
+    "Test with real content at real sizes — small text at 4.51:1 is technically passing but practically uncomfortable",
+    "8% of males are colorblind — never rely on red vs green alone to communicate state"
+  ],
+  "dark_mode_notes": [
+    "Recheck all contrast ratios in dark mode — token values change and some combinations that pass in light mode fail in dark",
+    "Pure black (#000000) background causes excessive contrast and halation on OLED — use #09090B or #0F172A",
+    "Reduce shadow opacity by ~50% in dark mode — dark surfaces naturally recede without heavy shadows"
+  ]
+}

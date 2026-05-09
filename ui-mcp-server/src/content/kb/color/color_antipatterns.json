@@ -1,0 +1,70 @@
+{
+  "antipatterns": [
+    {
+      "name": "Rainbow UI",
+      "bad": "Using 6 different accent colors across one page for 'variety'",
+      "why": "Color loses meaning — if everything is colorful, nothing is highlighted",
+      "fix": "One accent color, three semantic colors (danger/success/warning), greys for everything else",
+      "emphasis_match": ["clarity", "trust"]
+    },
+    {
+      "name": "Dark text on colored background without contrast check",
+      "bad": "bg-warning text-primary — lighter amber backgrounds fail badly",
+      "why": "#D97706 (amber) may pass AA but lighter variants don't — easy to miss without a checker",
+      "fix": "Always check contrast. Use -subtle variants (light tinted bg) with dark text instead",
+      "emphasis_match": ["trust", "clarity"]
+    },
+    {
+      "name": "Color-only state signaling",
+      "bad": "Turning a border red to signal error — no icon, no message",
+      "why": "8% of males are colorblind and cannot distinguish red from green",
+      "fix": "Red border + error icon + error message text. All three, always.",
+      "emphasis_match": ["trust", "clarity", "conversion"]
+    },
+    {
+      "name": "Pure black text on white",
+      "bad": "#000000 on #FFFFFF (21:1 contrast)",
+      "why": "Too harsh — causes halation (white bleeding into dark text) on bright screens",
+      "fix": "#09090B or #111111 on white — visually indistinguishable but eliminates harshness",
+      "emphasis_match": ["clarity", "trust"]
+    },
+    {
+      "name": "Pure black background",
+      "bad": "#000000 as dark mode base",
+      "why": "Creates excessive contrast and looks low-quality on OLED screens",
+      "fix": "#09090B or #0F172A — near-black with slight warmth or coolness",
+      "emphasis_match": ["trust", "clarity"]
+    },
+    {
+      "name": "Gradient overuse",
+      "bad": "Gradients on buttons, cards, inputs, backgrounds — everything",
+      "why": "Gradients age quickly and read as decorative rather than structural",
+      "fix": "One subtle gradient maximum — hero section or marketing illustration. UI chrome stays flat.",
+      "emphasis_match": ["clarity", "speed"]
+    },
+    {
+      "name": "Semitransparent colors on unknown backgrounds",
+      "bad": "text-black/70 on a surface that might be colored",
+      "why": "rgba opacity composites with whatever is beneath — unpredictable in dark mode or colored panels",
+      "fix": "Use explicit color tokens — never rely on opacity for color values in components",
+      "emphasis_match": ["clarity", "trust"]
+    },
+    {
+      "name": "Low contrast 'modern' aesthetic",
+      "bad": "text-gray-300 on white (#D1D5DB = 1.6:1) as body text",
+      "why": "Fails WCAG AA. Affects ~10% of users with visual impairment",
+      "fix": "text-secondary (#52525B = 7.4:1) minimum for any meaningful text",
+      "emphasis_match": ["trust", "clarity", "conversion"]
+    }
+  ],
+  "checklist": {
+    "color_system": [
+      "All colors reference tokens — no raw hex values in component files",
+      "Page uses bg-base → bg-surface → bg-subtle hierarchy correctly",
+      "Accent color appears in ≤10% of visible screen area",
+      "All text meets WCAG AA contrast (4.5:1 body, 3:1 large/UI)",
+      "Semantic colors (danger/success/warning) paired with icon, not color alone",
+      "Dark mode tested — all tokens have dark variants defined"
+    ]
+  }
+}

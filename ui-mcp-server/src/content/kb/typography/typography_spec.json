@@ -1,0 +1,103 @@
+{
+  "font_families": [
+    {
+      "use_case": "Enterprise SaaS, dashboard, admin",
+      "fonts": ["Inter", "IBM Plex Sans", "Source Sans 3", "Geist"],
+      "reason": "Dense, clear, neutral, readable at smaller sizes — suited for information-heavy surfaces",
+      "industry_match": ["saas", "b2b", "admin", "analytics", "internal", "developer", "enterprise", "fintech", "finance"],
+      "emphasis_match": ["clarity", "speed"]
+    },
+    {
+      "use_case": "Consumer app",
+      "fonts": ["Inter", "DM Sans", "Manrope", "Plus Jakarta Sans"],
+      "reason": "Friendly, versatile, readable — works across device sizes with a warm but professional feel",
+      "industry_match": ["consumer", "social", "health", "fitness", "lifestyle", "travel", "ecommerce", "retail"],
+      "emphasis_match": ["clarity", "conversion", "trust"]
+    },
+    {
+      "use_case": "Premium editorial or luxury brand",
+      "fonts": ["Instrument Serif", "Fraunces", "Canela-style serif paired with a stable sans"],
+      "reason": "Adds authority, taste, and emotion — reserve for brands where craftsmanship is the value proposition",
+      "industry_match": ["luxury", "premium", "editorial", "hospitality", "fashion", "beauty"],
+      "emphasis_match": ["trust", "conversion"]
+    },
+    {
+      "use_case": "Technical or developer tooling",
+      "fonts": ["IBM Plex Sans", "Geist", "Inter", "JetBrains Sans"],
+      "reason": "Precise, low-friction, high legibility — works well alongside monospace code fonts",
+      "industry_match": ["developer", "devtools", "api", "infrastructure", "technical", "security"],
+      "emphasis_match": ["clarity", "speed"]
+    },
+    {
+      "use_case": "Youthful brand, fashion, music",
+      "fonts": ["Sora", "Space Grotesk", "General Sans", "Clash Display for headlines with a calmer sans for body"],
+      "reason": "Energy and edge without sacrificing readability — combine a display headline face with a calmer body sans",
+      "industry_match": ["music", "media", "entertainment", "streaming", "sports", "fashion", "youth"],
+      "emphasis_match": ["conversion"]
+    }
+  ],
+  "size_scale": [
+    { "role": "Hero headline",    "desktop": "48–72px", "mobile": "32–44px" },
+    { "role": "Section headline", "desktop": "28–40px", "mobile": "24–32px" },
+    { "role": "Card title",       "desktop": "20–24px", "mobile": "18–22px" },
+    { "role": "Body",             "desktop": "16–18px", "mobile": "16–18px" },
+    { "role": "Small support",    "desktop": "14px",    "mobile": "14px"    },
+    { "role": "Micro label",      "desktop": "12–13px", "mobile": "12–13px" }
+  ],
+  "line_height_scale": [
+    { "role": "Hero",    "value": "1.0–1.15" },
+    { "role": "Heading", "value": "1.1–1.25" },
+    { "role": "Body",    "value": "1.45–1.7" },
+    { "role": "Labels",  "value": "1.2–1.4"  }
+  ],
+  "spacing_scale": [
+    { "token": "xs",  "px": 4  },
+    { "token": "sm",  "px": 8  },
+    { "token": "md",  "px": 12 },
+    { "token": "lg",  "px": 16 },
+    { "token": "xl",  "px": 24 },
+    { "token": "2xl", "px": 32 },
+    { "token": "3xl", "px": 48 },
+    { "token": "4xl", "px": 64 }
+  ],
+  "button_targets": [
+    { "use_case": "Mobile primary action",   "minimum": "44×44px", "preferred": "48–56px" },
+    { "use_case": "Desktop primary action",  "minimum": "40×40px", "preferred": "44–48px" },
+    { "use_case": "Destructive action",      "minimum": "Same as primary", "preferred": "Lower visual priority until confirmation" }
+  ],
+  "page_type_font_pairings": {
+    "landing_page": {
+      "pairings": ["Manrope + Inter", "Sora + DM Sans", "Fraunces + Inter (premium)"],
+      "headline_guidance": "Large display treatment — hero headline should command the viewport within the first viewport."
+    },
+    "dashboard": {
+      "pairings": ["Inter (single family)", "IBM Plex Sans", "Geist"],
+      "headline_guidance": "20–24px page title. 28–40px main KPI number depending on density preference."
+    },
+    "form": {
+      "pairings": ["Inter", "DM Sans", "Source Sans 3"],
+      "headline_guidance": "Keep form headline short and task-based: 'Create account' or 'Set up your workspace' — under 6 words."
+    },
+    "onboarding": {
+      "pairings": ["Inter", "Plus Jakarta Sans", "Manrope"],
+      "headline_guidance": "Headline focus on the next value step, not brand poetry. Under 8 words."
+    },
+    "pricing": {
+      "pairings": ["Inter", "IBM Plex Sans", "DM Sans"],
+      "headline_guidance": "Price number large and bold. Benefit headline above feature list. CTA directly beneath price."
+    },
+    "settings": {
+      "pairings": ["Inter", "Source Sans 3", "IBM Plex Sans"],
+      "headline_guidance": "Section headers clear but not dominant — the content should lead, not the label."
+    },
+    "navigation": {
+      "pairings": ["Inter", "DM Sans", "Geist"],
+      "headline_guidance": "Labels concise. Active state typographically distinct (weight or color, not both)."
+    }
+  },
+  "line_length_guidance": {
+    "content_page": "60–75 characters for body copy",
+    "dashboard": "No body copy wrapping — use data, numbers, and labels at natural widths",
+    "form": "Full-width inputs for most fields; narrow postal/zip, phone, and short code fields"
+  }
+}

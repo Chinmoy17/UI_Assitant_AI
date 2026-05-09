@@ -1,0 +1,103 @@
+{
+  "spacing_tokens": [
+    { "token": "1",  "px": 4,   "rem": "0.25", "use": "Icon gap, very tight inline spacing" },
+    { "token": "2",  "px": 8,   "rem": "0.5",  "use": "Tag padding, dense inline spacing" },
+    { "token": "3",  "px": 12,  "rem": "0.75", "use": "Small gaps within components" },
+    { "token": "4",  "px": 16,  "rem": "1",    "use": "Standard internal component padding (p-4)" },
+    { "token": "5",  "px": 20,  "rem": "1.25", "use": "Card padding" },
+    { "token": "6",  "px": 24,  "rem": "1.5",  "use": "Section padding, spacious card padding" },
+    { "token": "8",  "px": 32,  "rem": "2",    "use": "Large vertical gaps between sections" },
+    { "token": "10", "px": 40,  "rem": "2.5",  "use": "Major section breaks" },
+    { "token": "12", "px": 48,  "rem": "3",    "use": "Hero padding, large marketing sections" },
+    { "token": "16", "px": 64,  "rem": "4",    "use": "Maximum section gap on desktop" },
+    { "token": "20", "px": 80,  "rem": "5",    "use": "Hero vertical padding (landing page)" },
+    { "token": "24", "px": 96,  "rem": "6",    "use": "Maximum hero padding" }
+  ],
+  "contextual_rules": [
+    { "element": "Within component (icon-to-text)", "spacing": "gap-2 (8px)" },
+    { "element": "Between related fields",          "spacing": "gap-4 (16px)" },
+    { "element": "Between card content sections",   "spacing": "gap-4 to gap-6 (16–24px)" },
+    { "element": "Between cards in grid",           "spacing": "gap-4 to gap-6 (16–24px)" },
+    { "element": "Section padding horizontal",      "spacing": "px-4 mobile → px-6 tablet → px-8+ desktop" },
+    { "element": "Section gap vertical",            "spacing": "gap-8 to gap-12 (32–48px)" },
+    { "element": "Page section breaks (marketing)", "spacing": "py-16 to py-24 (64–96px)" }
+  ],
+  "grid_system": {
+    "columns": {
+      "mobile":  "4 cols, 16px margins, 8px gutter",
+      "tablet":  "8 cols, 24px margins, 16px gutter",
+      "desktop": "12 cols, 32px margins, 24px gutter"
+    },
+    "page_max_width": {
+      "compact":   "720px  (max-w-3xl)  — focused: settings, forms, onboarding",
+      "standard":  "1024px (max-w-5xl)  — typical app dashboard",
+      "wide":      "1280px (max-w-6xl)  — wide dashboards, data-heavy",
+      "full":      "1440px (max-w-7xl)  — marketing sites"
+    },
+    "responsive_patterns": [
+      { "breakpoint": "sm",  "min_px": 640,  "use": "Column count: 2 (cards)" },
+      { "breakpoint": "md",  "min_px": 768,  "use": "Sidebar visible, 2-col forms" },
+      { "breakpoint": "lg",  "min_px": 1024, "use": "Column count: 3–4, full nav" },
+      { "breakpoint": "xl",  "min_px": 1280, "use": "Max-width containers reached" },
+      { "breakpoint": "2xl", "min_px": 1536, "use": "Extra columns for data tables" }
+    ],
+    "page_type_max_width": {
+      "form":          "max-w-xl (centered) — focus the user",
+      "settings":      "max-w-3xl (centered)",
+      "dashboard":     "max-w-6xl or full (with side margins)",
+      "landing_page":  "max-w-7xl (marketing width)",
+      "pricing":       "max-w-5xl (3-column plan cards)",
+      "onboarding":    "max-w-md (single-column wizard)"
+    },
+    "rules": [
+      "NEVER mix absolute pixel widths with Tailwind responsive classes",
+      "Always define max-width container at the page level — not on every section",
+      "Use the correct column count for the content: 12-col for complex layouts, simpler is better",
+      "Stick to 4–8px spacing multiples — never use 7px, 13px, 17px etc."
+    ]
+  },
+  "z_index_system": {
+    "scale": [
+      { "name": "Default",      "value": "0",    "use": "Static content" },
+      { "name": "Raised",       "value": "10",   "use": "Slightly elevated elements (floating buttons)" },
+      { "name": "Dropdown",     "value": "100",  "use": "Dropdowns, popovers, tooltips" },
+      { "name": "Sticky",       "value": "200",  "use": "Sticky headers, sticky sidebar" },
+      { "name": "Modal",        "value": "300",  "use": "Modal dialogs, drawers" },
+      { "name": "Overlay",      "value": "400",  "use": "Modal backdrop overlay" },
+      { "name": "Toast",        "value": "500",  "use": "Toast notifications (above modal)" },
+      { "name": "Max",          "value": "9999", "use": "Emergency full-screen overlays only" }
+    ],
+    "css_vars": [
+      "--z-raised:   10;",
+      "--z-dropdown: 100;",
+      "--z-sticky:   200;",
+      "--z-modal:    300;",
+      "--z-overlay:  400;",
+      "--z-toast:    500;"
+    ],
+    "rules": [
+      "NEVER use arbitrary z-index values like z-[9999] in components — use the scale",
+      "Define z-index as CSS custom properties, not magic numbers",
+      "Toast must always be above modal (500 > 300) — users need to see success/error messages",
+      "Sticky elements MUST test against existing modal/dropdown layers before shipping"
+    ]
+  },
+  "checklist": {
+    "spacing": [
+      "All spacing uses 4px multiples — no arbitrary 7px, 13px, 17px values",
+      "Page has correct max-width for content type (form ≠ dashboard width)",
+      "Mobile has correct horizontal padding (px-4 minimum)",
+      "Section vertical rhythm uses consistent spacing scale"
+    ],
+    "grid": [
+      "12-column grid used for complex layouts",
+      "Responsive breakpoints defined: mobile 4col → tablet 8col → desktop 12col",
+      "Grid gaps consistent across breakpoints"
+    ],
+    "z_index": [
+      "No arbitrary z-index values — all from the defined scale",
+      "Toast z-index higher than modal z-index",
+      "Sticky header tested against dropdown z-index"
+    ]
+  }
+}
