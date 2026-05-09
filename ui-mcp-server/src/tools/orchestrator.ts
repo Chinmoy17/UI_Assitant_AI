@@ -25,7 +25,7 @@ import {
   appendUsageEvent,
   type ProjectContext,
 } from '../storage/storage.js'
-const SERVER_VERSION = '0.3.0'
+const SERVER_VERSION = '0.4.0'
 
 // --- Zod shape (all optional -- orchestrator resolves what it can) ---------------
 

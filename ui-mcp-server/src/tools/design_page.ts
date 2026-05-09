@@ -665,15 +665,17 @@ function resolveNeededDomains(
     const isAsked = DOMAIN_KEYWORDS[domain].some(k => lower.includes(k))
 
     if (isAsked) {
+      // Always re-trigger if explicitly asked — regardless of resolved status.
+      // The redo signal additionally clears the domain from resolved_domains.
+      flags[domain] = true
       if (isResolved && hasRedo) {
-        // Redo signal + explicit domain mention = clear resolved and re-trigger
         clearedByRedo.push(domain)
-        flags[domain] = true
-      } else if (!isResolved) {
-        flags[domain] = true
       }
-      // isResolved && !hasRedo = already covered, skip
+    } else if (!isResolved) {
+      // Not yet covered and not specifically asked — auto-trigger
+      flags[domain] = true
     }
+    // isResolved && !isAsked = already covered, not asked → skip (shown in skipped note)
   }
 
   // Safety: if nothing triggered, still output typography + layout as baseline
@@ -865,10 +867,11 @@ export function designPage(input: DesignPageInput): string {
 
   // ── Context sections ───────────────────────────────────────────────────────
   const strategyContext = [
-    `Stored audience: ${projectCtx.audience || 'not set'}`,
-    `Stored industry: ${projectCtx.industry || 'not set'}`,
-    `Stored devices: ${toTitleList(projectCtx.device_targets)}`,
-  ].join(' | ')
+    projectCtx.project_name ? `Project: ${projectCtx.project_name}` : '',
+    `Audience: ${projectCtx.audience || 'not set'}`,
+    `Industry: ${projectCtx.industry || 'not set'}`,
+    `Devices: ${toTitleList(projectCtx.device_targets) || 'not set'}`,
+  ].filter(Boolean).join(' | ')
 
   const brandCtxSection = projectCtx.brand.primary_color
     ? `\n## Brand Context\nPrimary color: ${projectCtx.brand.primary_color} | Theme: ${projectCtx.brand.theme} | Font: ${projectCtx.brand.font || 'not set'}`

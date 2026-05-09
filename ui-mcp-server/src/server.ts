@@ -15,11 +15,11 @@ import {
   type ProjectContextUpdate,
 } from './storage/storage.js'
 
-const SERVER_VERSION = '0.3.0'
+const SERVER_VERSION = '0.4.0'
 
 const server = new McpServer({
   name: 'ui-craft',
-  version: '0.3.0',
+  version: '0.4.0',
 })
 
 type TextToolHandler = (input: unknown) => Promise<{
